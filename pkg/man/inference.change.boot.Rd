@@ -1,10 +1,8 @@
 \name{inference.change.boot}
 \alias{inference.change.boot}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
  This does bootstrap inference for the difference in the
  average "car" between t1 and t2 (both in event time).
-%%  ~~function to do ... ~~
 }
 \description{
 
@@ -18,61 +16,56 @@
  But if operator="difference" is sent in, then the
  statistic of interest shifts to Ecar(t2)-Ecar(t1).
 
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
 inference.change.boot(z.e, t1, t2, operator = "ratio", conf = 0.95)
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{z.e}{
 z is the zoo object returned from phys2eventtime.
-%%     ~~Describe \code{z.e} here~~
+
 }
   \item{t1}{
 Start of the event period.
-%%     ~~Describe \code{t1} here~~
+
 }
   \item{t2}{
 End of the event period.
-%%     ~~Describe \code{t2} here~~
+
 }
   \item{operator}{
-%%     ~~Describe \code{operator} here~~
+One of ratio or difference to compute the ratio or difference
+for the change in Ecar
 }
   \item{conf}{
-%%     ~~Describe \code{conf} here~~
+The level of confidence for computing the confidence intervals.
 }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+It returns a list containing the mean,and the confidence intervals 
+for the change in Ecar.
+
 }
 \references{
-%% ~put references to the literature/web site here ~
+
 }
 \author{
-%%  ~~who you are~~
+
 }
 \note{
-%%  ~~further notes~~
+
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
 function (z.e, t1, t2, operator = "ratio", conf = 0.95) 
@@ -93,7 +86,6 @@ function (z.e, t1, t2, operator = "ratio", conf = 0.95)
     list(est = b$t0, lo = ci$bca[1, 4], hi = ci$bca[1, 5])
   }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+
+
+

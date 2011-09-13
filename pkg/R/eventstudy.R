@@ -17,7 +17,9 @@ phys2eventtime <- function(z, events, width=10) {
 
   # Just in case events$unit has been sent in as a factor --
   events$unit <- as.character(events$unit)
-  events$when <- as.character(events$when)
+  if(is.factor(events$when)) stop("Sorry you provided a factor as an index")
+  	
+
   # Given a zoo time-series vector x, and an event date "when",
   # try to shift this vector into event time, where the event date
   # becomes 0 and all other dates shift correspondingly.

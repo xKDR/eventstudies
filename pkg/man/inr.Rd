@@ -1,5 +1,5 @@
-\name{inr.rda}
-\alias{inr.rda}
+\name{inr}
+\alias{inr}
 \docType{data}
 \title{
 INR/USD
@@ -7,13 +7,14 @@ INR/USD
 \description{
 A sample of INR/USD rates from 1990 to 2011. It is stored as an xts object.  
 }
-\usage{data(inr.rda)}
+\usage{data(inr)}
 \format{
   The format is:
  chr "inr.rda"
 }
 \examples{
-data(inr.rda)
+data(inr)
+str(inr)
 ## maybe str(inr.rda) ; plot(inr.rda) ...
 }
 \keyword{datasets}

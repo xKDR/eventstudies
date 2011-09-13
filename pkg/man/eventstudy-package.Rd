@@ -25,12 +25,7 @@ graph of the event study.
 \author{
 Ajay Shah,Ashim Kapoor,Vimal Balasubramniam.
 
-Maintainer: Who to complain to <yourfault@somewhere.net>
-}
-\references{
+Maintainer: ajayshah@mayin.org
 }
 \keyword{ eventstudies }
-\seealso{
-}
-\examples{
-}
+

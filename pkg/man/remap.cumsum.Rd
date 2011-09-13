@@ -26,22 +26,11 @@ base (default 0) for the cumulative sum.
 
 }
 }
-\details{
-}
 \value{
 The frame returned has each column replaced by the cumulative sum of the column.
 
 }
-\references{
-}
-\author{
-}
-\note{
-}
 
-
-\seealso{
-}
 \examples{
 ##---- Should be DIRECTLY executable !! ----
 ##-- ==>  Define data, use random,

@@ -21,16 +21,7 @@ z.e is the first component of the list returned by the function phys2eventtime.
 \value{
   A data frame with 3 columns,the lower CI,the mean and the upper CI which are the result of bootstrap 
 inference.
-\references{
-
 }
-\author{
-
-}
-\note{
-
-}
-
 
 
 \seealso{
@@ -57,5 +48,4 @@ function (z.e)
     results
   }
 }
-\keyword{ ~kwd1 }
 

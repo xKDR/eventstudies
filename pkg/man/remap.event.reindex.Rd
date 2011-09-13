@@ -21,18 +21,9 @@ remap.event.reindex(z)
   \item{z}{
 }
 }
-\details{
-}
 \value{
 The function returns a zoo object which has been rescaled.
 }
-\references{
-}
-\author{
-}
-\note{
-}
-
 
 \seealso{
 phys2eventtime

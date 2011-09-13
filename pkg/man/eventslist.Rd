@@ -23,6 +23,5 @@ Home brewed test data.
 }
 \examples{
 data(eventslist)
-## maybe str(eventslist) ; plot(eventslist) ...
 }
 \keyword{datasets}

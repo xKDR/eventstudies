@@ -15,41 +15,20 @@ remap.cumprod(z, is.pc = TRUE, is.returns = TRUE, base = 100)
 \arguments{
   \item{z}{
 z is the zoo object returned from phys2eventtime.
-
 }
   \item{is.pc}{
 Logical flag if input is a percentage
-
 }
   \item{is.returns}{
 Logical flag if input is returns.
-
 }
   \item{base}{
 The base for the cumulative product.
+}
+}
 
-}
-}
-\details{
-
-}
 \value{
 The frame returned has each column replaced by base * the cumulative product of the column.
-}
-\references{
-
-}
-\author{
-
-}
-\note{
-
-}
-
-
-
-\seealso{
-
 }
 \examples{
 

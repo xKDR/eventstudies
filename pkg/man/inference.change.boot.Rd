@@ -48,23 +48,10 @@ The level of confidence for computing the confidence intervals.
 \value{
 It returns a list containing the mean,and the confidence intervals 
 for the change in Ecar.
-
-}
-\references{
-
-}
-\author{
-
-}
-\note{
-
 }
 
 
 
-\seealso{
-
-}
 \examples{
 
 ## The function is currently defined as

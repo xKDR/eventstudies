@@ -5,7 +5,7 @@
 Event study analysis.
 }
 \description{
-The is a package to do Event Studies using R.
+This package is used to do Event Studies using R.
 }
 \details{
 \tabular{ll}{

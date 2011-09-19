@@ -6,10 +6,7 @@ average "car" between t1 and t2 (both in event time).
 }
 \description{
 z.e is a zoo object, where rows are in event time
-and columns are units of observation.
-Sampling with replacement is done within the units of
-observation. Each time, the Ecar(t1) and Ecar(t2) is
-computed.
+and columns are units of observation. Sampling with replacement is done within the units of observation. Each time, the Ecar(t1) and Ecar(t2) is computed.
 By default, the statistic of interest is the ratio
 Ecar(t2)/Ecar(t1)
 But if operator="difference" is sent in, then the

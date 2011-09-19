@@ -11,11 +11,8 @@ phys2eventtime(z, events, width = 10)
 }
 \arguments{
   \item{z}{
-z is a zoo object containing input data. E.g. this could be all the 
-prices of a bunch of stocks. The column name is the unit name.
-events is a data.frame containing 2 columns. The first column
-("unit") is the name of the unit. The second column is the date/time
-("when") when the event happened.
+z is a zoo object containing input data. E.g. this could be all the prices of a bunch of stocks. The column name is the unit name.
+events is a data.frame containing 2 columns. The first column ("unit") is the name of the unit. The second column is the date/time ("when") when the event happened.
 }
   \item{events}{
 A data.frame containing unit name and corresponding event dates.

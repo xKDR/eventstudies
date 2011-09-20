@@ -5,7 +5,7 @@
 Event study analysis.
 }
 \description{
-This package is used to do Event Studies using R.
+This package is used to undertake event study analyses using R.
 }
 \details{
 \tabular{ll}{
@@ -16,10 +16,7 @@ Date: \tab 2011-06-20\cr
 License: \tab GPL 2\cr
 LazyLoad: \tab yes\cr
 }
-The 2 most important functions of this package are phys2eventtime and inference.Ecar.
-The first of these converts the index of the zoo object containing the events
-to event time while the second one performs bootstrap inference for the main 
-graph of the event study.
+This package allows a dataset to be converted into an event-time frame to undertake any further parametric / non-parametric analysis using various inference procedures.
 
 }
 \author{

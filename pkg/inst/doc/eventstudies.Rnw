@@ -7,6 +7,11 @@
 \title{Introduction to the \textbf{eventstudies} package in R}
 \author{}
 \begin{document}
+%\VignetteIndexEntry{eventstudies: A package with functionality to do Event Studies}
+%\VignetteDepends{}
+%\VignetteKeywords{event studies}
+%\VignettePackage{eventstudies}
+
 \maketitle
 \newpage
 \SweaveOpts{engine=R,pdf=TRUE}

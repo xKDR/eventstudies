@@ -116,7 +116,7 @@ Once we have an event time frame returned by phys2eventtime we may use inference
 bootstrap inference for the main graph of the event study. This is illustrated in the following example.
 <<>>==
 library(xts)
-load("../../data/inr.rda")
+load(paste(system.file(package="eventstudies"),"data","inr.rda",sep="/"))
 inr.returns<-diff(log(inr))[-1]
 eventslist<-data.frame(unit=rep("inr",10),
                        when=as.Date(c(

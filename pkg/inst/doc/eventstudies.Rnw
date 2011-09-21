@@ -1,0 +1,131 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{graphicx}
+\usepackage{a4wide}
+\usepackage[colorlinks,linkcolor=blue,citecolor=red]{hyperref}
+\usepackage{natbib}
+\usepackage{float}
+\title{Introduction to the \textbf{eventstudies} package in R}
+\author{}
+\begin{document}
+\maketitle
+\newpage
+\SweaveOpts{engine=R,pdf=TRUE}
+\section{Introduction}
+This is an introduction to eventstudies, a package in R which has functionality to convert a given dataset into 
+an event-time frame and to undertake further parametric/non-parametric analysis using various inference procedures.
+
+This paper describes how this package is used and provides several examples illustrating the use of 
+the functionality within this package.
+
+\section{phys2eventtime}
+phys2eventtime is a function which takes a zoo object containing input data, a data frame containing 
+the date of occurance of the events and creates a data frame which is indexed according to the event
+time. 
+
+The following illustrates the use of phys2eventtime.
+<<>>=
+options(useFancyQuotes=FALSE)
+library(eventstudies)
+input.zoo.object <- structure(c(33.16, 34.0967, 35.3683, 34.46, 34.17, 35.89, 36.19,
+                 37.1317, 36.7033, 37.7933, 37.8533, 285.325, 292.6,
+                 290.025, 286.2, 290.075, 295.05, 289.325, 285.625,
+                 293.7, 298.5, 289.05, 704.5438, 708.35, 735.8375,
+                 710.625, 711.65, 731.0125, 727.575, 715.0187, 724.2,
+                 713.1875, 695.1812), .Dim = c(11L, 3L), .Dimnames =
+                 list( NULL, c("ITC", "Reliance", "Infosys")), index =
+                 structure(c(12418, 12419, 12422, 12423, 12424, 12425,
+                 12426, 12429, 12430, 12431, 12432), class = "Date"),
+                 class = "zoo")
+input.zoo.object
+eventslist <- data.frame(unit=c("ITC","Reliance","Infosys",
+                           "ITC","Reliance","Junk"),
+                            when=as.Date(c(
+                           "2004-01-02", "2004-01-08", "2004-01-14",
+                           "2005-01-15", "2004-01-01", "2005-01-01")))
+
+eventslist$unit <- as.character(eventslist$unit)
+eventslist
+@
+In this example we note the following about input.zoo.object and the data frame eventslist:-
+\begin{enumerate}
+\item Prior to event date(in eventslist\$when) there is only 1 reading in the corresponding unit in input.zoo.object.
+\item The event date is within the range of available dates for the corresponding unit(this is the ideal case).
+\item After the event date there's only 1 reading.
+\item The date is not within the range.
+\item There is no data prior to this date.
+\item Unit does not exist in input.zoo.object.
+\end{enumerate}
+
+This is exactly what the second component of phys2eventtime namely outcomes,reports. The first component of the result of phys2eventtime
+is a zoo object which is the event time data frame.
+<<>>==
+a <- phys2eventtime(input.zoo.object, eventslist,width=0)
+str(a)
+a$z.e
+a$outcomes
+
+@
+phys2eventtime has a third parameter namely width which allows for checking that no more than 4 consecutive missing observations
+are there within the given width from the event time.
+
+What we expect if we don't use width handling:-
+<<>>==
+rawres <- structure(list(z.e = structure(c(NA, NA, NA, NA, NA, NA,
+  NA, NA, 33.16, 34.0967, 35.3683, 34.46, 34.17, 35.89, 36.19,
+  37.1317, 36.7033, 37.7933, 37.8533, NA, NA, NA, NA, 285.325, 292.6,
+  290.025, 286.2, 290.075, 295.05, 289.325, 285.625, 293.7, 298.5,
+  289.05, NA, NA, NA, NA, 704.5438, 708.35, 735.8375, 710.625, 711.65,
+  731.0125, 727.575, 715.0187, 724.2, 713.1875, 695.1812, NA, NA, NA,
+  NA, NA, NA, NA, NA), .Dim = c(19L, 3L), .Dimnames = list( NULL,
+  c("1", "2", "3")), index = -9:9, class = "zoo"), outcomes =
+  structure(c(1L, 1L, 1L, 3L, 3L, 2L), .Label = c("success",
+  "unitmissing", "wrongspan" ), class = "factor")), .Names = c("z.e",
+  "outcomes"))
+rawres
+@
+Check without the width handling --
+<<>>==
+a <- phys2eventtime(input.zoo.object, eventslist,width=0)
+a
+all.equal(a, rawres)
+@
+Check with width of 1 --
+<<>>==
+a <- phys2eventtime(input.zoo.object, eventslist,width=1)
+a
+all.equal(a, rawres)
+@
+But when we go to width=2, column 1 and 3 drop off because they have
+only 1 obs before and after the event date respectively.
+
+<<>>==
+a <- phys2eventtime(input.zoo.object, eventslist,width=2)
+a
+all.equal(a, structure(list(z.e = structure(c(NA, NA, NA, NA, 285.325,
+                              292.6, 290.025, 286.2, 290.075, 295.05,
+                              289.325, 285.625, 293.7, 298.5, 289.05,
+                              NA, NA, NA, NA), index = -9:9, class =
+                              "zoo"), outcomes = structure(c(3L, 1L,
+                              3L, 4L, 4L, 2L), .Label = c("success",
+                              "unitmissing", "wdatamissing",
+                              "wrongspan"), class = "factor")), .Names
+                              = c("z.e", "outcomes" )))
+@
+\section{inference.Ecar}
+Once we have an event time frame returned by phys2eventtime we may use inference.Ecar to do 
+bootstrap inference for the main graph of the event study. This is illustrated in the following example.
+<<>>==
+library(xts)
+load("../../data/inr.rda")
+inr.returns<-diff(log(inr))[-1]
+eventslist<-data.frame(unit=rep("inr",10),
+                       when=as.Date(c(
+                         "2010-04-20","2010-07-02","2010-07-27",
+                         "2010-09-16","2010-11-02","2011-01-25",
+                         "2011-03-17","2011-05-03","2011-06-16",
+                         "2011-07-26")))
+event.time.data<-phys2eventtime(inr.returns,eventslist,width=10)
+w<-window(event.time.data$z.e,start=-10,end=10)
+inference.Ecar(w)
+@
+\end{document}

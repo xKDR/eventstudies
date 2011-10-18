@@ -14,12 +14,9 @@ library(zoo)
 #   success : all is well.
 # A vector of these outcomes is returned.
 phys2eventtime <- function(z, events, width=10) {
-
   # Just in case events$unit has been sent in as a factor --
   events$unit <- as.character(events$unit)
   if(is.factor(events$when)) stop("Sorry you provided a factor as an index")
-  	
-
   # Given a zoo time-series vector x, and an event date "when",
   # try to shift this vector into event time, where the event date
   # becomes 0 and all other dates shift correspondingly.
@@ -50,7 +47,6 @@ phys2eventtime <- function(z, events, width=10) {
   outcomes <- outcomes
   z.e <- z.e[,-1, drop = FALSE]                       #get rid of that junk initialisation
   colnames(z.e) <- which(outcomes=="success")
-
   ## Now worry about whether there's information within the event window
   ## (This entire cleaning+checking can be switched off by specifying width=0)
   badcolumns <- NULL
@@ -71,10 +67,8 @@ phys2eventtime <- function(z, events, width=10) {
       z.e <- z.e[, -badcolumns]
     }
   }
-
   # Check that we're okay
   stopifnot(sum(outcomes=="success") == NCOL(z.e))
-
   list(z.e=z.e, outcomes=factor(outcomes))
 }
 

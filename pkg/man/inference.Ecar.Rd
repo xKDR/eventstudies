@@ -4,25 +4,28 @@
 \title{
 Bootstrap inference for the event study.
 }
+
 \description{
 This function does bootstrap inference for the entire Ecar, i.e. main graph of the event study.
  }
+
 \usage{
 inference.Ecar(z.e)
 }
+
 \arguments{
   \item{z.e}{z.e is the first component of the list returned by the function phys2eventtime.}
 }
+
 \value{
 A data frame with 3 columns,the lower CI,the mean and the upper CI which are the result of bootstrap inference.
 }
 
-
 \seealso{
 phys2eventtime
 }
-\examples{
 
+\examples{
 ## The function is currently defined as
 function (z.e) 
 {
@@ -42,4 +45,3 @@ function (z.e)
     results
   }
 }
-

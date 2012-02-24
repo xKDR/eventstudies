@@ -1,4 +1,4 @@
-source("eventstudy.R")
+library(eventstudies)
 
 # An example dataset, with 3 firms --
 p <- structure(c(33.16, 34.0967, 35.3683, 34.46, 34.17, 35.89, 36.19,

@@ -1,9 +1,11 @@
-These are the functions one hopes to write at some point in time. 
+Some of the modifications we hope to make shortly:
 
-1. 
-2. 
+1. Introduce asymmetry in the width option in phys2eventtime
+2. Add parametric tests to the system. 
 3.
 4.
 5.
 6.
 7. 
+
+

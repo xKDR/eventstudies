@@ -1,7 +1,7 @@
-library(eventstudies)
-library(xts)
+#library(eventstudies)
+#library(xts)
 
-load("./data/inr.rda")
+data(inr)
 inr_returns<-diff(log(inr))[-1]
 eventslist<-data.frame(unit=rep("inr",10),
                        when=as.Date(c(

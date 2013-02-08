@@ -1,5 +1,4 @@
-#library(eventstudies)
-#library(xts)
+library(eventstudies)
 
 data(inr)
 inr_returns<-diff(log(inr))[-1]

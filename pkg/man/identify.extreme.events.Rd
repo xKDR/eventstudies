@@ -33,17 +33,8 @@ identify.extreme.events(input,prob.value)
   data}
 }
 
-\seealso{
-  get.clusters.formatted
-  sumstat
-  extreme.events.distribution
-  runlength.dist
-  quantile.extreme.values
-  yearly.exevent.dist
-}
-
 \examples{
-data(IdentifyExevent)
+data(input.data)
 input <- diff(log(input.data[,"sp500"]))
 output <- identify.extreme.events(input, prob.value=5)
 }

@@ -189,8 +189,8 @@ This function gives following output:
 % Example for understanding
 <<>>==
 library(xts)
-data(input.data)
-input <- diff(log(input.data[,"sp500"]))
+data(inputdata)
+input <- diff(log(inputdata[,"sp500"]))
 output <- identifyextremeevents(input, prob.value=5)
 output
 @

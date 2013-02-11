@@ -20,11 +20,13 @@ License: \tab GPL 2\cr
 LazyLoad: \tab yes\cr
 }
 
-This package allows a dataset to be studied in an event-time frame and perform parametric / non-parametric analysis using several inference procedures. 
+This package allows a dataset to be studied in an event-time frame and
+perform parametric / non-parametric analysis using several inference
+procedures.
 }
 
 \author{
-Ajay Shah,Vimal Balasubramniam
+Ajay Shah,Vimal Balasubramniam, Vikram Bahure
 
 Maintainer: vimsaa@gmail.com
 }

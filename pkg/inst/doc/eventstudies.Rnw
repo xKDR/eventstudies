@@ -133,4 +133,66 @@ event.time.data<-phys2eventtime(inr.returns,eventslist,width=10)
 w<-window(event.time.data$z.e,start=-10,end=10)
 inference.Ecar(w)
 @
+
+\section{identifyextremeevents}
+% Conceptual framework
+This package does eventstudy analysis but if the eventstudy analysis
+is done on extreme events then it is very essential to understand the
+basic pattern and distribution of the extreme events. Here, we define
+extreme events as the upper or lower tail values which are estimated
+with certain probability value. 
+
+There are two further issues to consider. First, matters are
+complicated by the fact that extreme (tail) values may cluster: for
+example, there may be two or three consecutive days of very high or
+very low daily returns, or these extremes may occur in two out of
+three days. If the extreme values are all in the same tail of the
+distribution, it might make sense to consider the cluster of extreme
+values as a single event. 
+
+We approach this problem through two paths. The data has following
+events: clustered, un-clustered and mixed clusters. For simplicity, we
+remove all the mixed clusters and deal with the rest. Un-clustered or
+uncontaminated events are those where there is no other event within
+the event window. Clustered events are defined by fusing all
+consecutive extreme events, of the same direction, into a single
+event. In event time, date +1 is then the first day after the run of
+extreme events, and date -1 is the last day prior to the start of the
+run. This strategy avoids losing observations of some of the most  
+important crises, which have clustered extreme events in the same
+direction. 
+
+This function gives following output:
+\begin{itemize}
+\item Summary statistics for complete data-set
+\item Extreme event analysis for lower and upper tail i.e. bad-days
+  and good-days
+  \begin{itemize}
+  \item Dataset: Extreme events
+    \begin{itemize}
+    \item All extreme events
+    \item Clustered extreme events
+    \item Un-clustered extreme events
+    \end{itemize}
+  \item Distribution of clustered and un-clustered data: This measures
+    the number of cluster and un-cluster extreme events in the
+    data-set. Here, cluster which are not used are mixed clusters.
+  \item Run-length distribution of clusters: If there is a cluster
+    then run-length measures the length of consecutive extreme events
+    in a cluster.
+  \item Quantile values of extreme events: 
+  \item Yearly distribution of extreme events: Here we have year-wise
+    distribution of extreme events and their median values.
+  \end{itemize}
+\end{itemize}
+
+% Example for understanding
+<<>>==
+library(xts)
+data(input.data)
+input <- diff(log(input.data[,"sp500"]))
+output <- identifyextremeevents(input, prob.value=5)
+output
+@
+
 \end{document}

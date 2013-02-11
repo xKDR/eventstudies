@@ -1,5 +1,5 @@
-\name{identify.extreme.events}
-\alias{identify.extreme.events}
+\name{identifyextremeevents}
+\alias{identifyextremeevents}
 
 \title{
 Identify extreme events for a time series.
@@ -12,7 +12,7 @@ unclustered extreme event distribution.
  }
 
 \usage{
-identify.extreme.events(input,prob.value)
+identifyextremeevents(input,prob.value)
 }
 
 \arguments{
@@ -36,5 +36,5 @@ identify.extreme.events(input,prob.value)
 \examples{
 data(input.data)
 input <- diff(log(input.data[,"sp500"]))
-output <- identify.extreme.events(input, prob.value=5)
+output <- identifyextremeevents(input, prob.value=5)
 }

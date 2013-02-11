@@ -35,7 +35,7 @@ library(xts)
 #     - Clustered, Un-clustered and Both
 #------------------------------------------------------------------
 # NOTE:
-identify.extreme.events <- function(input,prob.value){
+identifyextremeevents <- function(input,prob.value){
   no.var <- NCOL(input)
 
   #------------------------------------------------

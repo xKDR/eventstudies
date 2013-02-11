@@ -1,4 +1,4 @@
-\name{input.data}
+\name{inputdata}
 
 \docType{data}
 
@@ -12,7 +12,7 @@
   sample range for the daily data is from 2000-02-10 to 2011-07-29.
 }
 
-\usage{input.data}
+\usage{inputdata}
 
 \format{An object with class attributes \code{xts} and \code{zoo} containing three variables with 2036 observations.}
 

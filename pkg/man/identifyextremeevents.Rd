@@ -35,6 +35,6 @@ identifyextremeevents(input,prob.value)
 
 \examples{
 data(inputdata)
-input <- diff(log(input.data[,"sp500"]))
+input <- diff(log(inputdata[,"sp500"]))
 output <- identifyextremeevents(input, prob.value=5)
 }

@@ -1,12 +1,12 @@
 Package: eventstudies
 Type: Package
-Title: Event study analysis
-Version: 0.03
+Title: Event study and extreme event analysis
+Version: 0.04
 Date: 2011-06-20
-Author: Ajay Shah, Vimal Balasubramaniam
+Author: Ajay Shah, Vimal Balasubramaniam, Vikram Bahure
 Maintainer: Vimal Balasubramaniam <vimsaa@gmail.com>
 Depends: R (>= 2.12.0), zoo, xts, boot 
 Description: Implementation of short and long term event study methodology
 License: GPL-2
 LazyLoad: yes
-Packaged: 2011-07-13 10:33:06 UTC; t136
+Packaged: 2013-02-14 10:33:06 UTC; t136

@@ -12,6 +12,6 @@
 
 \usage{sp500}
 
-\format{An object with class attributes \code{xts} and \code{zoo} containing three variables with 2036 observations.}
+\format{An object with class attributes \code{xts} and \code{zoo} containing a variable with 2036 observations.}
 
 \keyword{datasets}

@@ -18,8 +18,8 @@ identifyextremeevents(input,prob.value)
 \arguments{
   \item{input}{'input' is the time-series on which extreme event
   analysis is done. This series should in returns format.}
-  \item{prob.value}{This is tail value for which the extreme event is to
-  be defined. For eg: prob.value of 5 will consider 5\% tail on both sides.}
+  \item{prob.value}{It is the tail value on the basis of which the
+  extreme event are defined. For eg: prob.value of 5 will consider 5\% tail on both sides.} 
 }
 
 \value{

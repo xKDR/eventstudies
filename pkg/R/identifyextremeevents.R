@@ -100,7 +100,7 @@ identifyextremeevents <- function(input,prob.value){
   # Lower tail
   lower.tail$data <- list(left.all,left.tail.clustered,
                           left.tail.unclustered)
-  names(lower.tail$data) <- c("All","Clustered","Un-clustered")
+  names(lower.tail$data) <- c("All","Clustered","Unclustered")
   lower.tail$extreme.event.distribution <- event.dist$lower.tail
   lower.tail$runlength <- runlength$lower.tail
   lower.tail$quantile.values <- qnt.values$lower.tail
@@ -108,7 +108,7 @@ identifyextremeevents <- function(input,prob.value){
   # Upper tail
   upper.tail$data <- list(right.all,right.tail.clustered,
                           right.tail.unclustered)
-  names(upper.tail$data) <- c("All","Clustered","Un-clustered")
+  names(upper.tail$data) <- c("All","Clustered","Unclustered")
   upper.tail$extreme.event.distribution <- event.dist$upper.tail
   upper.tail$runlength <- runlength$upper.tail
   upper.tail$quantile.values <- qnt.values$upper.tail
@@ -349,7 +349,7 @@ sumstat <- function(input){
   if(no.var==1){input <- xts(input)}
   # Creating empty frame: chassis
   tmp <- data.frame(matrix(NA,nrow=11,ncol=NCOL(input)))
-  colnames(tmp) <-  colnames(input) 
+  colnames(tmp) <-  "summary" 
   rownames(tmp) <- c("Min","5%","25%","Median","Mean","75%","95%",
                          "Max","sd","IQR","Obs.")
   # Estimating summary statistics
@@ -424,8 +424,8 @@ yearly.exevent.summary <- function(tmp){
   tmp.good.y <- merge(tmp.good.y,apply.yearly(xts(tmp.good[,1]),function(x)median(x,na.rm=T)))
     index(tmp.good.y) <- as.yearmon(as.Date(substr(index(tmp.good.y),1,4),"%Y"))
   tmp.res <- merge(tmp.bad.y,tmp.good.y)
-  colnames(tmp.res) <- c("number.baddays","median.baddays",
-                         "number.gooddays","median.goodays")
+  colnames(tmp.res) <- c("number.lowertail","median.lowertail",
+                         "number.uppertail","median.uppertail")
   output <- as.data.frame(tmp.res)
   cn <- rownames(output)
   rownames(output) <- sapply(rownames(output),
@@ -521,13 +521,13 @@ get.event.count <- function(series,
 
   # Making a table
   tb <- data.frame(matrix(NA,2,6))
-  colnames(tb) <- c("unclstr","used.clstr","removed.clstr","tot.clstr","Tot","Tot.used")
+  colnames(tb) <- c("unclstr","used.clstr","removed.clstr","tot.clstr","tot","tot.used")
   rownames(tb) <- c("lower","upper")
-  tb[,"Tot"] <- c(tot.ev.l,tot.ev.r)
+  tb[,"tot"] <- c(tot.ev.l,tot.ev.r)
   tb[,"unclstr"] <- c(un.clstr.l,un.clstr.r)
   tb[,"used.clstr"] <- c(us.cl.l,us.cl.r)
-  tb[,"Tot.used"] <- tb$unclstr+tb$used.clstr
-  tb[,"tot.clstr"] <- tb$Tot-tb$unclstr
+  tb[,"tot.used"] <- tb$unclstr+tb$used.clstr
+  tb[,"tot.clstr"] <- tb$tot-tb$unclstr
   tb[,"removed.clstr"] <- tb$tot.clstr-tb$used.clstr
 
   return(tb)
@@ -555,10 +555,10 @@ quantile.extreme.values <- function(input, prob.value){
   upper.tail.qnt.value <- data.frame(matrix(NA,nrow=no.var,ncol=6))
   colnames(lower.tail.qnt.value) <- c("Min","25%","Median","75%","Max",
                                       "Mean")
-  rownames(lower.tail.qnt.value) <- colnames(input)
+  rownames(lower.tail.qnt.value) <- "extreme.events"
   colnames(upper.tail.qnt.value) <- c("Min","25%","Median","75%","Max",
                                       "Mean")
-  rownames(upper.tail.qnt.value) <- colnames(input)
+  rownames(upper.tail.qnt.value) <- "extreme.events"
   # Estimating cluster count
   #--------------------
   # Formatting clusters
@@ -574,7 +574,7 @@ quantile.extreme.values <- function(input, prob.value){
                        "event.series"]
   df.left <- t(data.frame(quantile(tmp.left.tail,c(0,0.25,0.5,0.75,1))))
   tmp.left <- round(cbind(df.left,mean(tmp.left.tail)),2)
-  rownames(tmp.left) <- NULL
+  rownames(tmp.left) <- "extreme.events"
   colnames(tmp.left) <- c("0%","25%","Median","75%","100%","Mean")
   # Right tail
   tmp.right.tail <- tmp[which(tmp$right.tail==1),
@@ -582,7 +582,7 @@ quantile.extreme.values <- function(input, prob.value){
   df.right <- t(data.frame(quantile(tmp.right.tail,c(0,0.25,0.5,0.75,1))))
   tmp.right <- round(cbind(df.right,
                            mean(tmp.right.tail)),2)
-  rownames(tmp.right) <- NULL
+  rownames(tmp.right) <- "extreme.events"
   colnames(tmp.right) <- c("0%","25%","Median","75%","100%","Mean")
   
   lower.tail.qnt.value  <- tmp.left 
@@ -637,9 +637,9 @@ runlength.dist <- function(input, prob.value){
   upper.tail.runlength <- data.frame(matrix(NA,nrow=no.var,
                                             ncol=length(col.names)))
   colnames(lower.tail.runlength) <- col.names
-  rownames(lower.tail.runlength) <- colnames(input)
+  rownames(lower.tail.runlength) <- "clustered.events"
   colnames(upper.tail.runlength) <- col.names
-  rownames(upper.tail.runlength) <- colnames(input)
+  rownames(upper.tail.runlength) <- "clustered.events"
 
   #----------------------
   # Run length estimation

@@ -138,9 +138,9 @@ inference.Ecar(w)
 \section{identifyextremeevents}
 % Conceptual framework
 \subsection{Conceptual framework}
-This package identifies and interprets extreme events along with
-eventstudy analysis. The upper tail and lower tail values are defined
-as extreme events at certain probability. 
+This function of the package identifies extreme event and does data
+analysis. The upper tail and lower tail values are defined as extreme
+events at certain probability. 
 
 There are two further issues to consider. First, matters are
 complicated by the fact that extreme (tail) values may cluster: for
@@ -151,8 +151,8 @@ distribution, it might make sense to consider the cluster of extreme
 values as a single event. 
 
 We approach this problem through two paths. The data has following
-events: clustered, un-clustered and mixed clusters. For simplicity, we
-remove all the mixed clusters and deal with the rest. Un-clustered or
+events: clustered, unclustered and mixed clusters. For simplicity, we
+remove all the mixed clusters and deal with the rest. Unclustered or
 uncontaminated events are those where there is no other event within
 the event window. Clustered events are defined by fusing all
 consecutive extreme events, of the same direction, into a single
@@ -165,12 +165,12 @@ direction.
 % Example for understanding
 \subsection{Usage}
 This function does extreme event analysis on the returns of the
-data. There are only two arguments the function has:
+data. Function has following two arguments:
 \begin{enumerate}
 \item \textit{input}: Data on which extreme event analysis is done. Note:
   \textit{input} should be in returns format.  
 \item \textit{prob.value}: It is the tail value on basis of which the
-  extreme event is are defined. For eg: prob.value of 5 will consider
+  extreme events are defined. For eg: \textit{prob.value} of 5 will consider
   5\% tail on both sides.
 \end{enumerate}
 <<>>==

@@ -3,16 +3,16 @@ citHeader("To cite eventstudies in publications use:")
 citEntry(entry="Article",
          title = "eventstudies: Infrastructure for performing Event Studies with R",
          author = personList(as.person("Ajay Shah"),
-	                     as.person("Ashim Kapoor"),
+	                     as.person("Vikram Bahure"),
 			     as.person("Vimal Balasubramaniam")),
          journal      = "Journal of Statistical Software",
-         year         = "2011",
+         year         = "2013",
 	 volume       = "",
 	 number       = "",
 	 pages        = "",
          url          = "",
          
          textVersion = 
-         paste("Ajay Shah,Ashim Kapoor,Vimal Balasubramaniam", 
+         paste("Ajay Shah,Vikram Bahure,Vimal Balasubramaniam", 
                "eventstudies: Infrastructure for performing Event Studies with R")
 )

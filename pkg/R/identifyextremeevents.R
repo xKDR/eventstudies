@@ -141,6 +141,7 @@ gen.data <- function(d,probvalue,value="nonreturns"){
   res$left.tail <- as.numeric(res$returns < pval[1])
   res$right.tail <- as.numeric(res$returns > pval[2])
   res$both.tails <- res$left.tail + res$right.tail
+  res <- res[complete.cases(res),]
   if(value=="returns"){
     return(res[-1,])
   }else{

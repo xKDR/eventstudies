@@ -28,61 +28,9 @@ events is a data.frame containing 2 columns. The first column ("unit") is the na
 \author{Ajay Shah, Vimal Balasubramaniam}
 
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (z, events, width = 10) 
-{
-    events$unit <- as.character(events$unit)
-    timeshift <- function(x, when) {
-        location <- findInterval(when, index(x))
-        if ((location <= 1) | (location >= length(x))) {
-            return(list(result = NULL, outcome = "wrongspan"))
-        }
-        remapped <- zoo(as.numeric(x), order.by = (-location + 
-            1):(length(x) - location))
-        list(result = remapped, outcome = "success")
-    }
-    outcomes <- character(nrow(events))
-    z.e <- zoo(1, order.by = as.integer(1))
-    for (eventnum in 1:nrow(events)) {
-        if (!(events$unit[eventnum] \%in\% colnames(z))) {
-            outcomes[eventnum] <- "unitmissing"
-            next
-        }
-        attempt <- timeshift(z[, events$unit[eventnum]], events$when[eventnum])
-        if (attempt$outcome == "success") {
-            z.e <- cbind(z.e, attempt$result)
-        }
-        outcomes[eventnum] <- attempt$outcome
-    }
-    outcomes <- outcomes
-    z.e <- z.e[, -1]
-    colnames(z.e) <- which(outcomes == "success")
-    badcolumns <- NULL
-    if (width > 0) {
-        for (i in 1:ncol(z.e)) {
-            tmp <- z.e[, i]
-            tmp <- na.locf(tmp, na.rm = FALSE, maxgap = 4)
-            tmp <- na.locf(tmp, na.rm = FALSE, maxgap = 4, fromLast = TRUE)
-            tmp2 <- window(tmp, start = -width, end = +width)
-            if (any(is.na(tmp2))) {
-                outcomes[as.numeric(colnames(z.e)[i])] <- "wdatamissing"
-                badcolumns <- c(badcolumns, i)
-            }
-            else {
-                z.e[, i] <- tmp
-            }
-        }
-        if (any(outcomes == "wdatamissing")) {
-            z.e <- z.e[, -badcolumns]
-        }
-    }
-    stopifnot(sum(outcomes == "success") == NCOL(z.e))
-    list(z.e = z.e, outcomes = factor(outcomes))
-  }
+data(eventDays)
+data(eventstudyData)
+phys2eventtime(z=eventstudyData, events=eventDays,width=5)	
 }
 
 \keyword{ phys2eventime }

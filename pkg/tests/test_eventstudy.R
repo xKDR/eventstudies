@@ -18,12 +18,6 @@ eventslist <- data.frame(unit=c("ITC","Reliance","Infosys",
                            "2004-01-02", "2004-01-08", "2004-01-14",
                            "2005-01-15", "2004-01-01", "2005-01-01")))
 eventslist$unit <- as.character(eventslist$unit)
-# 1   It's fine, but prior to event date there's only 1 reading
-# 2   It's fine
-# 3   It's fine, but after event date there's only 1 reading
-# 4   Unit is fine, date is off
-# 5   Unit is fine, date is off
-# 6   Unit does not exist
 
 # What we expect if we don't worry about width --
 rawres <- structure(list(z.e = structure(c(NA, NA, NA, NA, NA, NA,

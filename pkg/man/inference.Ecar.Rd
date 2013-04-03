@@ -10,11 +10,12 @@ This function does bootstrap inference for the entire Ecar, i.e. main graph of t
  }
 
 \usage{
-inference.Ecar(z.e)
+inference.Ecar(z.e,to.plot=FALSE)
 }
 
 \arguments{
   \item{z.e}{z.e is the first component of the list returned by the function phys2eventtime.}
+  \item{to.plot}{This argument will generate an eventstudy plot of the inference estimated. If to.plot is equal to TRUE then function would generate the plot else it would not. }
 }
 
 \value{
@@ -26,22 +27,8 @@ phys2eventtime
 }
 
 \examples{
-## The function is currently defined as
-function (z.e) 
-{
-    Ecar <- function(transposed, d) {
-        colMeans(transposed[d, ], na.rm = TRUE)
-    }
-    tmp <- t(as.matrix(z.e))
-    b <- boot(tmp, Ecar, R = 1000)
-    results <- NULL
-    for (i in 1:ncol(b$t)) {
-        results <- rbind(results, quantile(b$t[, i], prob = c(0.025, 
-            0.975)))
-    }
-    results <- cbind(results[, 1], b$t0, results[, 2])
-    rownames(results) <- rownames(z.e)
-    colnames(results) <- c("2.5\%", "Mean", "97.5\%")
-    results
-  }
+data(eventDays)
+data(eventstudyData)
+eventtime <- phys2eventtime(z=eventstudyData, events=eventDays,width=5)
+inference.Ecar(z.e=eventtime, to.plot=FALSE)
 }

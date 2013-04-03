@@ -174,8 +174,8 @@ data. Function has following two arguments:
   5\% tail on both sides.
 \end{enumerate}
 <<>>==
-data(sp500)
-input <- diff(log(sp500))*100
+data(eventstudyData)
+input <- eventstudyData$sp500*100
 output <- identifyextremeevents(input, prob.value=5)
 @
 

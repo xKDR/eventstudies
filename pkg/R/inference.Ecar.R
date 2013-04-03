@@ -62,7 +62,7 @@ inference.Ecar <- function(z.e,to.plot=FALSE) {
   results <- cbind(results[,1], b$t0, results[,2])
   rownames(results) <- rownames(z.e)
   colnames(results) <- c("2.5%","Mean","97.5%")
-  if(to.plot=TRUE){
+  if(to.plot==TRUE){
     plotInference(inference=results)
   }
   return(results)

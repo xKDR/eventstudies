@@ -29,6 +29,8 @@ phys2eventtime
 \examples{
 data(eventDays)
 data(eventstudyData)
-eventtime <- phys2eventtime(z=eventstudyData, events=eventDays,width=5)
+es.results <- phys2eventtime(z=eventstudyData, events=eventDays,width=5)
+es.w <- window(es.results$z.e, start=-5, end=+5)
+eventtime <- remap.cumsum(es.w, is.pc=FALSE, base=0)
 inference.Ecar(z.e=eventtime, to.plot=FALSE)
 }

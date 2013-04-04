@@ -31,22 +31,9 @@ for the change in Ecar.}
 \value{It returns a list containing the mean,and the confidence intervals for the change in Ecar.}
 
 \examples{
-## The function is currently defined as
-function (z.e, t1, t2, operator = "ratio", conf = 0.95) 
-{
-    stopifnot(operator \%in\% c("ratio", "difference"))
-    tmp <- t(as.matrix(z.e[, c(t1, t2)]))
-    if (operator == "ratio") {
-        change <- tmp[, 2]/tmp[, 1]
-    }
-    if (operator == "difference") {
-        change <- tmp[, 2] - tmp[, 1]
-    }
-    mymean <- function(x, d) {
-        mean(x[d], na.rm = TRUE)
-    }
-    b <- boot(change, mymean, R = 1000)
-    ci <- boot.ci(b, type = "bca", conf = conf)
-    list(est = b$t0, lo = ci$bca[1, 4], hi = ci$bca[1, 5])
-  }
+data(eventDays)
+data(eventstudyData)
+es.results <- phys2eventtime(z=eventstudyData, events=eventDays,width=5)
+es.w <- window(es.results$z.e, start=-5, end=+5)
+eventtime <- remap.cumsum(es.w, is.pc=FALSE, base=0)
 }

@@ -19,22 +19,16 @@
 
 \value{The frame returned has each column replaced by base * the cumulative product of the column.}
 
+\seealso{
+eventDays, eventstudyData, phys2eventtime
+}
 
 \examples{
-## The function is currently defined as
-function (z, is.pc = TRUE, is.returns = TRUE, base = 100) 
-{
-    for (i in 1:ncol(z)) {
-        tmp <- z[, i]
-        if (is.returns) {
-            if (is.pc) {
-                tmp <- tmp/100
-            }
-            tmp <- 1 + tmp
-        }
-        tmp[1] <- base
-        z[, i] <- cumprod(tmp)
-    }
-  }
+data(eventDays)
+data(eventstudyData)
+es.results <- phys2eventtime(z=eventstudyData, events=eventDays,width=5)
+es.w <- window(es.results$z.e, start=-5, end=+5)
+eventtime <- remap.cumprod(es.w, is.pc=FALSE, is.returns=TRUE, base=0)
+eventtime
 }
 

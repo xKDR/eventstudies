@@ -24,24 +24,13 @@ base for the cumulative sum (default: base = 0).
 The frame returned has each column replaced by the cumulative sum of the column.
 }
 \seealso{
-phys2eventtime
+eventDays, eventstudyData, phys2eventtime
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index) for the standard data sets.
-
-## The function is currently defined as
-function (z, is.pc = TRUE, base = 0) 
-{
-    for (i in 1:ncol(z)) {
-        tmp <- z[, i]
-        if (is.pc) {
-            tmp <- tmp/100
-        }
-        z[, i] <- base + cumsum(tmp)
-    }
-    z
-  }
+data(eventDays)
+data(eventstudyData)
+es.results <- phys2eventtime(z=eventstudyData, events=eventDays,width=5)
+es.w <- window(es.results$z.e, start=-5, end=+5)
+eventtime <- remap.cumsum(es.w, is.pc=FALSE, base=0)
 }
 

@@ -16,18 +16,13 @@ It's input is a zoo object which is the first component of the list returned by 
 
 \value{The function returns a zoo object which has been rescaled.}
 
-\seealso{phys2eventtime}
-
-
-\examples{
-## The function is currently defined as
-function (z) 
-{
-    eventvals <- as.numeric(window(z, start = 0, end = 0))
-    for (i in 1:ncol(z)) {
-        z[, i] <- 100 * z[, i]/eventvals[i]
-    }
-    z
-  }
+\seealso{
+eventDays, eventstudyData, phys2eventtime
 }
-
+\examples{
+data(eventDays)
+data(eventstudyData)
+es.results <- phys2eventtime(z=eventstudyData, events=eventDays,width=5)
+es.w <- window(es.results$z.e, start=-5, end=+5)
+eventtime <- remap.event.reindex(es.w)
+}

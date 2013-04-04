@@ -15,7 +15,7 @@ This package is used to undertake event study analyses using R.
 Package: \tab eventstudy\cr
 Type: \tab Package\cr
 Version: \tab 1.0\cr
-Date: \tab 2011-01-04\cr
+Date: \tab 2013-04-04\cr
 License: \tab GPL 2\cr
 LazyLoad: \tab yes\cr
 }
@@ -26,9 +26,9 @@ procedures.
 }
 
 \author{
-Ajay Shah,Vimal Balasubramniam, Vikram Bahure
+Ajay Shah, Vimal Balasubramniam, Vikram Bahure
 
-Maintainer: vimsaa@gmail.com
+Maintainer: economics.vikram@gmail.com
 }
 
 \keyword{ eventstudies }

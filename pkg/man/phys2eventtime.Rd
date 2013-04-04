@@ -25,7 +25,6 @@ events is a data.frame containing 2 columns. The first column ("unit") is the na
 
 \value{Returns a list containing 1. A zoo object indexed with event time, and having "enough data points" and 2. a vector which describes the status of each unit in the original data ( this maybe more than the no of units in 1 ).}
 
-\author{Ajay Shah, Vimal Balasubramaniam}
 
 \examples{
 data(eventDays)

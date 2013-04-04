@@ -17,4 +17,5 @@ remap.cumprod <- function(z, is.pc=TRUE, is.returns=TRUE, base=100) {
     tmp[1] <- base
     z[,i] <- cumprod(tmp)
   }
+  z
 }

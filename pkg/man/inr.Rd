@@ -12,6 +12,5 @@ A sample of INR/USD rates from 1990 to 2011. It is stored as an xts object.
 }
 \examples{
 data(inr)
-## maybe str(inr.rda) ; plot(inr.rda) ...
 }
 \keyword{datasets}

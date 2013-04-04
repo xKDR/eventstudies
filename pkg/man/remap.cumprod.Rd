@@ -29,6 +29,5 @@ data(eventstudyData)
 es.results <- phys2eventtime(z=eventstudyData, events=eventDays,width=5)
 es.w <- window(es.results$z.e, start=-5, end=+5)
 eventtime <- remap.cumprod(es.w, is.pc=FALSE, is.returns=TRUE, base=0)
-eventtime
 }
 

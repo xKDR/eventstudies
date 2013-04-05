@@ -223,7 +223,7 @@ get.clusters.formatted <- function(event.series,
                                    probvalue=5,
                                    event.value="returns",
                                    response.value="returns"){
-  # Getting levels in event format
+   # Getting levels in event format
   tmp <- gen.data(event.series,
                   probvalue=probvalue,
                   value=event.value)

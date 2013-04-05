@@ -5,135 +5,221 @@
 \usepackage{natbib}
 \usepackage{float}
 \usepackage{tikz}
+\usepackage{amsmath}
 \title{Introduction to the \textbf{eventstudies} package in R}
-\author{}
+\author{Ajay Shah, Vimal Balasubramaniam and Vikram Bahure}
 \begin{document}
 %\VignetteIndexEntry{eventstudies: A package with functionality to do Event Studies}
 %\VignetteDepends{}
 %\VignetteKeywords{event studies}
 %\VignettePackage{eventstudies}
-
 \maketitle
-\newpage
+\begin{abstract}
+The structure of the package and its implementation of event study
+methodology is explained in this paper. In addition to converting
+physical dates to event time frame, functions for re-indexing the
+event time returns, bootstrap inference estimation and identification
+of extreme clustered events and futher in-depth analysis of the
+same is also provided. The methods and functions are elucidated by
+employing data-set for S\&P 500, Nifty and net Foreign Insitutional
+Investors (FII) flow in India. 
+\end{abstract}
+
 \SweaveOpts{engine=R,pdf=TRUE}
 \section{Introduction}
-This is an introduction to eventstudies, a package in R which has functionality to convert a given dataset into 
-an event-time frame and to undertake further parametric/non-parametric analysis using various inference procedures.
+Event study has a long history which dates back to 1933 (James Dolley
+(1933)). It is mostly used to study the response of stock price or
+value of a firm due to event such as mergers \& aquisitions,  stock
+splits, quarterly results and so on.  It is one of the most widely
+used statistical tool.  
 
-This paper describes how this package is used and provides several examples illustrating the use of 
-the functionality within this package.
+Event study is a statistical method used to study the response or
+the effect on a variable, due to similar events. Efficient and liquid
+markets are basic assumption in this methodolgy. It assumes the
+effect on response variable is without delay. As event study output is
+further used in econometric analysis, hence significance test such as
+\textit{t-test}, \textit{J-test}, \textit{Patell-test} which are
+parametric and \textit{GRANK}, \textit{RANK} which are non-parametric
+can also be performed. 
 
-\section{phys2eventtime}
-phys2eventtime is a function which takes a zoo object containing input data, a data frame containing 
-the date of occurance of the events and creates a data frame which is indexed according to the event
-time. 
+In this package, we have three major functions
+\textit{phys2eventtime}, \textit{remap.cumsum} and
+\textit{inference.Ecar}. \textit{phys2eventtime} function changes the
+physical dates to event time frame on which event study analysis can
+be done with ease. \textit{remap.cumsum} and similar other functions
+can be use to convert returns to cumulative sum or product in the
+event time frame. \textit{inference.Ecar} generates bootstrap
+inference for the event time response of the variable. 
 
-The following illustrates the use of phys2eventtime.
-<<>>=
-options(useFancyQuotes=FALSE)
-library(eventstudies)
-input.zoo.object <- structure(c(33.16, 34.0967, 35.3683, 34.46, 34.17, 35.89, 36.19,
-                 37.1317, 36.7033, 37.7933, 37.8533, 285.325, 292.6,
-                 290.025, 286.2, 290.075, 295.05, 289.325, 285.625,
-                 293.7, 298.5, 289.05, 704.5438, 708.35, 735.8375,
-                 710.625, 711.65, 731.0125, 727.575, 715.0187, 724.2,
-                 713.1875, 695.1812), .Dim = c(11L, 3L), .Dimnames =
-                 list( NULL, c("ITC", "Reliance", "Infosys")), index =
-                 structure(c(12418, 12419, 12422, 12423, 12424, 12425,
-                 12426, 12429, 12430, 12431, 12432), class = "Date"),
-                 class = "zoo")
-input.zoo.object
-eventslist <- data.frame(unit=c("ITC","Reliance","Infosys",
-                           "ITC","Reliance","Junk"),
-                            when=as.Date(c(
-                           "2004-01-02", "2004-01-08", "2004-01-14",
-                           "2005-01-15", "2004-01-01", "2005-01-01")))
+\section{Converting physical dates to event time}
+\subsection{Conceptual framework}
+The foremost task of event study analysis is to define event dates and
+generate an event window. Once the user defines event dates then this
+function generates event time frame for the response series. For
+example, if we are studying response of Nifty returns due to event on
+S\&P 500 then this function will map together all the event day
+responses cross sectionally at day 0, the days after the event would
+be indexed as positive and days before the event woud be indexed as
+negative. The output of this function can be further trimmed to
+smaller window such as of +10 to -10 days.
 
-eventslist$unit <- as.character(eventslist$unit)
-eventslist
-@
-In this example we note the following about input.zoo.object and the data frame eventslist:-
+
+\subsection{Usage}
+\textit{phys2eventtime} has three arguments which are as follows:
 \begin{enumerate}
-\item Prior to event date(in eventslist\$when) there is only 1 reading in the corresponding unit in input.zoo.object.
-\item The event date is within the range of available dates for the corresponding unit(this is the ideal case).
-\item After the event date there's only 1 reading.
-\item The date is not within the range.
-\item There is no data prior to this date.
-\item Unit does not exist in input.zoo.object.
+\item \textit{z}:  Time series data for which event frame is to be
+  generated. In this example, we have zoo object with data for S\&P
+  500 returns, Nifty returns and net Foregin Institutional Invetors
+  (FII) flow.
+  
+\item \textit{events}: It is a data frame with two columns:
+  \textit{unit} and \textit{when}. \textit{unit} has column name of
+  which response is to measured on the event date, while \textit{when}
+  has the event date.\textit{unit} has to in character format
+
+\item \textit{width}: For a given width, if there is any \textit{NA} in the event window
+  then the last observation is carried forward.
 \end{enumerate}
+<<>>=
+library(eventstudies)
+data(eventstudyData)
+str(eventstudyData)
+head(eventstudyData)
+data(eventDays)
+str(eventDays)
+head(eventDays)
+@
 
-This is exactly what the second component of phys2eventtime namely outcomes,reports. The first component of the result of phys2eventtime
-is a zoo object which is the event time data frame.
-<<>>==
-a <- phys2eventtime(input.zoo.object, eventslist,width=0)
-str(a)
-a$z.e
-a$outcomes
+\subsection{Output}
+Output for \textit{phys2eventtime} is in a list format. The first
+element of list is a time series object which is converted to event
+time and the second element is \textit{outcomes} which shows if there
+was any \textit{NA} in the dataset. If the outcome is \textit{success}
+then all is well in the given window as specified by the
+width else it gives \textit{wdatamissing} if too many NAs within the crucial event
+window or \textit{wrongspan} If the event date is not placed within 
+the span of data for the unit or \textit{unitmissing} if a unit named
+in events is not in \textit{z}.
+<<>>=
+es <- phys2eventtime(z=eventstudyData, events=eventDays, width=10)
+str(es)
+#head(es$z.e)
+es$outcomes
+@ 
 
-@
-phys2eventtime has a third parameter namely width which allows for checking that no more than 4 consecutive missing observations
-are there within the given width from the event time.
+Output of \textit{phys2eventtime} can be converted to specific frame
+by using window command of time series. This event window can be
+further used in inference analysis.
+<<>>=
+es.w <- window(es$z.e, start=-10, end=+10)
+es.w[,1:2]
+@ 
 
-What we expect if we don't use width handling:-
-<<>>==
-rawres <- structure(list(z.e = structure(c(NA, NA, NA, NA, NA, NA,
-  NA, NA, 33.16, 34.0967, 35.3683, 34.46, 34.17, 35.89, 36.19,
-  37.1317, 36.7033, 37.7933, 37.8533, NA, NA, NA, NA, 285.325, 292.6,
-  290.025, 286.2, 290.075, 295.05, 289.325, 285.625, 293.7, 298.5,
-  289.05, NA, NA, NA, NA, 704.5438, 708.35, 735.8375, 710.625, 711.65,
-  731.0125, 727.575, 715.0187, 724.2, 713.1875, 695.1812, NA, NA, NA,
-  NA, NA, NA, NA, NA), .Dim = c(19L, 3L), .Dimnames = list( NULL,
-  c("1", "2", "3")), index = -9:9, class = "zoo"), outcomes =
-  structure(c(1L, 1L, 1L, 3L, 3L, 2L), .Label = c("success",
-  "unitmissing", "wrongspan" ), class = "factor")), .Names = c("z.e",
-  "outcomes"))
-rawres
-@
-Check without the width handling --
-<<>>==
-a <- phys2eventtime(input.zoo.object, eventslist,width=0)
-a
-all.equal(a, rawres)
-@
-Check with width of 1 --
-<<>>==
-a <- phys2eventtime(input.zoo.object, eventslist,width=1)
-a
-all.equal(a, rawres)
-@
-But when we go to width=2, column 1 and 3 drop off because they have
-only 1 obs before and after the event date respectively.
+\section{Remapping}
+\subsection{Conceptual framework}
+Many a times, there is more information in cumulative
+returns rather than just returns. Re-indexing event window helps to 
+represent returns in cumulative sum or cumulative product
+format. 
 
-<<>>==
-a <- phys2eventtime(input.zoo.object, eventslist,width=2)
-a
-all.equal(a, structure(list(z.e = structure(c(NA, NA, NA, NA, 285.325,
-                              292.6, 290.025, 286.2, 290.075, 295.05,
-                              289.325, 285.625, 293.7, 298.5, 289.05,
-                              NA, NA, NA, NA), index = -9:9, class =
-                              "zoo"), outcomes = structure(c(3L, 1L,
-                              3L, 4L, 4L, 2L), .Label = c("success",
-                              "unitmissing", "wdatamissing",
-                              "wrongspan"), class = "factor")), .Names
-                              = c("z.e", "outcomes" )))
+\subsection{Usage}
+There are three functions used to re-map data which are as follows:
+\begin{itemize}
+\item \textit{remap.cumsum}: This function is used to convert event
+  window returns to cumulative sum of returns. Arguments for the
+  function are as follows:
+  \begin{enumerate}
+  \item \textit{z}: This is the output of \textit{phys2eventtime}
+    which is further reduced to an event window of \textit{width}
+    equals 10 or 20.
+  \item \textit{is.pc}: If returns is in percentage form then
+    \textit{is.pc} is equal to \textit{TRUE} else \textit{FALSE}
+  \item \textit{base}: Using this command, the base for the
+    cumulative returns can be changed. It has default value as 0.
+  \end{enumerate}
+\end{itemize}
+<<>>=
+es.w.cs <- remap.cumsum(z= es.w, is.pc=FALSE)
+es.w.cs[,1:2]
+@   
+\begin{itemize}
+\item \textit{remap.cumprod}: This function is used to convert event
+  window returns to cumulative product of returns. Arguments for the
+  function are as follows:
+  \begin{enumerate}
+  \item \textit{z}: This is the output of \textit{phys2eventtime}
+    which is further reduced to an event window of \textit{width}
+    equals 10 or 20.
+  \item \textit{is.pc}: If returns is in percentage form then
+    \textit{is.pc} is equal to \textit{TRUE} else \textit{FALSE}
+    \item \textit{is.returns}: If the data is in returns format then
+      \textit{is.returns} is \textit{TRUE}.
+  \item \textit{base}: Using this command, the base for the
+    cumulative returns can be changed. It has default value as 100.
+  \end{enumerate}
+\end{itemize}
+  
+<<>>=
+es.w.cp <- remap.cumprod(z= es.w, is.pc=FALSE, is.returns=TRUE, base=100)
+es.w.cp[,1:2]
+@   
+
+\begin{itemize}
+\item \textit{remap.event.reindex}: This function is used to convert event
+  window data to returns format. Argument for the
+  function is as follows:
+  \begin{enumerate}
+  \item \textit{z}: This is the output of \textit{phys2eventtime}
+    which is further reduced to an event window of \textit{width}
+    equals 10 or 20.
+  \end{enumerate}
+\end{itemize}
+<<>>=
+es.w.ri <- remap.event.reindex(z= es.w)
+es.w.ri[,1:2]
+@   
+
+%\newpage
+\section{Evenstudy Inference using Bootstrap}
+\subsection{Conceptual framework}
+Suppose there are N events. Each event is expressed as a time-series
+of cumulative returns (CR) in event time, within the event window. The
+overall summary statistic of interest is the $\bar{CR}$, the average of all the
+CR time-series. 
+We do sampling with replacement at the level of the events. Each
+bootstrap sample is constructed by sampling with replacement, N times,
+within the dataset of N events. For each event, its corresponding CR
+time-series is taken. This yields a time-series, which is one draw
+from the distribution of the statistic. 
+This procedure is repeated 1000 times in order to obtain the full
+distribution of $\bar{CR}$ . Percentiles of the distribution are shown
+in the graphs reported later, giving bootstrap confidence intervals
+for our estimates. This specific approach used here is based on
+Davinson, Hinkley and Schectman (1986).
+
+\subsection{Usage}
+This function has two arguments:
+\begin{enumerate}
+\item \textit{z.e}: This is the re-mapped output of \textit{phys2eventtime}
+\item \textit{to.plot}: If the user wants inference output plot then
+  \textit{to.plot} is equals \textit{TRUE}
+\end{enumerate}
+<<>>=
+result <- inference.Ecar(z.e=es.w.cs, to.plot=FALSE)
+head(result)
+@ 
+\begin{figure}[h]
+  \begin{center}
+    \caption{Event on S\&P 500 and response of Nifty}
+    \setkeys{Gin}{width=0.8\linewidth}
+    \setkeys{Gin}{height=0.8\linewidth}
+<<label=fig1,fig=TRUE,echo=FALSE>>=
+<<fig1plot>>
+  result <- inference.Ecar(z.e=es.w.cs, to.plot=TRUE)
 @
-\section{inference.Ecar}
-Once we have an event time frame returned by phys2eventtime we may use inference.Ecar to do 
-bootstrap inference for the main graph of the event study. This is illustrated in the following example.
-<<>>==
-library(xts)
-load(paste(system.file(package="eventstudies"),"data","inr.rda",sep="/"))
-inr.returns<-diff(log(inr))[-1]
-eventslist<-data.frame(unit=rep("inr",10),
-                       when=as.Date(c(
-                         "2010-04-20","2010-07-02","2010-07-27",
-                         "2010-09-16","2010-11-02","2011-01-25",
-                         "2011-03-17","2011-05-03","2011-06-16",
-                         "2011-07-26")))
-event.time.data<-phys2eventtime(inr.returns,eventslist,width=10)
-w<-window(event.time.data$z.e,start=-10,end=10)
-inference.Ecar(w)
-@
+\end{center}
+\label{fig:one}
+\end{figure}
 
 \section{identifyextremeevents}
 % Conceptual framework
@@ -175,7 +261,7 @@ data. Function has following two arguments:
 \end{enumerate}
 <<>>==
 data(eventstudyData)
-input <- eventstudyData$sp500*100
+input <- eventstudyData$sp500
 output <- identifyextremeevents(input, prob.value=5)
 @
 

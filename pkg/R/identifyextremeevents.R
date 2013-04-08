@@ -4,7 +4,7 @@
 # Identifying extreme events
 ############################
 # libraries required
-library(xts)
+library(zoo)
 #----------------------------------------------------------------
 # INPUT:
 # 'input'     : Data series for which extreme events are 

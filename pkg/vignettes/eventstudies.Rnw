@@ -44,7 +44,7 @@ further used in econometric analysis, hence significance test such as
 parametric and \textit{GRANK}, \textit{RANK} which are non-parametric
 can also be performed. 
 
-In this package, we have three major functions
+In this package, there are three major functions
 \textit{phys2eventtime}, \textit{remap.cumsum} and
 \textit{inference.Ecar}. \textit{phys2eventtime} function changes the
 physical dates to event time frame on which event study analysis can
@@ -361,6 +361,12 @@ output$lower.tail$extreme.event.distribution[,"unclstr"]
 output$lower.tail$runlength
 @ 
 
-%\section{Conclusion}
+\section{Computational details}
+The package code is purely written in R. It has dependencies to zoo
+(\href{http://cran.r-project.org/web/packages/zoo/index.html}{Zeileis
+  2012}) and boot
+(\href{http://cran.r-project.org/web/packages/boot/index.html}{Rlpley
+  2013}).  R itself as well as these packages can be obtained from \href{http://CRAN.R-project.org/}{CRAN}.
+%\section{Acknowledgments}
 
 \end{document}

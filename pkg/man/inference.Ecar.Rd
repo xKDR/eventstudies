@@ -6,7 +6,7 @@ Bootstrap inference for the event study.
 }
 
 \description{
-This function does bootstrap inference for the entire Ecar, i.e. main graph of the event study.
+This function does bootstrap inference to generate distribution of average of all the cumulative returns time-series.
  }
 
 \usage{
@@ -19,7 +19,7 @@ inference.Ecar(z.e,to.plot=FALSE)
 }
 
 \value{
-A data frame with 3 columns,the lower CI,the mean and the upper CI which are the result of bootstrap inference.
+A data frame with 3 columns, the lower confidence interval (CI), the mean and the upper CI which are the result of bootstrap inference.
 }
 
 \seealso{

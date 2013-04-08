@@ -11,7 +11,7 @@ It's input is a zoo object which is the first component of the list returned by 
 \usage{remap.event.reindex(z)}
 
 \arguments{  
-    \item{z}{ z is a zoo object containing input data from phys2eventtime.}
+    \item{z}{z is a zoo object containing input data from phys2eventtime.}
 }
 
 \value{The function returns a zoo object which has been rescaled.}

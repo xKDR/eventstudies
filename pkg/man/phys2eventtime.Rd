@@ -14,16 +14,16 @@ phys2eventtime(z, events, width = 10)
 }
 
 \arguments{
-  \item{z}{z is a zoo object containing input data. E.g. this could be all the prices of a bunch of stocks. The column name is the unit name.
-events is a data.frame containing 2 columns. The first column ("unit") is the name of the unit. The second column is the date/time ("when") when the event happened.}
+  \item{z}{Time series data for which event frame is to be generated.}
 
-  \item{events}{A data.frame containing unit name and corresponding event dates.}
+  \item{events}{It is a data frame with two columns: unit and when. unit has column name of which response is to measured on the event date, while when has the event date.}
 
-  \item{width}{Width corresponds to the number of days on each side of the event date.}
+  \item{width}{Width corresponds to the number of days on each side of the event date.For a given width, if there is any NA in the event window then the last observation is carried forward.}
 
 }
 
-\value{Returns a list containing 1. A zoo object indexed with event time, and having "enough data points" and 2. a vector which describes the status of each unit in the original data ( this maybe more than the no of units in 1 ).}
+\value{Output is in a list format. A zoo object indexed with event time and a vector which describes the status of each unit in the original data.
+}
 
 
 \examples{

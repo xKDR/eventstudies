@@ -10,7 +10,7 @@
 \arguments{
   \item{z}{z is the zoo object returned from phys2eventtime.}
 
-  \item{is.pc}{Logical flag if input is a percentage}
+  \item{is.pc}{Logical flag if input is a percentage.}
 
   \item{is.returns}{Logical flag if input is returns.}
 

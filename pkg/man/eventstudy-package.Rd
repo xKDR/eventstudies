@@ -7,7 +7,7 @@ Event study analysis.
 }
 
 \description{
-This package is used to undertake event study analyses using R.
+This package is used to undertake event study analysis using R.
 }
 
 \details{

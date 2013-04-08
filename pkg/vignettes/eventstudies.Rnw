@@ -1,3 +1,4 @@
+
 \documentclass[a4paper,11pt]{article}
 \usepackage{graphicx}
 \usepackage{a4wide}
@@ -5,6 +6,7 @@
 \usepackage{natbib}
 \usepackage{float}
 \usepackage{tikz}
+\usepackage{parskip}
 \usepackage{amsmath}
 \title{Introduction to the \textbf{eventstudies} package in R}
 \author{Ajay Shah, Vimal Balasubramaniam and Vikram Bahure}
@@ -18,10 +20,10 @@
 The structure of the package and its implementation of event study
 methodology is explained in this paper. In addition to converting
 physical dates to event time frame, functions for re-indexing the
-event time returns, bootstrap inference estimation and identification
-of extreme clustered events and futher in-depth analysis of the
+event time returns, bootstrap inference estimation, and identification
+of extreme clustered events and further in-depth analysis of the
 same is also provided. The methods and functions are elucidated by
-employing data-set for S\&P 500, Nifty and net Foreign Insitutional
+employing data-set for S\&P 500, Nifty and net Foreign Institutional
 Investors (FII) flow in India. 
 \end{abstract}
 
@@ -29,13 +31,13 @@ Investors (FII) flow in India.
 \section{Introduction}
 Event study has a long history which dates back to 1933 (James Dolley
 (1933)). It is mostly used to study the response of stock price or
-value of a firm due to event such as mergers \& aquisitions,  stock
+value of a firm due to events such as mergers \& acquisitions,  stock
 splits, quarterly results and so on.  It is one of the most widely
 used statistical tool.  
 
-Event study is a statistical method used to study the response or
+Event study is used to study the response or
 the effect on a variable, due to similar events. Efficient and liquid
-markets are basic assumption in this methodolgy. It assumes the
+markets are basic assumption in this methodology. It assumes the
 effect on response variable is without delay. As event study output is
 further used in econometric analysis, hence significance test such as
 \textit{t-test}, \textit{J-test}, \textit{Patell-test} which are
@@ -46,8 +48,8 @@ In this package, we have three major functions
 \textit{phys2eventtime}, \textit{remap.cumsum} and
 \textit{inference.Ecar}. \textit{phys2eventtime} function changes the
 physical dates to event time frame on which event study analysis can
-be done with ease. \textit{remap.cumsum} and similar other functions
-can be use to convert returns to cumulative sum or product in the
+be done with ease. \textit{remap.cumsum}
+can be used to convert returns to cumulative sum or product in the
 event time frame. \textit{inference.Ecar} generates bootstrap
 inference for the event time response of the variable. 
 
@@ -59,7 +61,7 @@ function generates event time frame for the response series. For
 example, if we are studying response of Nifty returns due to event on
 S\&P 500 then this function will map together all the event day
 responses cross sectionally at day 0, the days after the event would
-be indexed as positive and days before the event woud be indexed as
+be indexed as positive and days before the event would be indexed as
 negative. The output of this function can be further trimmed to
 smaller window such as of +10 to -10 days.
 
@@ -69,13 +71,13 @@ smaller window such as of +10 to -10 days.
 \begin{enumerate}
 \item \textit{z}:  Time series data for which event frame is to be
   generated. In this example, we have zoo object with data for S\&P
-  500 returns, Nifty returns and net Foregin Institutional Invetors
+  500 returns, Nifty returns and net foreign institutional investors
   (FII) flow.
   
 \item \textit{events}: It is a data frame with two columns:
   \textit{unit} and \textit{when}. \textit{unit} has column name of
   which response is to measured on the event date, while \textit{when}
-  has the event date.\textit{unit} has to in character format
+  has the event date.
 
 \item \textit{width}: For a given width, if there is any \textit{NA} in the event window
   then the last observation is carried forward.
@@ -89,21 +91,20 @@ data(eventDays)
 str(eventDays)
 head(eventDays)
 @
-
+% some problem in the output after you are printing the structure.
 \subsection{Output}
 Output for \textit{phys2eventtime} is in a list format. The first
-element of list is a time series object which is converted to event
+element of the list is a time series object which is converted to event
 time and the second element is \textit{outcomes} which shows if there
 was any \textit{NA} in the dataset. If the outcome is \textit{success}
 then all is well in the given window as specified by the
-width else it gives \textit{wdatamissing} if too many NAs within the crucial event
-window or \textit{wrongspan} If the event date is not placed within 
+width. It gives \textit{wdatamissing} if there are too many \textit{NAs} within the crucial event
+window or \textit{wrongspan} if the event date is not placed within 
 the span of data for the unit or \textit{unitmissing} if a unit named
 in events is not in \textit{z}.
 <<>>=
 es <- phys2eventtime(z=eventstudyData, events=eventDays, width=10)
 str(es)
-#head(es$z.e)
 es$outcomes
 @ 
 
@@ -131,11 +132,11 @@ There are three functions used to re-map data which are as follows:
   \begin{enumerate}
   \item \textit{z}: This is the output of \textit{phys2eventtime}
     which is further reduced to an event window of \textit{width}
-    equals 10 or 20.
+    equal to 10 or 20.
   \item \textit{is.pc}: If returns is in percentage form then
     \textit{is.pc} is equal to \textit{TRUE} else \textit{FALSE}
   \item \textit{base}: Using this command, the base for the
-    cumulative returns can be changed. It has default value as 0.
+    cumulative returns can be changed. The default value is 0.
   \end{enumerate}
 \end{itemize}
 <<>>=
@@ -149,13 +150,13 @@ es.w.cs[,1:2]
   \begin{enumerate}
   \item \textit{z}: This is the output of \textit{phys2eventtime}
     which is further reduced to an event window of \textit{width}
-    equals 10 or 20.
+    equal to 10 or 20.
   \item \textit{is.pc}: If returns is in percentage form then
-    \textit{is.pc} is equal to \textit{TRUE} else \textit{FALSE}
+    \textit{is.pc} is equal to \textit{TRUE}, else \textit{FALSE}
     \item \textit{is.returns}: If the data is in returns format then
       \textit{is.returns} is \textit{TRUE}.
   \item \textit{base}: Using this command, the base for the
-    cumulative returns can be changed. It has default value as 100.
+    cumulative returns can be changed. The default value is 100.
   \end{enumerate}
 \end{itemize}
   
@@ -165,9 +166,9 @@ es.w.cp[,1:2]
 @   
 
 \begin{itemize}
-\item \textit{remap.event.reindex}: This function is used to convert event
-  window data to returns format. Argument for the
-  function is as follows:
+\item \textit{remap.event.reindex}: This function is used to change
+  the base of event day to 100 and change the pre-event and post-event values
+  respectively. Argument for the function is as follows:
   \begin{enumerate}
   \item \textit{z}: This is the output of \textit{phys2eventtime}
     which is further reduced to an event window of \textit{width}
@@ -178,24 +179,25 @@ es.w.cp[,1:2]
 es.w.ri <- remap.event.reindex(z= es.w)
 es.w.ri[,1:2]
 @   
-
-%\newpage
 \section{Evenstudy Inference using Bootstrap}
 \subsection{Conceptual framework}
-Suppose there are N events. Each event is expressed as a time-series
-of cumulative returns (CR) in event time, within the event window. The
+Suppose there are $N$ events. Each event is expressed as a time-series
+of cumulative returns $(CR)$ in event time, within the event window. The
 overall summary statistic of interest is the $\bar{CR}$, the average of all the
-CR time-series. 
+$CR$ time-series. 
 We do sampling with replacement at the level of the events. Each
-bootstrap sample is constructed by sampling with replacement, N times,
-within the dataset of N events. For each event, its corresponding CR
+bootstrap sample is constructed by sampling with replacement, $N$ times,
+within the dataset of $N$ events. For each event, its corresponding $CR$
 time-series is taken. This yields a time-series, which is one draw
 from the distribution of the statistic. 
 This procedure is repeated 1000 times in order to obtain the full
 distribution of $\bar{CR}$ . Percentiles of the distribution are shown
 in the graphs reported later, giving bootstrap confidence intervals
-for our estimates. This specific approach used here is based on
-Davinson, Hinkley and Schectman (1986).
+for our estimates. 
+This specific approach used here is based on Davinson, Hinkley and
+Schectman (1986). The \textit{inference.Ecar} function does the
+bootstrap to generate distribution of $\bar{CR}$. The bootstrap
+generates confidence interval at 2.5\% and 97.5\% for the estimate.
 
 \subsection{Usage}
 This function has two arguments:
@@ -208,7 +210,7 @@ This function has two arguments:
 result <- inference.Ecar(z.e=es.w.cs, to.plot=FALSE)
 head(result)
 @ 
-\begin{figure}[h]
+\begin{figure}[ht]
   \begin{center}
     \caption{Event on S\&P 500 and response of Nifty}
     \setkeys{Gin}{width=0.8\linewidth}
@@ -221,8 +223,7 @@ head(result)
 \label{fig:one}
 \end{figure}
 
-\section{identifyextremeevents}
-% Conceptual framework
+\section{Identify extreme events}
 \subsection{Conceptual framework}
 This function of the package identifies extreme event and does data
 analysis. The upper tail and lower tail values are defined as extreme
@@ -264,7 +265,7 @@ data(eventstudyData)
 input <- eventstudyData$sp500
 output <- identifyextremeevents(input, prob.value=5)
 @
-
+% I don't understand this output. Maybe you should explain what it means.
 \subsection{Output}
 Output is in list format. Primarily it consists of three lists,
 summary statistics for complete data-set, extreme event analysis for
@@ -273,7 +274,7 @@ lower tail and upper tail list objects consists of 5 more list objects with
 following output:
 \begin{enumerate}
 \item Extreme events dataset
-\item Distribution of clustered and unclustered
+\item Distribution of clustered and unclustered % events.
 \item Run length distribution
 \item Quantile values of extreme events
 \item Yearly distribution of extreme events
@@ -292,16 +293,16 @@ output$data.summary
 @ 
 \subsubsection{Extreme events dataset} 
 The output for upper tail and lower tail are in the same format as
-mentioned above. The data-set is an time series object which has 2
+mentioned above. The data-set is a time series object which has 2
 columns. The first column is \textit{event.series} column which has
 returns for extreme events and the second column is
 \textit{cluster.pattern} which signifies the number of consecutive
-days in the cluster. So, here we just show results for lower tail.
+days in the cluster. Here we show results for the lower tail.
 <<>>=
-output$lower.tail$data
+str(output$lower.tail$data)
 @
 
-\subsubsection{Distribution of clustered and clustered events}
+\subsubsection{Distribution of clustered and unclustered events}
 In the analysis we have clustered, unclustered and mixed clusters. We
 remove the mixed clusters and study the rest of the clusters by fusing
 them. Here we show, number of clustered and unclustered data used in
@@ -333,9 +334,33 @@ output$lower.tail$quantile.values
 @ 
 
 \subsubsection{Yearly distribution of extreme events}
-This table shows the yearly wise distribution and
+This table shows the yearly distribution and
 the median value for extreme events data.
 <<>>=
 output$lower.tail$yearly.extreme.event
 @ 
+The yearly distribution for extreme events include unclustered event
+and clustered events which are fused. While in extreme event distribution of
+clustered and unclustered event, the clustered events are defined as
+total evnets in a cluster. For example, if there is a clustered event
+with three consecutive extreme events then yearly distribution will
+treat it as one single event. Here below the relationship between the
+Tables is explained through equations:\\\\
+\textit{Sum of yearly distribution for lower tail = 59 \\ 
+Unclustered events for lower tail = 56\\\\
+Clustered events for lower tail = 3 + 0\\
+Total events in clusters (Adding number of events in each cluster)
+= 3*2 + 0*3 = 6\\ 
+Total used events = Unclustered events for lower tail + Total events
+in clusters \\ = 56 + 6 = 62 \\\\
+Sum of yearly distribution for lower tail =  Unclustered events for
+lower tail + Total events in clusters\\ = 56 + 3 =59}
+<<>>=
+sum(output$lower.tail$yearly.extreme.event[,"number.lowertail"])
+output$lower.tail$extreme.event.distribution[,"unclstr"]
+output$lower.tail$runlength
+@ 
+
+%\section{Conclusion}
+
 \end{document}

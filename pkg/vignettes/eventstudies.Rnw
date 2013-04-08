@@ -199,18 +199,7 @@ Schectman (1986). The \textit{inference.Ecar} function does the
 bootstrap to generate distribution of $\bar{CR}$. The bootstrap
 generates confidence interval at 2.5\% and 97.5\% for the estimate.
 
-\subsection{Usage}
-This function has two arguments:
-\begin{enumerate}
-\item \textit{z.e}: This is the re-mapped output of \textit{phys2eventtime}
-\item \textit{to.plot}: If the user wants inference output plot then
-  \textit{to.plot} is equals \textit{TRUE}
-\end{enumerate}
-<<>>=
-result <- inference.Ecar(z.e=es.w.cs, to.plot=FALSE)
-head(result)
-@ 
-\begin{figure}[ht]
+\begin{figure}[t]
   \begin{center}
     \caption{Event on S\&P 500 and response of Nifty}
     \setkeys{Gin}{width=0.8\linewidth}
@@ -222,6 +211,19 @@ head(result)
 \end{center}
 \label{fig:one}
 \end{figure}
+
+\subsection{Usage}
+This function has two arguments:
+\begin{enumerate}
+\item \textit{z.e}: This is the re-mapped output of \textit{phys2eventtime}
+\item \textit{to.plot}: If the user wants inference output plot then
+  \textit{to.plot} is equals \textit{TRUE}
+\end{enumerate}
+<<>>=
+result <- inference.Ecar(z.e=es.w.cs, to.plot=FALSE)
+head(result)
+@ 
+
 
 \section{Identify extreme events}
 \subsection{Conceptual framework}

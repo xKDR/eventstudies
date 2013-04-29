@@ -20,10 +20,8 @@
 The structure of the package and its implementation of event study
 methodology is explained in this paper. In addition to converting
 physical dates to event time frame, functions for re-indexing the
-event time returns, bootstrap inference estimation, and identification
-of extreme clustered events and further in-depth analysis of the
-same is also provided. The methods and functions are elucidated by
-employing data-set of SENSEX firms. 
+event time returns and bootstrap inference estimation. The methods and
+functions are elucidated by employing data-set ofSENSEX firms. 
 \end{abstract}
 
 \SweaveOpts{engine=R,pdf=TRUE}
@@ -106,14 +104,25 @@ dates in event time frame.
 Here, we index the stock split date, stock price returns to day 0 and
 similarly post event dates are indexed to positive and pre event
 dates are indexed as negative. As we can see below the stock split dates
-for BHEL, Bharti Airtel and Cipla are indexed to day 0.  
+for BHEL, Bharti Airtel and Cipla are indexed to day 0.
 
-% outcomes, example
+The output for \textit{phys2eventtime} is a list. The first element of
+a list is a time series object which is converted to event 
+time and the second element is \textit{outcomes} which shows if there
+was any \textit{NA} in the dataset. If the outcome is \textit{success}
+then all is well in the given window as specified by the
+width. It gives \textit{wdatamissing} if there are too many \textit{NAs} within the crucial event
+window or \textit{wrongspan} if the event date is not placed within 
+the span of data for the unit or \textit{unitmissing} if a unit named
+in events is not in \textit{z}.
 
 <<>>=
 es <- phys2eventtime(z=StockPriceReturns, events=SplitDates, width=10)
 es.w <- window(es$z.e, start=-10, end=10)
 SplitDates[1:3,]
+StockPriceReturns[SplitDates[1,2],SplitDates[1,1]]
+StockPriceReturns[SplitDates[2,2],SplitDates[2,1]]
+StockPriceReturns[SplitDates[3,2],SplitDates[3,1]]
 es.w[,1:3]
 @ 
 
@@ -132,7 +141,7 @@ we need to check the stability of the result and derive other
 estimates like standard errors and confidence intervals. For this,
 we generate the sampling distribution for the estimate using bootstrap
 inference. A detailed explanation of the methodology is presented in
-Shah, Patnaik and Singh (2013).
+Patnaik, Shah and Singh (2013).
 This specific approach used here is based on Davinson, Hinkley and
 Schectman (1986). The \textit{inference.Ecar} function does the
 bootstrap to generate distribution of $\bar{CR}$. The bootstrap
@@ -140,7 +149,7 @@ generates confidence interval at 2.5\% and 97.5\% for the estimate.
 
 \begin{figure}[t]
   \begin{center}
-    \caption{Event on S\&P 500 and response of Nifty}
+    \caption{Stock splits event and response of respective stock returns}
     \setkeys{Gin}{width=0.8\linewidth}
     \setkeys{Gin}{height=0.8\linewidth}
 <<label=fig1,fig=TRUE,echo=FALSE>>=

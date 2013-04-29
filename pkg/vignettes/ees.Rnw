@@ -44,9 +44,9 @@ side 5\% tail events are considered as extreme, lower tail and upper
 tail (5\% to 95\%).
 <<>>==
 library(eventstudies)
-data(identifyexeventData)
-input <- identifyexeventData$sp500
-output <- identifyextremeevents(input, prob.value=5)
+data(eesData)
+input <- eesData$sp500
+output <- ees(input, prob.value=5)
 @
 % I don't understand this output. Maybe you should explain what it means.
 The output is a list. Primarily it consists of three lists,
@@ -139,6 +139,24 @@ sum(output$lower.tail$yearly.extreme.event[,"number.lowertail"])
 output$lower.tail$extreme.event.distribution[,"unclstr"]
 output$lower.tail$runlength
 @ 
+
+\section{Extreme event}
+% Quantile values
+
+% Plot event study graph
+
+\begin{figure}[t]
+  \begin{center}
+    \caption{Extreme event on S\&P500 and response of NIFTY}
+    \setkeys{Gin}{width=1\linewidth}
+    \setkeys{Gin}{height=0.8\linewidth}
+<<label=fig12,fig=TRUE,echo=FALSE>>=
+<<fig12plot>>
+res <- deprintize(eesPlot)(z=eesData, response.series.name="nifty", event.series.name="sp500",titlestring="S&P500", ylab="(Cum.) change in NIFTY", prob.value=5, width=15
+@
+\end{center}
+\label{fig:one}
+\end{figure}
 
 \section{Computational details}
 The package code is purely written in R. It has dependencies to zoo

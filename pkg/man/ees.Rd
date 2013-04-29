@@ -1,8 +1,8 @@
-\name{identifyextremeevents}
-\alias{identifyextremeevents}
+\name{ees}
+\alias{ees}
 
 \title{
-Identify extreme events for a time series.
+Extreme events study for a time series.
 }
 
 \description{
@@ -12,7 +12,7 @@ unclustered extreme event distribution.
  }
 
 \usage{
-identifyextremeevents(input,prob.value)
+ees(input,prob.value)
 }
 
 \arguments{
@@ -35,7 +35,7 @@ identifyextremeevents(input,prob.value)
 
 \examples{
 library(eventstudies)
-data(identifyexeventData)
-input <- identifyexeventData$sp500
-output <- identifyextremeevents(input, prob.value=5)
+data(eesData)
+input <- eesData$sp500
+output <- ees(input, prob.value=5)
 }

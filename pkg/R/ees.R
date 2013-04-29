@@ -35,7 +35,7 @@ library(zoo)
 #     - Clustered, Un-clustered and Both
 #------------------------------------------------------------------
 # NOTE:
-identifyextremeevents <- function(input,prob.value){
+ees <- function(input,prob.value){
   no.var <- NCOL(input)
 
   #------------------------------------------------
@@ -253,7 +253,7 @@ get.clusters.formatted <- function(event.series,
     if(me!=0){
       tmp <- tmp[-which(tmp$remove.mixed==5),]
       cat("Pattern of:",i,";",
-          "Disarded event:",me/i,"\n")
+          "Discarded event:",me/i,"\n")
     }
   }
   tmp.nc <- tmp
@@ -735,4 +735,149 @@ numbers2words <- function(x){
   suffixes <- c("thousand", "million", "billion", "trillion")
   if (length(x) > 1) return(sapply(x, helper))
   helper(x)
+}
+
+##########################
+# Extreme event study plot
+##########################
+# This function generates event study plot for clustered and un-clustered data
+#-------------------------
+# Input for the function
+#                  z   = Data object with both the series response.series and event.series
+# response.series.name = Column name of the series for which response is observed
+#    event.series.name = Column name of the series on which event is observed
+#          titlestring = Title string for the event study plot
+#                 ylab = Y - axis label
+#                width = width of event window for event study plot
+#           prob.value = Probability value for which extreme events is determined
+#-------------------------
+eesPlot <- function(z, response.series.name,
+                    event.series.name,
+                    titlestring, ylab, width=5,
+                    prob.value=5){
+  #-----------------
+  # Get event dates
+  #-----------------
+  # Get both clustered and unclustered dates
+  e.s <- z[,event.series.name]
+  r.s <- z[,response.series.name]
+  data.use <- get.clusters.formatted(event.series=e.s,
+                                      response.series=r.s,
+                                      probvalue=prob.value,
+                                      event.value="nonreturns",
+                                      response.value="nonreturns",
+                                      result="series")
+  # Get only unclustered data
+  data.frmt <- data.use[which(data.use$cluster.pattern==1),]
+  data.frmt2 <- data.use[which(data.use$cluster.pattern!=0),]
+
+  # get dates for bigdays and baddays
+  baddays.normal <- index(data.frmt[which(data.frmt[,"left.tail"]==1)])
+  bigdays.normal <- index(data.frmt[which(data.frmt[,"right.tail"]==1)])
+  baddays.purged <- index(data.frmt2[which(data.frmt2[,"left.tail"]==1)])
+  bigdays.purged <- index(data.frmt2[which(data.frmt2[,"right.tail"]==1)])
+
+  d.good.normal <- bigdays.normal
+  d.bad.normal <- baddays.normal
+  d.good.purged <- bigdays.purged
+  d.bad.purged <- baddays.purged
+  
+  # ES for normal returns
+  es.good.normal <- corecomp(data.use,d.good.normal,
+                             "response.series",width)
+  es.bad.normal <- corecomp(data.use,d.bad.normal,
+                            "response.series",width)
+  
+  # ES for purged returns
+  es.good.purged <- corecomp(data.use,d.good.purged,
+                             "response.series",width)
+  es.bad.purged <- corecomp(data.use,d.bad.purged,
+                            "response.series",width)
+  
+  big.normal <- max(abs(cbind(es.good.normal,es.bad.normal)))
+  big.purged <- max(abs(cbind(es.good.purged,es.bad.purged)))
+  big <- max(big.normal,big.purged)
+  hilo1 <- c(-big,big)
+  
+  #---------------
+  # Plotting graph
+  plot.es.graph.both(es.good.normal,es.bad.normal,
+                     es.good.purged,es.bad.purged,
+                     width,titlestring,ylab)
+}
+#--------------------------
+# Eventstudy analysis
+# -using eventstudy package
+#--------------------------
+corecomp <- function(z,dlist,seriesname,width) {
+  events <- data.frame(unit=rep(seriesname, length(dlist)), when=dlist)
+  es.results <- phys2eventtime(z, events, width=0)
+  es.w <- window(es.results$z.e, start=-width, end=+width)
+  # Replaing NA's with zeroes
+  es.w[is.na(es.w)] <- 0
+  es.w <- remap.cumsum(es.w, is.pc=FALSE, base=0)
+  inference.Ecar(es.w)
+}
+ 
+#----------------------------------
+# Plotting graph in es.error.metric
+#----------------------------------
+plot.es.graph.both <- function(es.good.normal,es.bad.normal,
+                               es.good.purged,es.bad.purged,
+                               width,titlestring,ylab){
+  big.normal <- max(abs(cbind(es.good.normal,es.bad.normal)))
+  big.purged <- max(abs(cbind(es.good.purged,es.bad.purged)))
+  big <- max(big.normal,big.purged)
+  hilo1 <- c(-big,big)
+
+  # Plotting graph
+  par(mfrow=c(1,2))
+  
+  # Plot very good days
+  plot(-width:width, es.good.normal[,2], type="l", lwd=2, ylim=hilo1, col="red",
+       xlab="Event time (days)", ylab=ylab,
+       main=paste("Very good", " (by ", titlestring, ")", sep=""))
+  lines(-width:width, es.good.purged[,2], lwd=2, lty=1,type="l", col="orange")
+  points(-width:width, es.good.normal[,2], pch=19,col="red")
+  points(-width:width, es.good.purged[,2], pch=25,col="orange")
+  lines(-width:width, es.good.normal[,1], lwd=0.8, lty=2, col="red")
+  lines(-width:width, es.good.normal[,3], lwd=0.8, lty=2, col="red")
+  lines(-width:width, es.good.purged[,1], lwd=0.8, lty=4, col="orange")
+  lines(-width:width, es.good.purged[,3], lwd=0.8, lty=4, col="orange")
+  abline(h=0,v=0)
+  points(-width:width, es.good.normal[,1], pch=19,col="red")
+  points(-width:width, es.good.purged[,1],pch=25,col="orange")
+  points(-width:width, es.good.normal[,3], pch=19,col="red")
+  points(-width:width, es.good.purged[,3],pch=25,col="orange")
+    
+  legend("topleft",legend=c("Un-clustered","Clustered"),
+         cex=0.7,pch=c(19,25),
+         col=c("red","orange"),lty=c(1,1),bty="n")
+    
+  # Plot very bad days
+  plot(-width:width, es.bad.normal[,2], type="l", lwd=2, ylim=hilo1, col="red",
+       xlab="Event time (days)", ylab=ylab,
+       main=paste("Very bad", " (by ", titlestring, ")", sep=""))
+  lines(-width:width, es.bad.purged[,2], lwd=2, lty=1,type="l", col="orange")
+  points(-width:width, es.bad.normal[,2], pch=19,col="red")
+  points(-width:width, es.bad.purged[,2], pch=25,col="orange")
+  lines(-width:width, es.bad.normal[,1], lwd=0.8, lty=2, col="red")
+  lines(-width:width, es.bad.normal[,3], lwd=0.8, lty=2, col="red")
+  lines(-width:width, es.bad.purged[,1], lwd=0.8, lty=2, col="orange")
+  lines(-width:width, es.bad.purged[,3], lwd=0.8, lty=2, col="orange")
+  points(-width:width, es.bad.normal[,1], pch=19,col="red")
+  points(-width:width, es.bad.purged[,1], pch=25,col="orange")
+  points(-width:width, es.bad.normal[,3], pch=19,col="red")
+  points(-width:width, es.bad.purged[,3], pch=25,col="orange")
+    
+  abline(h=0,v=0)
+  legend("topleft",legend=c("Un-clustered","Clustered"),
+         cex=0.7,pch=c(19,25),
+         col=c("red","orange"),lty=c(1,1),bty="n")
+}
+
+#--------------------------
+# Suppress the messages
+deprintize<-function(f){
+ return(function(...) {capture.output(w<-f(...));return(w);});
 }

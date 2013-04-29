@@ -20,13 +20,13 @@
 \value{The frame returned has each column replaced by base * the cumulative product of the column.}
 
 \seealso{
-eventDays, eventstudyData, phys2eventtime
+phys2eventtime
 }
 
 \examples{
-data(eventDays)
-data(eventstudyData)
-es.results <- phys2eventtime(z=eventstudyData, events=eventDays,width=5)
+data(StockPriceReturns)
+data(SplitDates)
+es.results <- phys2eventtime(z=StockPriceReturns, events=SplitDates,width=5)
 es.w <- window(es.results$z.e, start=-5, end=+5)
 eventtime <- remap.cumprod(es.w, is.pc=FALSE, is.returns=TRUE, base=0)
 }

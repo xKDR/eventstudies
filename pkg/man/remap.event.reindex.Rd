@@ -17,12 +17,12 @@ It's input is a zoo object which is the first component of the list returned by 
 \value{The function returns a zoo object which has been rescaled.}
 
 \seealso{
-eventDays, eventstudyData, phys2eventtime
+phys2eventtime
 }
 \examples{
-data(eventDays)
-data(eventstudyData)
-es.results <- phys2eventtime(z=eventstudyData, events=eventDays,width=5)
+data(StockPriceReturns)
+data(SplitDates)
+es.results <- phys2eventtime(z=StockPriceReturns, events=SplitDates,width=5)
 es.w <- window(es.results$z.e, start=-5, end=+5)
 eventtime <- remap.event.reindex(es.w)
 }

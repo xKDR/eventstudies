@@ -34,7 +34,8 @@ identifyextremeevents(input,prob.value)
 }
 
 \examples{
-data(eventstudyData)
-input <- eventstudyData$sp500
+library(eventstudies)
+data(identifyexeventData)
+input <- identifyexeventData$sp500
 output <- identifyextremeevents(input, prob.value=5)
 }

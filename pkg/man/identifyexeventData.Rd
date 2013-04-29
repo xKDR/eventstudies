@@ -1,24 +1,20 @@
-\name{eventstudyData}
+\name{identifyexeventData}
 
 \docType{data}
 
-\alias{eventstudyData}
+\alias{identifyexeventData}
 
 \title{It is the data-set used for event-study analysis.}
 
 \description{
-It is a time series object with daily series for S&P 500, Nifty and Net FII flows in India.	
+It is a time series object with daily series for S&P 500 and Nifty (NSE index).	
 }
 
-\usage{data(eventstudyData)}
+\usage{data(identifyexeventData)}
 
 \format{An object with class attributes \code{zoo} containing resposne series for eventstudy.}
 
-\seealso{
-eventDays
-}
-
 \examples{
-    data(eventstudyData)
+    data(identifyexeventData)
 }
 \keyword{datasets}

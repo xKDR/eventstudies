@@ -1,0 +1,181 @@
+
+\documentclass[a4paper,11pt]{article}
+\usepackage{graphicx}
+\usepackage{a4wide}
+\usepackage[colorlinks,linkcolor=blue,citecolor=red]{hyperref}
+\usepackage{natbib}
+\usepackage{float}
+\usepackage{tikz}
+\usepackage{parskip}
+\usepackage{amsmath}
+\title{Introduction to the \textbf{eventstudies} package in R}
+\author{Ajay Shah, Vimal Balasubramaniam and Vikram Bahure}
+\begin{document}
+%\VignetteIndexEntry{eventstudies: A package with functionality to do Event Studies}
+%\VignetteDepends{}
+%\VignetteKeywords{event studies}
+%\VignettePackage{eventstudies}
+\maketitle
+\begin{abstract}
+The structure of the package and its implementation of event study
+methodology is explained in this paper. In addition to converting
+physical dates to event time frame, functions for re-indexing the
+event time returns, bootstrap inference estimation, and identification
+of extreme clustered events and further in-depth analysis of the
+same is also provided. The methods and functions are elucidated by
+employing data-set for S\&P 500, Nifty and net Foreign Institutional
+Investors (FII) flow in India. 
+\end{abstract}
+
+\SweaveOpts{engine=R,pdf=TRUE}
+\section{Introduction}
+
+
+\section{Identify extreme events}
+\subsection{Conceptual framework}
+This function of the package identifies extreme event and does data
+analysis. The upper tail and lower tail values are defined as extreme
+events at certain probability. 
+
+There are two further issues to consider. First, matters are
+complicated by the fact that extreme (tail) values may cluster: for
+example, there may be two or three consecutive days of very high or
+very low daily returns, or these extremes may occur in two out of
+three days. If the extreme values are all in the same tail of the
+distribution, it might make sense to consider the cluster of extreme
+values as a single event. 
+
+We approach this problem through two paths. The data has following
+events: clustered, unclustered and mixed clusters. For simplicity, we
+remove all the mixed clusters and deal with the rest. Unclustered or
+uncontaminated events are those where there is no other event within
+the event window. Clustered events are defined by fusing all
+consecutive extreme events, of the same direction, into a single
+event. In event time, date +1 is then the first day after the run of
+extreme events, and date -1 is the last day prior to the start of the
+run. This strategy avoids losing observations of some of the most  
+important crises, which have clustered extreme events in the same
+direction. 
+
+% Example for understanding
+\subsection{Usage}
+This function does extreme event analysis on the returns of the
+data. Function has following two arguments:
+\begin{enumerate}
+\item \textit{input}: Data on which extreme event analysis is done. Note:
+  \textit{input} should be in returns format.  
+\item \textit{prob.value}: It is the tail value on basis of which the
+  extreme events are defined. For eg: \textit{prob.value} of 5 will consider
+  5\% tail on both sides.
+\end{enumerate}
+<<>>==
+library(eventstudies)
+data(identifyexeventData)
+input <- identifyexeventData$sp500
+output <- identifyextremeevents(input, prob.value=5)
+@
+% I don't understand this output. Maybe you should explain what it means.
+\subsection{Output}
+Output is in list format. Primarily it consists of three lists,
+summary statistics for complete data-set, extreme event analysis for
+lower tail and extreme event analysis for upper tail. Further, these
+lower tail and upper tail list objects consists of 5 more list objects with
+following output:
+\begin{enumerate}
+\item Extreme events dataset
+\item Distribution of clustered and unclustered % events.
+\item Run length distribution
+\item Quantile values of extreme events
+\item Yearly distribution of extreme events
+\end{enumerate}
+The complete set of analysis is done on the returns of S\&P500 and
+these results are in tandem with Table 1,2,3,4 and 5 of Patnaik, Shah
+and Singh (2013). 
+
+\subsubsection{Summary statistics}
+Here we have data summary for the complete data-set which shows
+minimum, 5\%, 25\%, median, mean, 75\%, 95\%, maximum, standard
+deviation (sd), inter-quartile range (IQR) and number of
+observations. The output is shown below:
+<<>>==
+output$data.summary
+@ 
+\subsubsection{Extreme events dataset} 
+The output for upper tail and lower tail are in the same format as
+mentioned above. The data-set is a time series object which has 2
+columns. The first column is \textit{event.series} column which has
+returns for extreme events and the second column is
+\textit{cluster.pattern} which signifies the number of consecutive
+days in the cluster. Here we show results for the lower tail.
+<<>>=
+str(output$lower.tail$data)
+@
+
+\subsubsection{Distribution of clustered and unclustered events}
+In the analysis we have clustered, unclustered and mixed clusters. We
+remove the mixed clusters and study the rest of the clusters by fusing
+them. Here we show, number of clustered and unclustered data used in
+the analysis. The \textit{removed.clstr} refers to mixed cluster which
+are removed and not used in the analysis.\textit{Tot.used} represents
+total number of extreme events used for the analysis which is sum of
+\textit{unclstr} (unclustered events) and \textit{used.clstr} (Used
+clustered events). \textit{Tot}
+are the total number of extreme events in the data-set.
+<<>>=
+output$lower.tail$extreme.event.distribution
+@ 
+
+\subsubsection{Run length distribution of clusters}
+Clusters used in the analysis are defined as consecutive extreme
+events. Run length shows total number of clusters with \textit{n} consecutive
+days. In the example below we have 3 clusters with  \textit{two}
+consecutive events and 0 clusters with \textit{three} consecutive
+events. 
+<<>>=
+output$lower.tail$runlength
+@ 
+
+\subsubsection{Extreme event quantile values}
+Quantile values show 0\%, 25\%, median, 75\%,100\% and mean values for
+the extreme events data.
+<<>>=
+output$lower.tail$quantile.values
+@ 
+
+\subsubsection{Yearly distribution of extreme events}
+This table shows the yearly distribution and
+the median value for extreme events data.
+<<>>=
+output$lower.tail$yearly.extreme.event
+@ 
+The yearly distribution for extreme events include unclustered event
+and clustered events which are fused. While in extreme event distribution of
+clustered and unclustered event, the clustered events are defined as
+total evnets in a cluster. For example, if there is a clustered event
+with three consecutive extreme events then yearly distribution will
+treat it as one single event. Here below the relationship between the
+Tables is explained through equations:\\\\
+\textit{Sum of yearly distribution for lower tail = 59 \\ 
+Unclustered events for lower tail = 56\\\\
+Clustered events for lower tail = 3 + 0\\
+Total events in clusters (Adding number of events in each cluster)
+= 3*2 + 0*3 = 6\\ 
+Total used events = Unclustered events for lower tail + Total events
+in clusters \\ = 56 + 6 = 62 \\\\
+Sum of yearly distribution for lower tail =  Unclustered events for
+lower tail + Total events in clusters\\ = 56 + 3 =59}
+<<>>=
+sum(output$lower.tail$yearly.extreme.event[,"number.lowertail"])
+output$lower.tail$extreme.event.distribution[,"unclstr"]
+output$lower.tail$runlength
+@ 
+
+\section{Computational details}
+The package code is purely written in R. It has dependencies to zoo
+(\href{http://cran.r-project.org/web/packages/zoo/index.html}{Zeileis
+  2012}) and boot
+(\href{http://cran.r-project.org/web/packages/boot/index.html}{Rlpley
+  2013}).  R itself as well as these packages can be obtained from \href{http://CRAN.R-project.org/}{CRAN}.
+%\section{Acknowledgments}
+
+\end{document}

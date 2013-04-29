@@ -27,9 +27,9 @@ phys2eventtime(z, events, width = 10)
 
 
 \examples{
-data(eventDays)
-data(eventstudyData)
-phys2eventtime(z=eventstudyData, events=eventDays,width=5)	
+data(StockPriceReturns)
+data(SplitDates)
+phys2eventtime(z=StockPriceReturns, events=SplitDates,width=5)	
 }
 
 \keyword{ phys2eventime }

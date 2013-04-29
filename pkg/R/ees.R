@@ -62,6 +62,7 @@ ees <- function(input,prob.value){
                                 probvalue=prob.value,
                                 event.value="nonreturns",
                                 response.value="nonreturns")
+  
   tail.events <- tmp[which(tmp$left.tail==1 | tmp$right.tail==1),]
   clustered.tail.events <- tmp[which(tmp$cluster.pattern>1),]
   unclustered.tail.events <- tmp[-which(tmp$cluster.pattern>1),]
@@ -765,8 +766,8 @@ eesPlot <- function(z, response.series.name,
                                       response.series=r.s,
                                       probvalue=prob.value,
                                       event.value="nonreturns",
-                                      response.value="nonreturns",
-                                      result="series")
+                                      response.value="nonreturns")
+
   # Get only unclustered data
   data.frmt <- data.use[which(data.use$cluster.pattern==1),]
   data.frmt2 <- data.use[which(data.use$cluster.pattern!=0),]

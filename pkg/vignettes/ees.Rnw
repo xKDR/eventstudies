@@ -33,12 +33,14 @@ understand the \textit{identifyextremeevents} functionality.
 
 Using this function, one can to understand the distribution and run
 length of the clustered events, quantile values for the extreme
-events and yearly distribution of the extreme events.
-
+events and yearly distribution of the extreme events. In the sections
+below we replicate the analysis for S\&P 500 from the paper and we
+generate the extreme event study plot for event on S\&P 500 and
+response of NIFTY.  
 
 \section{Extreme event analysis}
-This function just needs input in returns format on which extreme
-event analysis is to be done. Further we define tail events for given
+This function needs input in returns format on which extreme
+event analysis is to be done. Further, we define tail events for given
 probability value. For instance, if \textit{prob.value} is 5 then both
 side 5\% tail events are considered as extreme, lower tail and upper
 tail (5\% to 95\%).
@@ -66,7 +68,8 @@ following output:
 Here we have data summary for the complete data-set which shows
 minimum, 5\%, 25\%, median, mean, 75\%, 95\%, maximum, standard
 deviation (sd), inter-quartile range (IQR) and number of
-observations. The output is shown below:
+observations. The output shown below mathces with the fourth column
+in Table 1 of the paper.
 <<>>==
 output$data.summary
 @ 
@@ -76,7 +79,8 @@ mentioned above. The data-set is a time series object which has 2
 columns. The first column is \textit{event.series} column which has
 returns for extreme events and the second column is
 \textit{cluster.pattern} which signifies the number of consecutive
-days in the cluster. Here we show results for the lower tail.
+days in the cluster. Here we show results for the lower tail of S\&P
+500. Below is the extreme event data set on which analysis is done.
 <<>>=
 str(output$lower.tail$data)
 @
@@ -90,7 +94,8 @@ are removed and not used in the analysis.\textit{Tot.used} represents
 total number of extreme events used for the analysis which is sum of
 \textit{unclstr} (unclustered events) and \textit{used.clstr} (Used
 clustered events). \textit{Tot}
-are the total number of extreme events in the data-set.
+are the total number of extreme events in the data set. The results
+shown below match with second row in Table 2 of the paper.
 <<>>=
 output$lower.tail$extreme.event.distribution
 @ 
@@ -100,21 +105,25 @@ Clusters used in the analysis are defined as consecutive extreme
 events. Run length shows total number of clusters with \textit{n} consecutive
 days. In the example below we have 3 clusters with  \textit{two}
 consecutive events and 0 clusters with \textit{three} consecutive
-events. 
+events. The results shown below match with second row in Table 3 of
+the paper.
 <<>>=
 output$lower.tail$runlength
 @ 
 
 \subsection{Extreme event quantile values}
 Quantile values show 0\%, 25\%, median, 75\%,100\% and mean values for
-the extreme events data.
+the extreme events data. The results shown below match with second row
+of Table 4 in the paper.
 <<>>=
 output$lower.tail$quantile.values
 @ 
 
 \subsection{Yearly distribution of extreme events}
 This table shows the yearly distribution and
-the median value for extreme events data.
+the median value for extreme events data. The results shown below
+match with third and forth column for S\&P 500 in the Table 5 of the
+paper.  
 <<>>=
 output$lower.tail$yearly.extreme.event
 @ 
@@ -140,11 +149,24 @@ output$lower.tail$extreme.event.distribution[,"unclstr"]
 output$lower.tail$runlength
 @ 
 
-\section{Extreme event}
-% Quantile values
+\section{Extreme event study plot}
+Here, we replicate the Figure 7, from the paper Patnaik, Shah and
+Singh (2013). First, we need to have a merged time series object with
+event series and response series with no missing values for unerring
+results. After getting the time series object we just need to use the
+following function and fill the relevant arguments to generate the
+extreme event study plot. 
 
-% Plot event study graph
-
+The function generates extreme values for the event series with the
+given probability value. Once the values are generated, clustered
+extreme events are fused together for the response series and
+extreme evenstudy plot is generated for very bad and very good
+events. The detail methodology is mentioned in the paper. 
+<<>>=
+eesPlot(z=eesData, response.series.name="nifty", event.series.name="sp500",
+        titlestring="S&P500", ylab="(Cum.) change in NIFTY", prob.value=5, 
+        width=5)
+@ 
 \begin{figure}[t]
   \begin{center}
     \caption{Extreme event on S\&P500 and response of NIFTY}

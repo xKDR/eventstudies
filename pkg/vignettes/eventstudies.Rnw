@@ -33,7 +33,7 @@ splits, quarterly results and so on.  It is one of the most widely
 used statistical tool.  
 
 Event study is used to study the response or
-the effect on a variable, due to similar events. Efficient and liquid
+the effect on a variable due to similar events. Efficient and liquid
 markets are basic assumption in this methodology. It assumes the
 effect on response variable is without delay. As event study output is
 further used in econometric analysis, hence significance test such as

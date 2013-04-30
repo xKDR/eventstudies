@@ -1,15 +1,19 @@
 library(eventstudies)
-
 data(inr)
-inr_returns<-diff(log(inr))[-1]
+
+inr_returns <- diff(log(inr))[-1]
+
 eventslist<-data.frame(unit=rep("inr",10),
                        when=as.Date(c(
                          "2010-04-20","2010-07-02","2010-07-27",
                          "2010-09-16","2010-11-02","2011-01-25",
                          "2011-03-17","2011-05-03","2011-06-16",
-                         "2011-07-26")))
-event_time_data<-phys2eventtime(inr_returns,eventslist,width=10)
-w<-window(event_time_data$z.e,start=-10,end=10)
+                         "2011-07-26")
+                         )
+                       )
+
+event_time_data <- phys2eventtime(inr_returns,eventslist,width=10)
+w <- window(event_time_data$z.e,start=-10,end=10)
 
 all.equal(inference.Ecar(w)[,2],c(-.000015327,-.002526819,.0011990000,.001193535,.001846734,
                                   -.000105473,-.001659772,.001644518,-0.001325236,.001546369,

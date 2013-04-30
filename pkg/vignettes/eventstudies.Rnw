@@ -147,6 +147,9 @@ Schectman (1986). The \textit{inference.Ecar} function does the
 bootstrap to generate distribution of $\bar{CR}$. The bootstrap
 generates confidence interval at 2.5\% and 97.5\% for the estimate.
 
+<<>>=
+result <- inference.Ecar(z.e=es.cs, to.plot=TRUE)
+@ 
 \begin{figure}[t]
   \begin{center}
     \caption{Stock splits event and response of respective stock returns}

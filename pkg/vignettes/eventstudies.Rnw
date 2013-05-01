@@ -27,7 +27,7 @@ functions are elucidated by employing data-set of SENSEX firms.
 \SweaveOpts{engine=R,pdf=TRUE}
 \section{Introduction}
 Event study has a long history which dates back to 1938
-\citep{dolley1938effect}). It is mostly used to study the response of
+\citep{dolley1938effect}. It is mostly used to study the response of
 stock price or value of a firm due to events such as mergers \&
 acquisitions,  stock splits, quarterly results and so on.  It is one
 of the most widely used statistical tool.  
@@ -143,7 +143,7 @@ we generate the sampling distribution for the estimate using bootstrap
 inference. A detailed explanation of the methodology is presented in
 Patnaik, Shah and Singh (2013).
 This specific approach used here is based on
-\citept{davison1986efficient}. The \textit{inference.Ecar} function
+\citet{davison1986efficient}. The \textit{inference.Ecar} function
 does the bootstrap to generate distribution of $\bar{CR}$. The
 bootstrap generates confidence interval at 2.5\% and 97.5\% for the estimate.
 

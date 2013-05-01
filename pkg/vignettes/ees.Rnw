@@ -17,8 +17,8 @@
 %\VignettePackage{eventstudies}
 \maketitle
 \begin{abstract}
-The \textit{eventstudies} package also has extreme events
-functionality. This package has \textit{identifyextremeevents}
+The \textit{eventstudies} package includes an extreme events
+functionality. This package has \textit{ees}
 function which does extreme event analysis by fusing the
 consecutive extreme events in a single event. The methods and
 functions are elucidated by employing data-set of S\&P 500 and Nifty. 
@@ -26,17 +26,13 @@ functions are elucidated by employing data-set of S\&P 500 and Nifty.
 
 \SweaveOpts{engine=R,pdf=TRUE}
 \section{Introduction}
-The analysis done using this function is in tandem with Table 1,2,3,4
-and 5 of Patnaik, Shah and Singh (2013). A detail methodology is also
-discussed in the paper mentioned. We use S\&P500 returns to
-understand the \textit{identifyextremeevents} functionality. 
-
-Using this function, one can to understand the distribution and run
+Using this function, one can understand the distribution and run
 length of the clustered events, quantile values for the extreme
 events and yearly distribution of the extreme events. In the sections
-below we replicate the analysis for S\&P 500 from the paper and we
-generate the extreme event study plot for event on S\&P 500 and
-response of NIFTY.  
+below we replicate the analysis for S\&P 500 from the Patnaik, Shah
+and Singh (2013) and we generate the extreme event study plot for
+event on S\&P 500 and response of NIFTY. A detail methodology is also
+discussed in the paper.
 
 \section{Extreme event analysis}
 This function needs input in returns format on which extreme
@@ -48,14 +44,17 @@ tail (5\% to 95\%).
 library(eventstudies)
 data(eesData)
 input <- eesData$sp500
-output <- ees(input, prob.value=5)
+# Suppress messages
+  deprintize<-function(f){
+    return(function(...) {capture.output(w<-f(...));return(w);});
+  }
+output <- deprintize(ees)(input, prob.value=5)
 @
 % I don't understand this output. Maybe you should explain what it means.
-The output is a list. Primarily it consists of three lists,
-summary statistics for complete data-set, extreme event analysis for
-lower tail and extreme event analysis for upper tail. Further, these
-lower tail and upper tail list objects consists of 5 more list objects with
-following output:
+The output is a list and  consists of summary statistics for complete
+data-set, extreme event analysis for lower tail and extreme event
+analysis for upper tail. Further, these lower tail and upper tail list
+objects consists of 5 more list objects with following output:
 \begin{enumerate}
 \item Extreme events dataset
 \item Distribution of clustered and unclustered % events.
@@ -68,7 +67,7 @@ following output:
 Here we have data summary for the complete data-set which shows
 minimum, 5\%, 25\%, median, mean, 75\%, 95\%, maximum, standard
 deviation (sd), inter-quartile range (IQR) and number of
-observations. The output shown below mathces with the fourth column
+observations. The output shown below matches with the fourth column
 in Table 1 of the paper.
 <<>>==
 output$data.summary
@@ -130,7 +129,7 @@ output$lower.tail$yearly.extreme.event
 The yearly distribution for extreme events include unclustered event
 and clustered events which are fused. While in extreme event distribution of
 clustered and unclustered event, the clustered events are defined as
-total evnets in a cluster. For example, if there is a clustered event
+total events in a cluster. For example, if there is a clustered event
 with three consecutive extreme events then yearly distribution will
 treat it as one single event. Here below the relationship between the
 Tables is explained through equations:\\\\
@@ -174,10 +173,6 @@ eesPlot(z=eesData, response.series.name="nifty", event.series.name="sp500",
     \setkeys{Gin}{height=0.8\linewidth}
 <<label=fig12,fig=TRUE,echo=FALSE>>=
 <<fig12plot>>
-# Suppress the messages
-  deprintize<-function(f){
-    return(function(...) {capture.output(w<-f(...));return(w);});
-  }
 res <- deprintize(eesPlot)(z=eesData, response.series.name="nifty", event.series.name="sp500",titlestring="S&P500", ylab="(Cum.) change in NIFTY", prob.value=5, width=5)
 @
 \end{center}
@@ -188,7 +183,7 @@ res <- deprintize(eesPlot)(z=eesData, response.series.name="nifty", event.series
 The package code is purely written in R. It has dependencies to zoo
 (\href{http://cran.r-project.org/web/packages/zoo/index.html}{Zeileis
   2012}) and boot
-(\href{http://cran.r-project.org/web/packages/boot/index.html}{Rlpley
+(\href{http://cran.r-project.org/web/packages/boot/index.html}{Ripley
   2013}).  R itself as well as these packages can be obtained from \href{http://CRAN.R-project.org/}{CRAN}.
 %\section{Acknowledgments}
 

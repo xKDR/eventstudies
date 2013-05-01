@@ -21,19 +21,19 @@ The structure of the package and its implementation of event study
 methodology is explained in this paper. In addition to converting
 physical dates to event time frame, functions for re-indexing the
 event time returns and bootstrap inference estimation. The methods and
-functions are elucidated by employing data-set ofSENSEX firms. 
+functions are elucidated by employing data-set of SENSEX firms. 
 \end{abstract}
 
 \SweaveOpts{engine=R,pdf=TRUE}
 \section{Introduction}
-Event study has a long history which dates back to 1933 (James Dolley
-(1933)). It is mostly used to study the response of stock price or
-value of a firm due to events such as mergers \& acquisitions,  stock
-splits, quarterly results and so on.  It is one of the most widely
-used statistical tool.  
+Event study has a long history which dates back to 1938
+\citep{dolley1938effect}). It is mostly used to study the response of
+stock price or value of a firm due to events such as mergers \&
+acquisitions,  stock splits, quarterly results and so on.  It is one
+of the most widely used statistical tool.  
 
 Event study is used to study the response or
-the effect on a variable due to similar events. Efficient and liquid
+the effect on a variable, due to similar events. Efficient and liquid
 markets are basic assumption in this methodology. It assumes the
 effect on response variable is without delay. As event study output is
 further used in econometric analysis, hence significance test such as
@@ -142,10 +142,10 @@ estimates like standard errors and confidence intervals. For this,
 we generate the sampling distribution for the estimate using bootstrap
 inference. A detailed explanation of the methodology is presented in
 Patnaik, Shah and Singh (2013).
-This specific approach used here is based on Davinson, Hinkley and
-Schectman (1986). The \textit{inference.Ecar} function does the
-bootstrap to generate distribution of $\bar{CR}$. The bootstrap
-generates confidence interval at 2.5\% and 97.5\% for the estimate.
+This specific approach used here is based on
+\citept{davison1986efficient}. The \textit{inference.Ecar} function
+does the bootstrap to generate distribution of $\bar{CR}$. The
+bootstrap generates confidence interval at 2.5\% and 97.5\% for the estimate.
 
 <<>>=
 result <- inference.Ecar(z.e=es.cs, to.plot=TRUE)
@@ -168,8 +168,12 @@ result <- inference.Ecar(z.e=es.cs, to.plot=TRUE)
 The package code is purely written in R. It has dependencies to zoo
 (\href{http://cran.r-project.org/web/packages/zoo/index.html}{Zeileis
   2012}) and boot
-(\href{http://cran.r-project.org/web/packages/boot/index.html}{Rlpley
+(\href{http://cran.r-project.org/web/packages/boot/index.html}{Ripley
   2013}).  R itself as well as these packages can be obtained from \href{http://CRAN.R-project.org/}{CRAN}.
 %\section{Acknowledgments}
+
+%\newpage
+\bibliographystyle{jss}
+\bibliography{eventstudies}
 
 \end{document}

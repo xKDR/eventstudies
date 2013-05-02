@@ -32,7 +32,9 @@ ees(input,prob.value)
   distribution; Quantile values; Yearly distribution; Extreme event
   data}
 }
+\references{To convert number to words, code uses function \href{http://finzi.psych.upenn.edu/R/Rhelp02a/archive/46843.html}{numbers2words} by \href{http://socserv.mcmaster.ca/jfox/}{John Fox} and deprintize function by \href{http://mbq.me/}{Miron Kursa} }
 
+\author{Vikram Bahure}
 \examples{
 library(eventstudies)
 data(eesData)

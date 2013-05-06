@@ -1,7 +1,7 @@
 Package: eventstudies
 Type: Package
 Title: Event study and extreme event analysis
-Version: 0.05
+Version: 1.0
 Date: 2013-04-02
 Author: Ajay Shah, Vimal Balasubramaniam, Vikram Bahure
 Maintainer: Vikram Bahure <economics.vikram@gmail.com>

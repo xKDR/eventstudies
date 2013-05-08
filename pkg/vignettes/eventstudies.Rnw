@@ -155,8 +155,7 @@ result <- inference.Ecar(z.e=es.cs, to.plot=TRUE)
     \caption{Stock splits event and response of respective stock returns}
     \setkeys{Gin}{width=0.8\linewidth}
     \setkeys{Gin}{height=0.8\linewidth}
-<<label=fig1,fig=TRUE,echo=FALSE>>=
-<<fig1plot>>
+<<fig=TRUE,echo=FALSE>>=
   result <- inference.Ecar(z.e=es.cs, to.plot=TRUE)
 @
 \end{center}

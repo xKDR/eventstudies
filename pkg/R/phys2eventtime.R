@@ -52,8 +52,6 @@ phys2eventtime <- function(z, events, width=10) {
   if (width > 0) {
     for (i in 1:ncol(z.e)) {
       tmp <- z.e[,i]
-      tmp <- na.locf(tmp, na.rm=FALSE, maxgap=4)
-      tmp <- na.locf(tmp, na.rm=FALSE, maxgap=4, fromLast=TRUE)
       tmp2 <- window(tmp, start=-width, end=+width)
       if (any(is.na(tmp2))) {
         outcomes[as.numeric(colnames(z.e)[i])] <- "wdatamissing"

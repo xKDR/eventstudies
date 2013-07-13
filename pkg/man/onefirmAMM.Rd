@@ -42,7 +42,7 @@ onefirmAMM(rj, X, nlags = NA, verbose = FALSE, dates)
 
 \examples{ 
 # Create RHS before running onefirmAMM()
-data("ammData",package="amm")
+data("ammData")
 NIFTY_INDEX <- y3c3$NIFTY_INDEX
 INRUSD <- y3c3$INRUSD
 Company_A <- y3c3$Company_A

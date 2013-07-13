@@ -58,7 +58,7 @@ of the exposures estimated for the firm rj.}
 
 \examples{
 # firmExposures
-data("firmExposuresData",package="amm")
+data("firmExposuresData")
 rj  <- test$Company_A
 rM1 <- test$NIFTY_INDEX
 rM2 <- test$usdinr

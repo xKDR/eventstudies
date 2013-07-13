@@ -5,8 +5,12 @@ AMM <- function(amm.type=c("onefirm","manyfirms","firmExposures"), ...){
   #-----------------------------
   # Getting RHS variables in AMM
   #-----------------------------
-  print("Preparing explanatory variables for computation of Augmented Market Models")
-  print("If any argument is missing then please refer to the documentation for detailed explanation.")
+  #print("Preparing explanatory variables for computation of Augmented Market Models")
+  print("If there is missing argument then please refer to the documentation for detailed explanation")
+  if(amm.type!= "onefirm" & amm.type!="manyfirms" & amm.type!="firmExposures"){
+    stop("Input amm.type is missing")
+  }
+  
   # Checking arguments  
   nlags.check <- testObject(nlags)
   if(nlags.check==FALSE){ nlags <- NA}

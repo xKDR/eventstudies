@@ -37,7 +37,7 @@ of the exposures estimated for the firm rj.}
 
 \examples{ 
 # Create RHS before running AMM()
-data("ammData",package="amm")
+data("ammData")
 NIFTY_INDEX <- y3c3$NIFTY_INDEX
 INRUSD <- y3c3$INRUSD
 Company_A <- y3c3$Company_A
@@ -46,7 +46,7 @@ Company_C <- y3c3$Company_C
 regressand <- cbind(Company_A,Company_B,Company_C)
 
 # One firm
-of <- amm(amm.type="onefirm",rj=Company_A,
+of <- AMM(amm.type="onefirm",rj=Company_A,
             nlags=NA,
             verbose=TRUE,
             dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
@@ -55,7 +55,7 @@ of <- amm(amm.type="onefirm",rj=Company_A,
            switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
 
 # Many firm
-mf<- amm(amm.type="manyfirm",regressand,
+mf<- AMM(amm.type="manyfirm",regressand,
             lags=NA, nlags=NA,
             verbose=TRUE,
             dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",

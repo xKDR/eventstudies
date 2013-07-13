@@ -65,7 +65,7 @@ makeX(rM1, others, switch.to.innov = rep(TRUE, NCOL(others)), rM1purge = TRUE, n
 
 \examples{
 # makeX
-data("test",package="amm")
+data("firmExposuresData")
 rj  <- test$Company_A
 rM1 <- test$NIFTY_INDEX
 rM2 <- test$usdinr

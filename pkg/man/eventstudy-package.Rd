@@ -1,5 +1,5 @@
-\name{eventstudy-package}
-\alias{eventstudy}
+\name{eventstudies-package}
+\alias{eventstudies}
 \docType{package}
 
 \title{
@@ -12,10 +12,10 @@ This package is used to undertake event study analysis using R.
 
 \details{
 \tabular{ll}{
-Package: \tab eventstudy\cr
+Package: \tab eventstudies\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2013-04-04\cr
+Version: \tab 1.1\cr
+Date: \tab 2013-07-16\cr
 License: \tab GPL 2\cr
 LazyLoad: \tab yes\cr
 }

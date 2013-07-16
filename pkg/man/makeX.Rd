@@ -11,7 +11,7 @@ of Augmented Market Models
 }
 
 \usage{
-makeX(rM1, others, switch.to.innov = rep(TRUE, NCOL(others)), rM1purge = TRUE, nlags = 5, dates = NULL, verbose = TRUE)
+makeX(rM1, others, switch.to.innov = rep(TRUE, NCOL(others)), rM1purge = TRUE, nlags = 5, dates = NULL, verbose = FALSE)
 }
 
 \arguments{
@@ -61,18 +61,15 @@ makeX(rM1, others, switch.to.innov = rep(TRUE, NCOL(others)), rM1purge = TRUE, n
 
 \author{Ajay Shah, Vimal Balasubramaniam}
 
-\seealso{ \code{\link{do.one.piece}}}
-
 \examples{
 # makeX
 data("firmExposuresData")
-rj  <- test$Company_A
-rM1 <- test$NIFTY_INDEX
-rM2 <- test$usdinr
-rM3 <- test$baa
+rj  <- firmExposuresData$Company_A
+rM1 <- firmExposuresData$NIFTY_INDEX
+rM2 <- firmExposuresData$usdinr
+rM3 <- firmExposuresData$baa
 X <- makeX(rM1, others=rM2,
            switch.to.innov=FALSE, rM1purge=FALSE, verbose=FALSE)
 }
 
 \keyword{makeX}
-\keyword{do.one.piece}

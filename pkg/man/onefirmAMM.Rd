@@ -10,7 +10,7 @@
 }
 
 \usage{
-onefirmAMM(rj, X, nlags = NA, verbose = FALSE, dates)
+onefirmAMM(rj, X, nlags = NA, verbose = FALSE, dates = NULL, residual = TRUE)
 }
 
 \arguments{
@@ -29,7 +29,9 @@ onefirmAMM(rj, X, nlags = NA, verbose = FALSE, dates)
   }
   \item{dates}{Default is NULL. If no dates are mentioned, onefirmAMM does
   what firmExposures() would do, i.e., estimate exposures for the full time period.
-  } 
+  }
+  \item{residual}{Returns AMM Residuals if TRUE, AMM exposure
+  otherwise. Defaults to TRUE.}
 }
 \value{ The function returns the exposures, HAC adjusted standard
   errors, the number of lags used, and the residuals from the fitted
@@ -42,7 +44,7 @@ onefirmAMM(rj, X, nlags = NA, verbose = FALSE, dates)
 
 \examples{ 
 # Create RHS before running onefirmAMM()
-data("ammData")
+data("y3c3")
 NIFTY_INDEX <- y3c3$NIFTY_INDEX
 INRUSD <- y3c3$INRUSD
 Company_A <- y3c3$Company_A

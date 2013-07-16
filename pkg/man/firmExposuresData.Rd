@@ -13,7 +13,7 @@
 \examples{
 library(zoo)
 data(firmExposuresData)
-str(test)
+str(firmExposuresData)
 }
 
 \keyword{firmExposuresData}

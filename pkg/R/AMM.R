@@ -96,7 +96,7 @@ AMM <- function(amm.type = NULL, ...) {
 #######################
 # AMM for one firm
 #######################
-onefirmAMM <- function(rj,X,nlags=NA,verbose=FALSE,dates=NULL,residual=FALSE){
+onefirmAMM <- function(rj,X,nlags=NA,verbose=FALSE,dates=NULL,residual=TRUE){
   exposures <- data.frame(matrix(NA,ncol=ncol(X),nrow=(length(dates)-1)))
   colnames(exposures) <- colnames(X)
   sds <- exposures

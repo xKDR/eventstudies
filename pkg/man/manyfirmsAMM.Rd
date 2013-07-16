@@ -43,7 +43,7 @@ manyfirmsAMM(regressand, regressors, lags, dates = NULL, periodnames = NULL, ver
 \examples{
 # Running manyfirmsAMM() involves as many steps as working with onefirmAMM. 
 
-data("ammData",package="amm")       
+data("y3c3", package="eventstudies")       
 NIFTY_INDEX <- y3c3$NIFTY_INDEX
 INRUSD <- y3c3$INRUSD
 Company_A <- y3c3$Company_A

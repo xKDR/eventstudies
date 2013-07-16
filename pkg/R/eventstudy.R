@@ -1,13 +1,13 @@
 eventstudy <- function(inputData = NULL,
                        eventList,
                        width = 10,
-                       type = "marketResiduals",
+                       type = "marketResidual",
                        to.remap = TRUE,
                        remap = "cumsum",
                        to.plot = TRUE,
                        levels =  FALSE,
                        ...) {
-                                        # type = "marketResiduals", "excessReturn", "AMM", "None"
+                                        # type = "marketResidual", "excessReturn", "AMM", "None"
   if (type == "None" && !is.null(inputData)) {
     outputModel <- inputData
   } else {
@@ -24,9 +24,9 @@ eventstudy <- function(inputData = NULL,
     outputModel <- AMM(...)
   }
 
-  ## marketResiduals
-  if (type == "marketResiduals") {
-    outputModel <- marketResiduals(...)
+  ## marketResidual
+  if (type == "marketResidual") {
+    outputModel <- marketResidual(...)
   }
 
   ## excessReturn

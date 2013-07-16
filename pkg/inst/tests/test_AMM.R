@@ -1,14 +1,12 @@
 context("AMM")
 
 test_that("test.AMM", {
-  library(sandwich)
-  
-  load(system.file("data", "firmExposures.rda", package = "eventstudies"))
+  load(system.file("data", "firmExposuresData.rda", package = "eventstudies"))
 
-  rj  <- firmExposures$Company_A
-  rM1 <- firmExposures$NIFTY_INDEX
-  rM2 <- firmExposures$usdinr
-  rM3 <- firmExposures$baa
+  rj  <- firmExposuresData$Company_A
+  rM1 <- firmExposuresData$NIFTY_INDEX
+  rM2 <- firmExposuresData$usdinr
+  rM3 <- firmExposuresData$baa
 
   cat("\nDoing Testcase P2")
   X <- makeX(rM1, others=rM2,

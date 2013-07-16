@@ -1,17 +1,17 @@
-\name{ammData}
-\alias{ammData}
+\name{y3c3}
+\alias{y3c3}
 
 
 \title{Three years and three random companies}
 
 \description{Data for testing and examples in the package}
 
-\usage{data(ammData)}
+\usage{data(y3c3)}
 
 \examples{
 library(zoo)
-data(ammData)
+data(y3c3)
 str(y3c3)
 }
 
-\keyword{ammData}
+\keyword{y3c3}

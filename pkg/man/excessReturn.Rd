@@ -15,12 +15,12 @@
   \item{market.name}{It is the market (index) column name in the data object}
 
 }
-\value{ Excess market return}
+\value{Excess market return}
 
 \author{Vikram Bahure}
 
 \examples{ 
-data(marketmodelData)
+data(mmData)
 er.result <- excessReturn(firm.name="ranbaxyacp",market.name="nifty",
                           data.object=mmData)
 

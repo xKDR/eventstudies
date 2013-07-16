@@ -7,16 +7,17 @@
 }
 
 \usage{
-AMM(amm.type=c("one.firm","manyfirms","firmExposures"), ...)
+AMM(amm.type=NULL, ...)
 }
 
 \arguments{
-  \item{amm.type}{Type of AMM to be performed: On one firm or many firms or just firm exposure}
-
+  \item{amm.type}{Type of AMM to be performed: On one firm "onefirm" or
+    just firm exposure "firmExposures"}
+  \item{...}{Accepts specific arguments for the model.}
 }
-\value{ The function returns the exposures, HAC adjusted standard
+\value{The function returns the exposures, HAC adjusted standard
   errors, the number of lags used, and the residuals from the fitted
-  model.
+  model. Default is NULL.
 
 \item{exposures}{This contains the exposure estimates for the firm
 j}
@@ -37,7 +38,7 @@ of the exposures estimated for the firm rj.}
 
 \examples{ 
 # Create RHS before running AMM()
-data("ammData")
+data("y3c3")
 NIFTY_INDEX <- y3c3$NIFTY_INDEX
 INRUSD <- y3c3$INRUSD
 Company_A <- y3c3$Company_A
@@ -53,15 +54,6 @@ of <- AMM(amm.type="onefirm",rj=Company_A,
                        "2008-01-05","2009-01-03")),
            rM1=NIFTY_INDEX, others=INRUSD,
            switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
-
-# Many firm
-mf<- AMM(amm.type="manyfirm",regressand,
-            lags=NA, nlags=NA,
-            verbose=TRUE,
-            dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
-                       "2008-01-05","2009-01-03")),periodnames=c("P1","P2","P3","P4"),
-           rM1=NIFTY_INDEX, others=INRUSD,
-           switch.to.innov=TRUE, rM1purge=TRUE)
 }
 
 \keyword{AMM}

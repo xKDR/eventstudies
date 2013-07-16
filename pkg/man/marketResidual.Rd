@@ -22,7 +22,7 @@
 \author{Vikram Bahure}
 
 \examples{ 
-data(marketmodelData)
+data(mmData)
 # Forumla for market model
 mm.formula <- paste("ranbaxyacp","~","nifty","+","drug",sep="")
 # Extracting market residual

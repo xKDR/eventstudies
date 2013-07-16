@@ -163,7 +163,6 @@ manyfirmsAMM <-function(regressand,regressors,
                 s.exposures=rep(NA,ncol(regressors)))
 
   for(i in 1:ncol(regressand)){
-	cat("Doing",colnames(regressand)[i])
     if (verbose) {cat ("Doing", colnames(regressand)[i])}
     rj <- regressand[,i]
     dataset <- cbind(rj, regressors)   # This is the full time-series
@@ -283,7 +282,6 @@ ARinnovations <- function(x) {
 # The workhorse called by makeX to return a nice matrix of RHS
 # variables to be used in an analysis. 
 do.one.piece <- function(rM1, others, switch.to.innov, rM1purge, nlags, verbose=FALSE) {
-  cat("   do.one.piece invocation\n")
   thedates <- index(rM1)
   if (verbose) {
     cat("   Doing work for period from ",

@@ -1,4 +1,4 @@
-context("Models")
+context("AMM")
 
 test_that("test.AMM", {
   library(sandwich)
@@ -10,7 +10,7 @@ test_that("test.AMM", {
   rM2 <- firmExposures$usdinr
   rM3 <- firmExposures$baa
 
-  cat("Doing Testcase P2:\n")
+  cat("\nDoing Testcase P2")
   X <- makeX(rM1, others=rM2,
              switch.to.innov=FALSE, rM1purge=FALSE, verbose=FALSE)
   a <- firmExposures(rj, X, nlags=0, verbose=FALSE)
@@ -19,7 +19,7 @@ test_that("test.AMM", {
                                  0.152101606133946,1.02143820457251),
                                .Names = c("rM1", "z", "rM1", "z")), tolerance=1e-1))
 
-  cat("Doing Testcase P3:\n")
+  cat("\nDoing Testcase P3")
   X <- makeX(rM1, others=rM2,
              switch.to.innov=TRUE, rM1purge=FALSE, verbose=FALSE)
   a <- firmExposures(rj, X, nlags=0, verbose=FALSE)
@@ -28,7 +28,7 @@ test_that("test.AMM", {
                                  0.152100337597009,1.02146106755333),
                                .Names = c("rM1", "z", "rM1", "z")), tolerance=1e-1))
   
-  cat("Doing Testcase P4:\n")
+  cat("\nDoing Testcase P4")
   a <- firmExposures(rj, X, nlags=1, verbose=FALSE)
   expect_that(c(a$exposures, a$s.exposures),
               equals(structure(c( 0.736264286484902, -1.450805,
@@ -36,7 +36,7 @@ test_that("test.AMM", {
                                .Names = c("rM1","z", "rM1", "z")),tolerance=1e-1))
 
   
-  cat("Doing Testcase P5:\n")
+  cat("\nDoing Testcase P5")
   X <- makeX(rM1, others=rM2,
              switch.to.innov=TRUE, rM1purge=TRUE, nlags=1, verbose=FALSE)
   a <- firmExposures(rj, X, nlags=1, verbose=FALSE)
@@ -45,7 +45,7 @@ test_that("test.AMM", {
                                  0.1653025, 1.1436666),
                                .Names = c("rM1", "z", "rM1", "z")),tolerance=1e-1))
   
-  cat("Doing Testcase P6:\n")
+  cat("\nDoing Testcase P6")
   X <- makeX(rM1, others=cbind(rM2, rM3),
              switch.to.innov=c(FALSE, FALSE), rM1purge=FALSE, verbose=FALSE)
   a <- firmExposures(rj, X, nlags=0, verbose=FALSE)
@@ -55,7 +55,7 @@ test_that("test.AMM", {
                                  1.01806122963342,0.467821650129292),
                                .Names = c("rM1", "rM2", "rM3", "rM1", "rM2", "rM3")),tolerance=1e-1))
 
-  cat("Doing Testcase P7:\n")
+  cat("\nDoing Testcase P7")
   X <- makeX(rM1, others=cbind(rM2, rM3),
              switch.to.innov=c(TRUE, TRUE), rM1purge=TRUE, nlags=1, verbose=FALSE)
   a <- firmExposures(rj, X, nlags=1, verbose=FALSE)
@@ -71,7 +71,7 @@ test_that("test.AMM", {
 ################################################################################
 
 
-  cat("Doing Testcases P8:\n")
+  cat("\nDoing Testcases P8")
   load(system.file("data", "y3c3.rda", package = "eventstudies"))
 
   NIFTY_INDEX <- y3c3$NIFTY_INDEX

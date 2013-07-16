@@ -1,4 +1,4 @@
-context("Event study")
+context("phys2eventtime")
 
 test_that("test.eventstudy", {
 
@@ -34,16 +34,17 @@ rawres <- structure(list(z.e = structure(c(NA, NA, NA, NA, NA, NA,
   "unitmissing", "wrongspan" ), class = "factor")), .Names = c("z.e",
   "outcomes"))
 
-# Check without the width handling --
+cat("\nCheck without width handling ")
 a <- phys2eventtime(p, eventslist,width=0)
 expect_that(a, equals(rawres))
 
-# Check with width of 1 --
+cat("\nCheck with width of 1 ")
 a <- phys2eventtime(p, eventslist,width=1)
 expect_that(a, equals(rawres))
 
 # But when we go to width=2, column 1 and 3 drop off because they have
 # only 1 obs before & after the event date respectively.
+cat("\nCheck with width of 2 ")
 a <- phys2eventtime(p, eventslist,width=2)
 expect_that(a, equals(structure(list(z.e = structure(c(NA, NA, NA, NA, 285.325,
                                        292.6, 290.025, 286.2, 290.075, 295.05,

@@ -1,3 +1,9 @@
 export(inference.Ecar, phys2eventtime, remap.cumsum, remap.cumprod, remap.event.reindex, ees, eesPlot)
-
-
+export(AMM,
+       onefirmAMM,
+       firmExposures,
+       ARinnovations,
+       do.one.piece,
+       makeX,
+       lm.for.amm.exposure,
+       kernel.plots)

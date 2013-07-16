@@ -44,3 +44,6 @@ eventstudy <- function(inputData = NULL,
 
 ### Bootstrap
   result <- inference.Ecar(z.e = es.w, to.plot = to.plot)
+
+  return(result)
+}

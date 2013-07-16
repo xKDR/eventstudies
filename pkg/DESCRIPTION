@@ -4,7 +4,7 @@ Title: Event study and extreme event analysis
 Version: 1.1
 Author: Ajay Shah, Vimal Balasubramaniam, Vikram Bahure
 Maintainer: Vikram Bahure <economics.vikram@gmail.com>
-Depends: R (>= 2.12.0), zoo, xts, boot 
+Depends: R (>= 2.12.0), zoo, xts, boot, testthat (<= 0.7.1)
 Description: Implementation of short and long term event study methodology
 License: GPL-2
 LazyLoad: yes

@@ -1,5 +1,6 @@
 library(eventstudies)
 
+test.eventstudy <- function() {
 # An example dataset, with 3 firms --
 p <- structure(c(33.16, 34.0967, 35.3683, 34.46, 34.17, 35.89, 36.19,
                  37.1317, 36.7033, 37.7933, 37.8533, 285.325, 292.6,
@@ -42,7 +43,7 @@ all.equal(a, rawres)
 # But when we go to width=2, column 1 and 3 drop off because they have
 # only 1 obs before & after the event date respectively.
 a <- phys2eventtime(p, eventslist,width=2)
-all.equal(a, structure(list(z.e = structure(c(NA, NA, NA, NA, 285.325,
+test.result <- all.equal(a, structure(list(z.e = structure(c(NA, NA, NA, NA, 285.325,
                               292.6, 290.025, 286.2, 290.075, 295.05,
                               289.325, 285.625, 293.7, 298.5, 289.05,
                               NA, NA, NA, NA), index = -9:9, class =
@@ -51,3 +52,15 @@ all.equal(a, structure(list(z.e = structure(c(NA, NA, NA, NA, 285.325,
                               "unitmissing", "wdatamissing",
                               "wrongspan"), class = "factor")), .Names
                               = c("z.e", "outcomes" )))
+s <- structure(list(z.e = structure(c(NA, NA, NA, NA, 285.325,
+                              292.6, 290.025, 286.2, 290.075, 295.05,
+                              289.325, 285.625, 293.7, 298.5, 289.05,
+                              NA, NA, NA, NA), index = -9:9, class =
+                              "zoo"), outcomes = structure(c(3L, 1L,
+                              3L, 4L, 4L, 2L), .Label = c("success",
+                              "unitmissing", "wdatamissing",
+                              "wrongspan"), class = "factor")), .Names
+                              = c("z.e", "outcomes" ))
+
+checkTrue(isTRUE(test.result))
+}

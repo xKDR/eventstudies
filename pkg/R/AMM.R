@@ -117,16 +117,18 @@ AMM <- function(amm.type = NULL, ...) {
 #######################
 # AMM for one firm
 #######################
-onefirmAMM <- function(rj,X,nlags=NA,verbose=FALSE,dates=NULL){
+onefirmAMM <- function(rj,X,nlags=NA,verbose=FALSE,dates=NULL,residual=FALSE){
   exposures <- data.frame(matrix(NA,ncol=ncol(X),nrow=(length(dates)-1)))
   colnames(exposures) <- colnames(X)
   sds <- exposures
   periodnames <- NULL
-  
+  m.residuals <- NULL
   if(is.null(dates)){
    res <- firmExposures(rj,X,verbose=verbose,nlags=nlags)
    exposures <- res$exposure
    sds <- res$s.exposure
+   if(residual==TRUE)
+     m.residuals <- res$residuals
  }else{
    for(i in 1:(length(dates)-1)){
      tmp <- window(rj,start=dates[i],end=dates[i+1])
@@ -138,10 +140,11 @@ onefirmAMM <- function(rj,X,nlags=NA,verbose=FALSE,dates=NULL){
      exposures[i,] <- res$exposure
      periodnames <- c(periodnames,paste(dates[i],dates[i+1],sep=" TO "))
      sds[i,] <- res$s.exposure
+     m.residuals <- merge(m.residuals,res$residuals,all=TRUE)
    }
    rownames(exposures) <- rownames(sds) <- periodnames
  }
-  rval <- list(exposures=exposures,sds=sds)
+  rval <- list(exposures=exposures,sds=sds,residuals=m.residuals)
   return(rval)
 }
 
@@ -267,8 +270,9 @@ firmExposures <- function(rj, X, nlags=NA, verbose=FALSE) {
       s.exposures <- c(s.exposures, sqrt(w %*% Sigma %*% w))
     }
   }
+  residuals <- m$resid
   names(exposures) <- names(s.exposures) <- colnames(X)
-  results <- list(exposures=exposures,
+  results <- list(exposures=exposures,residuals=residuals,
                   s.exposures=s.exposures, nlags=nlags,
                   lm.res=m)
   class(results) <- "amm"

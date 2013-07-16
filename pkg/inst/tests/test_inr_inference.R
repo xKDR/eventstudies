@@ -1,4 +1,4 @@
-context("Event study")
+context("INR Inference")
 
 test_that("test.inr.inference", {
 library(eventstudies)

@@ -1,6 +1,6 @@
 context("phys2eventtime")
 
-test_that("test.eventstudy", {
+test_that("test.phys2eventtime", {
 
 # An example dataset, with 3 firms --
 p <- structure(c(33.16, 34.0967, 35.3683, 34.46, 34.17, 35.89, 36.19,

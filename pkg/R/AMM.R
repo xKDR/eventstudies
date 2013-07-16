@@ -478,14 +478,3 @@ kernel.plots <- function(draws, logscale=NULL) {
           }
 	}
   }
-
-#############################################################################################
-
-
-
-###########################
-# Checking if object exists
-###########################
-testObject <- function(object){
-   exists(as.character(substitute(object)))
-}

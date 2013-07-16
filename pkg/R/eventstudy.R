@@ -5,12 +5,17 @@ eventstudy <- function(inputData = NULL,
                        to.remap = TRUE,
                        remap = "cumsum",
                        to.plot = TRUE,
+                       levels =  FALSE,
                        ...) {
                                         # type = "marketResiduals", "excessReturn", "AMM", "None"
   if (type == "None" && !is.null(inputData)) {
     outputModel <- inputData
   } else {
     stop("inputData or \"None\" type missing")
+  }
+
+  if (levels == TRUE) {
+    inputData <- diff(log(inputData)) * 100
   }
 
 ### Run models

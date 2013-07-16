@@ -1,79 +1,113 @@
 ##########################
 # Generalised AMM function
 ##########################
-AMM <- function(amm.type=c("onefirm","manyfirms","firmExposures"), ...){
-  #-----------------------------
-  # Getting RHS variables in AMM
-  #-----------------------------
-  #print("Preparing explanatory variables for computation of Augmented Market Models")
-  print("If there is missing argument then please refer to the documentation for detailed explanation")
-  if(amm.type!= "onefirm" & amm.type!="manyfirms" & amm.type!="firmExposures"){
-    stop("Input amm.type is missing")
+
+AMM <- function(amm.type = NULL, ...) {
+
+  ## List of models currently supported
+  modelsList <- c("onefirm",
+                  "manyfirms",
+                  "firmExposures")
+
+  if (is.null(amm.type) || length(amm.type) != 1) {
+    stop("Argument amm.type not provided or incorrect")
+  }
+  if (match(amm.type, modelsList, nomatch = -1) == -1) {
+    stop("Unknown model provided")
+  }
+
+                                        # NULLify all the values before use
+  rj <- NULL
+  rM1 <- NULL
+  rM1purge <- NULL
+  nlags <- NULL
+  others <- NULL
+  switch.to.innov <- NULL
+  verbose <- NULL
+  dates <- NULL
+  regressand <- NULL
+  periodnames <- NULL
+
+                                        # parse the input arguments for the model
+  modelArgs <- list(...)
+                                        # assign values
+  for (i in 1:length(modelArgs)) {
+    eval(parse(text = paste(names(modelArgs)[i], "<-", "modelArgs[[i]]")))
+  }
+
+                                      # Checking required arguments
+  if (match("rM1", names(modelArgs), nomatch = -1) == -1) {
+    stop("Input rM1 (stock market index) is missing")
+  }
+  if (match("others", names(modelArgs), nomatch = -1) == -1) {
+    stop("Input 'others' (time series of other regressor or interest) is missing")
+  }
+  if (match("rM1purge", names(modelArgs), nomatch = -1) == -1) {
+    stop("Input rM1purge is missing")
+  }
+  if (match("switch.to.innov", names(modelArgs), nomatch = -1) == -1) {
+    stop("Input switch.to.innov is missing")
   }
   
-  # Checking arguments  
-  nlags.check <- testObject(nlags)
-  if(nlags.check==FALSE){ nlags <- NA}
-  verbose.check <- testObject(verbose)
-  if(verbose.check==FALSE){ verbose <- FALSE}
-  dates.check <- testObject(dates)
-  if(dates.check==FALSE){ dates <- NULL}
-  
-  rM1.check <- testObject(rM1)
-  if(rM1.check==FALSE){ stop("Input rM1 (stock market index) is missing")}
-  others.check <- testObject(others)
-  if(others.check==FALSE){ stop("Input 'others' (time series of other regressor or interest) is missing")}
-  rM1.check <- testObject(rM1)
-  if(rM1.check==FALSE){ stop("Input rM1 (stock market index) is missing")}
-  rM1purge.check <- testObject(rM1purge)
-  if(rM1purge.check==FALSE){ stop("Input rM1purge is missing")}
-  switch.to.innov.check <- testObject(switch.to.innov)
-  if(switch.to.innov.check==FALSE){ stop("Input switch.to.innov is missing")}
+                                        # Checking remaining arguments
+  if (match("nlags", names(modelArgs), nomatch = -1) == -1) {
+    nlags <- NA
+  }
+  if (match("verbose", names(modelArgs), nomatch = -1) == -1) {
+    verbose <- FALSE
+  }
+  if (match("dates", names(modelArgs), nomatch = -1) == -1) {
+    dates <- NULL
+  }
 
-  if(amm.type!="manyfirms"){
+  ## Assign values
+  
+  ##-----------
+  ## One firm
+  ##-----------
+  if(amm.type == "onefirm") {
+                                        # Checking required arguments
+    if (match("rj", names(modelArgs), nomatch = -1) == -1) {
+      stop("Input rj (firm data) is missing")
+    }
+
     X <- makeX(rM1, others, switch.to.innov,
                rM1purge, nlags, dates, verbose)
-  }else{
-    regressors <- makeX(rM1, others, switch.to.innov, rM1purge, nlags,
-                        dates, verbose)
-  }
-  
-  #---------
-  # One firm
-  #---------
-  if(amm.type=="onefirm"){
-    # Checking if arguments are provided
-    rj.check <- testObject(rj)
-    if(rj.check==FALSE){ stop("Input rj (firm data) is missing")}
- 
     result <- onefirmAMM(rj, X, nlags, verbose, dates)
   }
-    
-  #-----------
-  # Many firms
-  #-----------
-  if(amm.type=="manyfirms"){
-    # Checking if arguments are provided
-    regressors.check <- testObject(regressors)
-    if(regressors.check==FALSE){ stop("Input regressors is missing. Refer documentation.")}
-    regressand.check <- testObject(regressand)
-    if(regressand.check==FALSE){ stop("Input regressand is missing. Refer documentation.")}
-    dates.check <- testObject(dates)
-    if(dates.check==FALSE){ dates <- NULL}
-    periodnames.check <- testObject(periodnames)
-    if(periodnames.check==FALSE){ periodnames <- NULL}
-    
+
+  ##-----------
+  ## Many firms
+  ##-----------
+  if(amm.type == "manyfirms") {
+                                        # Checking required arguments
+    if (match("regressand", names(modelArgs), nomatch = -1) == -1) {
+      stop("Input regressand is missing. Refer documentation.")
+    }
+
+                                        # Checking remaining arguments
+    if (match("periodnames", names(modelArgs), nomatch = -1) == -1) {
+      periodnames <- NULL
+    }
+
+    regressors <- makeX(rM1, others, switch.to.innov,
+                        rM1purge, nlags, dates, verbose)
     result <- manyfirmsAMM(regressand,regressors,
-                        lags=nlags,dates, periodnames,verbose)
+                           lags=nlags,dates, periodnames,verbose)
   }
 
   #---------------
   # Firm exposures
   #---------------
-  if(amm.type=="firmExposures"){
-    rj.check <- testObject(rj)
-    if(rj.check==FALSE){ stop("Input rj (firm data) is missing")}
+  if (amm.type=="firmExposures") {
+                                        # Checking required arguments
+    if (match("rj", names(modelArgs), nomatch = -1) == -1) {
+      stop("Input rj (firm data) is missing")
+    }
     
+    X <- makeX(rM1, others, switch.to.innov,
+               rM1purge, nlags, dates, verbose)
+
     result <- firmExposures(rj, X, nlags, verbose)
   }
 

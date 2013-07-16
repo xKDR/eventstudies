@@ -345,7 +345,7 @@ makeX <- function(rM1, others,
                   rM1purge=TRUE,
                   nlags=5,
                   dates=NULL,
-                  verbose=TRUE) {
+                  verbose=FALSE) {
   if (verbose) {cat("0. Checking args\n")}
   stopifnot(all.equal(index(rM1), index(others)),
             length(switch.to.innov)==NCOL(others))

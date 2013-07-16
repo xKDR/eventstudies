@@ -2,8 +2,4 @@ export(inference.Ecar, phys2eventtime, remap.cumsum, remap.cumprod, remap.event.
 export(AMM,
        onefirmAMM,
        firmExposures,
-       ARinnovations,
-       do.one.piece,
-       makeX,
-       lm.for.amm.exposure,
-       kernel.plots)
+       makeX)

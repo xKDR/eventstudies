@@ -6,7 +6,6 @@ AMM <- function(amm.type = NULL, ...) {
 
   ## List of models currently supported
   modelsList <- c("onefirm",
-                  "manyfirms",
                   "firmExposures")
 
   if (is.null(amm.type) || length(amm.type) != 1) {
@@ -74,26 +73,6 @@ AMM <- function(amm.type = NULL, ...) {
     X <- makeX(rM1, others, switch.to.innov,
                rM1purge, nlags, dates, verbose)
     result <- onefirmAMM(rj, X, nlags, verbose, dates)
-  }
-
-  ##-----------
-  ## Many firms
-  ##-----------
-  if(amm.type == "manyfirms") {
-                                        # Checking required arguments
-    if (match("regressand", names(modelArgs), nomatch = -1) == -1) {
-      stop("Input regressand is missing. Refer documentation.")
-    }
-
-                                        # Checking remaining arguments
-    if (match("periodnames", names(modelArgs), nomatch = -1) == -1) {
-      periodnames <- NULL
-    }
-
-    regressors <- makeX(rM1, others, switch.to.innov,
-                        rM1purge, nlags, dates, verbose)
-    result <- manyfirmsAMM(regressand,regressors,
-                           lags=nlags,dates, periodnames,verbose)
   }
 
   #---------------

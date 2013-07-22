@@ -3,7 +3,7 @@ context("Market residuals")
 test_that("test.market.residuals", {
 library(eventstudies)
 
-load(system.file("data", "inr.rda", package = "eventstudies"))
+load(system.file("data", "mmData.rda", package = "eventstudies"))
 
 mm.formula <- paste("ranbaxyacp","~","nifty",sep="")
 mm.result <- marketResidual(mm.formula=mm.formula,data.object=mmData)

@@ -3,7 +3,7 @@ context("INR Inference")
 test_that("test.inr.inference", {
 library(eventstudies)
 
-load(system.file("data", "inr.rda", package = "eventstudies"))
+load(system.file("data", "inr.rda",package = "eventstudies"))
 
 inr_returns <- diff(log(inr))[-1]
 

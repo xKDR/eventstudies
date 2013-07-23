@@ -7,10 +7,19 @@
 }
 
 \usage{
-eventstudy(inputData, eventList, width = 10, type = "marketResidual", 
-to.remap = TRUE, remap = "cumsum", levels = FALSE, inference = TRUE,
-inference.strategy = "bootstrap", to.plot = TRUE, xlab = "Event time",
-ylab = "Cumulative returns of response series", main = "Event study plot", ...)
+eventstudy(inputData = NULL,
+                       eventList,
+                       width = 10,
+                       levels =  FALSE,
+                       type = "marketResidual",
+                       to.remap = TRUE,
+                       remap = "cumsum",
+                       inference = TRUE,
+                       inference.strategy = "bootstrap",
+                       to.plot = TRUE,
+                       xlab = "Event time",
+                       ylab = "Cumulative returns of response series",
+                       main = "Event study plot", ...)
 }
 
 \arguments{
@@ -23,6 +32,7 @@ ylab = "Cumulative returns of response series", main = "Event study plot", ...)
   \item{levels}{If the data is in returns format then levels is FALSE else TRUE}
   \item{inference}{This argument is used to compute confidence interval for the estimator}
   \item{inference.strategy}{If inference is TRUE then this argument gives an option to select different inference strategy to compute confidence intervals. Default to bootstrap.}
+  \item{to.plot}{This argument will generate an eventstudy plot of the inference estimated. If to.plot is equal to TRUE then function would generate the plot else it would not. }
   \item{xlab}{If to.plot is TRUE then the plot generated will take this X label}
   \item{ylab}{If to.plot is TRUE then the plot generated will take this Y label}	
   \item{main}{If to.plot is TRUE then the plot generated will take this as main title}
@@ -46,6 +56,7 @@ ylab = "Cumulative returns of response series", main = "Event study plot", ...)
 
 \examples{ 
 ## Performing event study
+library(eventstudies)
 data("StockPriceReturns")
 data("SplitDates")
 

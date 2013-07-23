@@ -10,13 +10,13 @@ This function does wilcox inference to generate distribution of average of all t
  }
 
 \usage{
-inference.wilcox(z.e,to.plot = TRUE, xlab = "Event time", 
+inference.wilcox(es.w,to.plot = TRUE, xlab = "Event time", 
 			     ylab = "Cumulative returns of response series", 
 			     main = "Event study plot")
 }
 
 \arguments{
-  \item{z.e}{z.e is the first component of the list returned by the function phys2eventtime.}
+  \item{es.w}{es.w is the first component of the list returned by the function phys2eventtime.}
   \item{to.plot}{This argument will generate an eventstudy plot of the inference estimated. If to.plot is equal to TRUE then function would generate the plot else it would not. }
   \item{xlab}{If to.plot is TRUE then the plot generated will take this X label}
   \item{ylab}{If to.plot is TRUE then the plot generated will take this Y label}	
@@ -39,5 +39,5 @@ data(SplitDates)
 es.results <- phys2eventtime(z=StockPriceReturns, events=SplitDates,width=5)
 es.w <- window(es.results$z.e, start=-5, end=+5)
 eventtime <- remap.cumsum(es.w, is.pc=FALSE, base=0)
-inference.wilcox(z.e=eventtime, to.plot=FALSE)
+inference.wilcox(es.w=eventtime, to.plot=FALSE)
 }

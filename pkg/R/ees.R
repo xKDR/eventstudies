@@ -817,7 +817,7 @@ corecomp <- function(z,dlist,seriesname,width) {
   # Replaing NA's with zeroes
   es.w[is.na(es.w)] <- 0
   es.w <- remap.cumsum(es.w, is.pc=FALSE, base=0)
-  inference.Ecar(es.w)
+  inference.bootstrap(es.w)
 }
  
 #----------------------------------

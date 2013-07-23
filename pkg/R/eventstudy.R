@@ -56,13 +56,13 @@ eventstudy <- function(inputData = NULL,
   if(inference == TRUE){
     ## Bootstrap
     if(inference.strategy == "bootstrap"){
-      result <- inference.bootstrap(z.e = es.w, to.plot = to.plot, xlab = xlab,
+      result <- inference.bootstrap(es.w = es.w, to.plot = to.plot, xlab = xlab,
                                     ylab = ylab, main = main)
     }
     ## Wilcoxon
     if(inference.strategy == "wilcoxon"){
-      result <- wilcox.CI(es.w = es.w, to.plot = to.plot, xlab = xlab,
-                          ylab = ylab, main = main)
+      result <- inference.wilcox(es.w = es.w, to.plot = to.plot, xlab = xlab,
+                                 ylab = ylab, main = main)
     }
   } else {
     ## Providing event frame as default output

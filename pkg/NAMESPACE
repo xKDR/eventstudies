@@ -1,4 +1,4 @@
-export(inference.bootstrap, inference.wilcox, phys2eventtime,
+export(eventstudy, inference.bootstrap, inference.wilcox, phys2eventtime,
        remap.cumsum, remap.cumprod, remap.event.reindex, ees, eesPlot)
 export(marketResidual,
        excessReturn

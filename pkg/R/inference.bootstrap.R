@@ -31,16 +31,17 @@ inference.change.boot <- function(z.e, t1, t2, operator="ratio", conf=.95) {
 }
 
 # Plotting inference
-plotInference <- function(inference){
+plotInference <- function(inference, xlab, ylab, main){
   big <- max(abs(inference))
   hilo <- c(-big,big)
   width <- (nrow(inference)-1)/2
-  plot(-width:width, inference[,"Mean"], type="l", lwd=2, ylim=hilo, col="blue",
-       xlab="Event time", ylab="Cumulative returns of response series",
-       main=paste("Eventstudy plot"))
+  plot(-width:width, inference[,"Mean"], type="l", lwd=2, ylim=hilo,
+       col="dark slate blue",
+       xlab= xlab, ylab = ylab,
+       main=paste(main))
   points(-width:width, inference[,"Mean"])
-  lines(-width:width, inference[,"2.5%"], lwd=1, lty=2, col="blue")
-  lines(-width:width, inference[,"97.5%"], lwd=1, lty=2, col="blue")
+  lines(-width:width, inference[,"2.5%"], lwd=1, lty=2, col="dark slate blue")
+  lines(-width:width, inference[,"97.5%"], lwd=1, lty=2, col="dark slate blue")
   abline(h=0,v=0)
 }
 
@@ -48,7 +49,10 @@ plotInference <- function(inference){
 # that define the event window, and columns with data for units.
 # This function does bootstrap inference for the entire
 # Ecar, i.e. main graph of the event study.
-inference.Ecar <- function(z.e,to.plot=FALSE) {
+inference.bootstrap <- function(z.e,to.plot=FALSE,
+                                xlab = "Event time",
+                                ylab = "Cumulative returns of response series",
+                                main = "Eventstudy plot") {
   Ecar <- function(transposed, d) {
     colMeans(transposed[d,], na.rm=TRUE)
   }
@@ -63,7 +67,30 @@ inference.Ecar <- function(z.e,to.plot=FALSE) {
   rownames(results) <- rownames(z.e)
   colnames(results) <- c("2.5%","Mean","97.5%")
   if(to.plot==TRUE){
-    plotInference(inference=results)
+    plotInference(inference=results, xlab, ylab, main)
   }
   return(results)
+}
+
+#####################
+## Wilcoxon sign test
+#####################
+inference.wilcox <- function(es.w, to.plot = TRUE, xlab = "Event time",
+                      ylab = "Cumulative returns of response series",
+                      main = "Eventstudy plot"
+                      ){
+  wx.res <- apply(es.w,1,function(x)
+                  res <- wilcox.exact(x, alternative = "two.sided",
+                                      conf.int = TRUE,
+                                      conf.level = 0.95)["conf.int"])
+  list <- unlist(wx.res, recursive = FALSE)
+  CI <- do.call(rbind, list)
+  Mean <- apply(es.w,1,mean,na.rm=TRUE)
+  result <- cbind(CI[,1], Mean, CI[,2])
+  colnames(result) <- c("2.5%","Mean","97.5%")
+  rownames(result) <- rownames(Mean)
+  if(to.plot = TRUE){
+    plotInference(inference = result, xlab, ylab, main)
+  }
+  return(result)
 }

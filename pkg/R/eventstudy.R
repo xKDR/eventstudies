@@ -1,11 +1,16 @@
 eventstudy <- function(inputData = NULL,
                        eventList,
                        width = 10,
+                       levels =  FALSE,
                        type = "marketResidual",
                        to.remap = TRUE,
                        remap = "cumsum",
+                       inference = TRUE,
+                       inference.strategy = "bootstrap",
                        to.plot = TRUE,
-                       levels =  FALSE,
+                       xlab = "Event time",
+                       ylab = "Cumulative returns of response series",
+                       main = "Event study plot",
                        ...) {
                                         # type = "marketResidual", "excessReturn", "AMM", "None"
   if (type == "None" && !is.null(inputData)) {
@@ -46,9 +51,23 @@ eventstudy <- function(inputData = NULL,
                    reindex = remap.event.reindex(es.w)
                    )
   }
-
-### Bootstrap
-  result <- inference.Ecar(z.e = es.w, to.plot = to.plot)
-
+  
+### Inference: confidence intervals
+  if(inference == TRUE){
+    ## Bootstrap
+    if(inference.strategy == "bootstrap"){
+      result <- inference.bootstrap(z.e = es.w, to.plot = to.plot, xlab = xlab,
+                                    ylab = ylab, main = main)
+    }
+    ## Wilcoxon
+    if(inference.strategy == "wilcoxon"){
+      result <- wilcox.CI(es.w = es.w, to.plot = to.plot, xlab = xlab,
+                          ylab = ylab, main = main)
+    }
+  } else {
+    ## Providing event frame as default output
+    result <- es.w
+  }
+    
   return(result)
 }

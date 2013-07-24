@@ -1,4 +1,3 @@
-
 \documentclass[a4paper,11pt]{article}
 \usepackage{graphicx}
 \usepackage{a4wide}
@@ -25,67 +24,133 @@ functions are elucidated by employing data-set of SENSEX firms.
 \end{abstract}
 
 \SweaveOpts{engine=R,pdf=TRUE}
+
 \section{Introduction}
-Event study has a long history which dates back to 1938
-\citep{dolley1938effect}. It is mostly used to study the response of
-stock price or value of a firm due to events such as mergers \&
-acquisitions,  stock splits, quarterly results and so on.  It is one
-of the most widely used statistical tool.  
 
-Event study is used to study the response or
-the effect on a variable, due to similar events. Efficient and liquid
-markets are basic assumption in this methodology. It assumes the
-effect on response variable is without delay. As event study output is
-further used in econometric analysis, hence significance test such as
-\textit{t-test}, \textit{J-test}, \textit{Patell-test} which are
-parametric and \textit{GRANK}, \textit{RANK} which are non-parametric
-can also be performed. 
+Event study methodology has been primarily used to evaluate the impact
+of specific events on the value of the firm. The typical procedure for
+conducting an event study involves \citep{MacKinlay}
+\begin{itemize}
+ \item Defining the event of interest and the event window which is
+   larger than the specific period of interest. % Generally the event
+  % period itself is not included in the estimation period to prevent
+  % the event from influencing the normal performance model parameter
+  % estimates.
+ \item Determining the selection criteria for the inclusion of firms,
+   in the study
+ \item Determining a measure of abnormal returns, the most common
+   being the \textit{constant mean return model} and the
+   \textit{market model}. This is important to disentangle the effects
+   on stock prices of information that is specific to the firm under
+   question (e.g. stock split annoucement) and information that is
+   likely to affect stock prices marketwide (e.g. interest rates)
+\end{itemize}
 
-In this package, there are three major functions
-\textit{phys2eventtime}, \textit{remap.cumsum} and
-\textit{inference.bootstrap}. \textit{phys2eventtime} changes the
-physical dates to event time frame on which event study analysis can
-be done with ease. \textit{remap.cumsum}
-can be used to convert returns to cumulative sum or product in the
-event time frame. \textit{inference.bootstrap} generates bootstrap
-inference for the event time response of the variable. 
+The \textbf{eventstudies} package makes possible BLAH. All functions
+in this package are implemented in the R system for statistical
+computing. The package, and R are available at no cost under the terms
+of the general public license (GPL) from the comprehensive R archive
+network (CRAN, \texttt{http://CRAN.R-project.org}).
 
-In the section below, we illustrate event study analysis using the
-package. We measure the impact of stock splits on the stock price of
-the firm for SENSEX index constituents.
+This paper is organised as follows. A skeletal event study model is
+presented in Section \ref{s::model}. Section \ref{s:approach}
+discusses the software approach used in this package. The
+functionalities of the package are discussed in Section
+\ref{s:package-func}: the construction of the data-set in section
+\ref{ss:construction}, estimation in section \ref{ss:estimation} and
+inference in section \ref{ss:inference}. Section \ref{s:conclusion}
+conclues the paper.
 
-\section{Performing Eventstudy analysis}
-To measure the impact of stock splits on the stock price of the firm,
-we create a dataset of 30 index companies of Bombay Stock Exchange
-(BSE). We have a returns of stock price for each firm from 2001 to
-2013 and respective stock splits date. Once we have the data then we
-use following steps to perform event study analysis using the package.
 
-\begin{enumerate}
-\item Construction of data set
-  \begin{itemize}
-  \item A time series object of stock price returns
-  \item Event dates object with 2 columns, \textit{unit} and
-    \textit{when}.
-  \end{itemize}
-  \item Converting physical dates to event frame
-  \item Remapping event frame
-  \item Estimating bootstrap inference
-\end{enumerate}
 
-\subsection{Construction of data set}
-% Stock returns and event dates
-We have collected data of index constituents of Bombay stock exchange
-(BSE) and corresponding stock splits dates. There are 30
-firms in SENSEX and we have stock split dates for each firm from 2000
-onwards. 
+% In this package, there are three major functions
+% \textit{phys2eventtime}, \textit{remap.cumsum} and
+% \textit{inference.Ecar}. \textit{phys2eventtime} changes the
+% physical dates to event time frame on which event study analysis can
+% be done with ease. \textit{remap.cumsum}
+% can be used to convert returns to cumulative sum or product in the
+% event time frame. \textit{inference.Ecar} generates bootstrap
+% inference for the event time response of the variable. 
 
-A time series \textit{zoo} object is created for stock price returns
-for 30 firms. For event dates, a data frame with two columns
+\section{Skeletal event study model} \label{s:model}
+
+Let day-0 identify the stock split date under scrutiny and let days
+t = ... -3,-2,-1 represent trading days leading up to the event. If
+the return on the firm with the stock split $R_o$ is statistically
+large compared to returns on previous dates, we may conclude that the
+stock split event had a significant price impact. 
+
+To disentangle the impact of the stock split on the returns of the
+firm from general market-wide information, we use the market-model to
+adjust the event-date return, thus removing the influence of market
+information. 
+
+The market model is calculated as follows:
+
+\[ R_t = a + b RM_t + e_t \]
+
+The firm-specific return $e_t$ is unrelated to the overall market and
+has an expected value of zero.  Hence, the expected event date return
+conditional on the event date market return is
+
+\[ E(R_0|RM_0) = a + b RM_0 \]
+
+The abnormal return $A_0$ is simply the day-zero firm-specific return
+$e_0$:
+
+\[ A_0 = R_0- E(R_0|RM_0) = R_0 - a - b RM_0 \]
+
+A series of abnormal returns from previous periods are also calculated
+for comparison, and to determine statistical signficance. 
+
+\[ A_t = R_t- E(R_t|RM_t) = R_t - a - b RM_t \] 
+
+The event date abnormal return $A_0$ is then assessed for statistical
+significance relative to the distribution of abnormal returns $A_t$ in
+the control period. A common assumption used to formulate tests of
+statistical significance is that abnormal returns are normally
+distributed.
+
+
+\section{Software approach} \label{s:approach}
+The package offers the following functionalities:
+\begin{itemize}
+ \item Coverting the data-set to an event frame. This requires:
+   \begin{itemize}
+   \item A time series object of stock price returns
+   \item Event dates object with two columns, \textit{unit} and
+     \textit{when}, the date of occurrence of the event.
+   \end{itemize}
+ \item Models for calculating returns. These include:
+   \begin{itemize}
+   \item Market model
+   \item Augmented market model
+   \item Excess returns model  
+   \end{itemize}
+ \item Procedures for inference. These include:
+   \begin{itemize}
+   \item Bootstrapping
+   \item Wilcoxon signed rank test  
+   \end{itemize}
+\end{itemize}
+
+
+\section{Example: Performing Eventstudy analysis} 
+\label{s:example}
+
+We demonstrate the package with a study of the impact of stock splits
+on the stock price of the firm. The data-set consist of the returns
+series of the thirty index companies, as of 2013, of the Bombay Stock
+Exchange (BSE), from 2001 to 2013.  We have stock split dates for each
+firm from 2000 onwards.
+
+We first create a \textit{zoo} object for stock price returns for the
+thirty firms. For event dates, a data frame with two columns
 \textit{unit} and \textit{when} is formed. \textit{unit} has name of
 the response series (firm name as in column name of time series
 object) along with event date in \textit{when}. \textit{unit} should
-be in \textit{character} format and \textit{when} in \textit{Date} format.
+be in \textit{character} format and \textit{when} in \textit{Date}
+format.
 
 <<>>=
 library(eventstudies)
@@ -95,29 +160,31 @@ data(SplitDates)
 head(SplitDates)
 @ 
 
-\subsection{Converting physical dates to event frame}
-After the formation of the dataset, our first step towards event study
-analysis is to convert the physical dates to event time
-frame.  Using the \textit{phys2eventtime} function we convert the
-dates in event time frame. 
+\subsection{Using the market model}
 
-Here, we index the stock split date, stock price returns to day 0 and
-similarly post event dates are indexed to positive and pre event
-dates are indexed as negative. As we can see below the stock split dates
-for BHEL, Bharti Airtel and Cipla are indexed to day 0.
+
+\subsection{Converting physical dates to event frame}
+The first step towards event study analysis is to convert the physical
+dates to event time frame.  The event date and the returns on that
+date are indexed to 0. Post-event dates are indexed to positive, and
+pre-event dates as negative. This is done using the
+\textit{phys2eventtime} function.
 
 The output for \textit{phys2eventtime} is a list. The first element of
 a list is a time series object which is converted to event 
 time and the second element is \textit{outcomes} which shows if there
 was any \textit{NA} in the dataset. If the outcome is \textit{success}
 then all is well in the given window as specified by the
-width. It gives \textit{wdatamissing} if there are too many \textit{NAs} within the crucial event
+width. It gives \textit{wdatamissing} if there are too many
+\textit{NAs} within the crucial event 
 window or \textit{wrongspan} if the event date is not placed within 
 the span of data for the unit or \textit{unitmissing} if a unit named
 in events is not in \textit{z}.
 
 <<>>=
 es <- phys2eventtime(z=StockPriceReturns, events=SplitDates, width=10)
+str(es)
+head(es$outcomes)
 es.w <- window(es$z.e, start=-10, end=10)
 SplitDates[1:3,]
 StockPriceReturns[SplitDates[1,2],SplitDates[1,1]]
@@ -125,6 +192,10 @@ StockPriceReturns[SplitDates[2,2],SplitDates[2,1]]
 StockPriceReturns[SplitDates[3,2],SplitDates[3,1]]
 es.w[,1:3]
 @ 
+
+In this example, es.w contains the returns in event-time form for all
+the stocks. In this you only get variables for whom all data is
+avaialable. 
 
 \subsection{Remapping event frame}
 In event study analysis the variable of interest is cumulative
@@ -145,7 +216,8 @@ Patnaik, Shah and Singh (2013).
 This specific approach used here is based on
 \citet{davison1986efficient}. The \textit{inference.bootstrap} function
 does the bootstrap to generate distribution of $\bar{CR}$. The
-bootstrap generates confidence interval at 2.5\% and 97.5\% for the estimate.
+bootstrap generates confidence interval at 2.5\% and 97.5\% for the
+estimate. 
 
 <<>>=
 result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE)

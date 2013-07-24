@@ -114,6 +114,14 @@ distributed.
 
 \section{Software approach} \label{s:approach}
 The package offers the following functionalities:
+
+ \item Models for calculating returns. These include:
+   \begin{itemize}
+   \item Excess returns model  
+   \item Market residual model
+   \item Augmented market model (AMM)
+   \end{itemize}
+   
 \begin{itemize}
  \item Coverting the data-set to an event frame. This requires:
    \begin{itemize}
@@ -121,12 +129,7 @@ The package offers the following functionalities:
    \item Event dates object with two columns, \textit{unit} and
      \textit{when}, the date of occurrence of the event.
    \end{itemize}
- \item Models for calculating returns. These include:
-   \begin{itemize}
-   \item Market model
-   \item Augmented market model
-   \item Excess returns model  
-   \end{itemize}
+
  \item Procedures for inference. These include:
    \begin{itemize}
    \item Bootstrapping
@@ -161,8 +164,48 @@ head(SplitDates)
 @ 
 
 \subsection{Using the market model}
+<<>>=
+data(StockPriceReturns)
+# Excess return
+er.result <- excessReturn(market.name="nifty",
+                          data.object=StockPriceReturns)
 
+@ 
 
+<<>>=
+# Extracting market residual
+mm.result <- marketResidual(data.object=StockPriceReturns, market.name="nifty")
+@ 
+
+%AMM model
+<<>>=
+# Create RHS before running AMM()
+data("y3c3")
+NIFTY_INDEX <- y3c3$NIFTY_INDEX
+INRUSD <- y3c3$INRUSD
+Company_A <- y3c3$Company_A
+Company_B <- y3c3$Company_B
+Company_C <- y3c3$Company_C
+regressand <- cbind(Company_A,Company_B,Company_C)
+
+## One firm
+of <- AMM(amm.type="onefirm",rj=Company_A,
+          nlags=NA,
+          verbose=TRUE,
+          dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
+            "2008-01-05","2009-01-03")),
+          rM1=NIFTY_INDEX, others=INRUSD,
+          switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+## Many firms
+mf <- AMM(amm.type="manyfirm",regressand=regressand,
+          nlags=NA,
+          verbose=TRUE,
+          dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
+            "2008-01-05","2009-01-03")),
+          rM1=NIFTY_INDEX, others=INRUSD,
+          switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+
+@ 
 \subsection{Converting physical dates to event frame}
 The first step towards event study analysis is to convert the physical
 dates to event time frame.  The event date and the returns on that
@@ -206,7 +249,8 @@ es.cs <- remap.cumsum(es.w,is.pc=FALSE,base=0)
 es.cs[,1:3]
 @ 
 
-\subsection{Bootstrap inference}
+\subsection{Inference procedures}
+\subsubsection{Bootstrap inference}
 After converting to event frame and estimating the interest variable,
 we need to check the stability of the result and derive other
 estimates like standard errors and confidence intervals. For this,
@@ -224,7 +268,8 @@ result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE)
 @ 
 \begin{figure}[t]
   \begin{center}
-    \caption{Stock splits event and response of respective stock returns}
+    \caption{Stock splits event and response of respective stock
+      returns: Bootstrap CI}
     \setkeys{Gin}{width=0.8\linewidth}
     \setkeys{Gin}{height=0.8\linewidth}
 <<fig=TRUE,echo=FALSE>>=
@@ -233,6 +278,76 @@ result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE)
 \end{center}
 \label{fig:one}
 \end{figure}
+
+\subsubsection{Wilcoxon signed rank tests}
+It is a non-parametric inference test to compute confidence interval.
+<<>>=
+result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE)
+@ 
+\begin{figure}[t]
+  \begin{center}
+    \caption{Stock splits event and response of respective stock
+      returns: Wilcoxon CI}
+    \setkeys{Gin}{width=0.8\linewidth}
+    \setkeys{Gin}{height=0.8\linewidth}
+<<fig=TRUE,echo=FALSE>>=
+  result <- inference.wilcox(es.w=es.cs, to.plot=TRUE)
+@
+\end{center}
+\label{fig:two}
+\end{figure}
+
+\subsection{General eventstudy function}
+This function is wrapper around all the internal functions. This
+function gives an option to compute returns like excess return, market
+residual and augmented market model. It also gives you an option to
+choose inference procedure from bootstrap and wilcoxon to generate
+confidence interval.
+
+<<>>=
+## Event study without adjustment
+es.na <- eventstudy(inputData = StockPriceReturns, eventList = SplitDates, 
+                    width = 10, to.remap = TRUE, remap = "cumsum", 
+                    to.plot = TRUE, inference = TRUE, 
+                    inference.strategy = "wilcoxon",
+                    type = "None")
+
+## Event study using market residual and bootstrap
+es.mm <- eventstudy(inputData = StockPriceReturns, eventList = SplitDates, 
+                    width = 10, to.remap = TRUE, remap = "cumsum", 
+                    to.plot = TRUE, inference = TRUE, 
+                    inference.strategy = "bootstrap",
+                    type = "marketResidual", market.name = "nifty")
+
+## Event study using excess return and bootstrap
+es.er <- eventstudy(inputData = StockPriceReturns, eventList = SplitDates, 
+                    width = 10, to.remap = TRUE, remap = "cumsum", 
+                    to.plot = TRUE, inference = TRUE, 
+                    inference.strategy = "bootstrap",
+                    type = "excessReturn", market.name = "nifty")
+
+## Event study using augmented market model (AMM) and bootstrap
+of <- AMM(amm.type="onefirm",rj=y3c3$Company_A,
+            nlags=NA,
+            verbose=TRUE,
+            dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
+                       "2008-01-05","2009-01-03")),
+           rM1=y3c3$NIFTY_INDEX, others=y3c3$INRUSD,
+           switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+
+## es.ammonefirm <- eventstudy(inputData = NULL, 
+##                             eventList = SplitDates, 
+##                             width = 10, to.remap = TRUE, remap = "cumsum", 
+##                             to.plot = TRUE, inference = TRUE, 
+##                             inference.strategy = "bootstrap",
+##                             type = "AMM", amm.type="onefirm",
+##                             rj=y3c3$Company_A,
+##                             rM1=y3c3$NIFTY_INDEX, others=y3c3$INRUSD,
+##                             nlags=NA, verbose=TRUE,
+##                             dates= as.Date(c("2005-01-15","2006-01-07",
+##                               "2007-01-06","2008-01-05","2009-01-03")),
+##                             switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+@ 
 
 
 \section{Computational details}

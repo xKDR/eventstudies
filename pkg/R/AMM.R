@@ -75,6 +75,20 @@ AMM <- function(amm.type = NULL, ...) {
     result <- onefirmAMM(rj, X, nlags, verbose, dates)
   }
 
+  ##-----------
+  ## Many firms
+  ##-----------
+  if(amm.type == "manyfirms") {
+                                        # Checking required arguments
+    if (match("regerssand", names(modelArgs), nomatch = -1) == -1) {
+      stop("Input regressand (firm data) is missing")
+    }
+
+    X <- makeX(rM1, others, switch.to.innov,
+               rM1purge, nlags, dates, verbose)
+    result <- manyfirmsAMM(regressand, regressors=X, nlags, verbose, dates)
+  }
+
   #---------------
   # Firm exposures
   #---------------

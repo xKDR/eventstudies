@@ -15,9 +15,11 @@ eventstudy <- function(inputData = NULL,
                                         # type = "marketResidual", "excessReturn", "AMM", "None"
   if (type == "None" && !is.null(inputData)) {
     outputModel <- inputData
-  } else {
-    stop("inputData or \"None\" type missing")
   }
+
+  ## else {
+  ##   stop("inputData or \"None\" type missing")
+  ## }
 
   if (levels == TRUE) {
     inputData <- diff(log(inputData)) * 100
@@ -31,18 +33,19 @@ eventstudy <- function(inputData = NULL,
 
   ## marketResidual
   if (type == "marketResidual") {
-    outputModel <- marketResidual(...)
+    outputModel <- marketResidual(data.object = inputData, ...)
   }
 
   ## excessReturn
   if (type == "excessReturn") {
-    outputModel <- excessReturn(...)
+    outputModel <- excessReturn(data.object = inputData, ...)
   }
 
 ### Convert to event frame
   es <- phys2eventtime(z=outputModel, events=eventList, width=width)
+  ## colnames(es) <- eventList[which(es$outcomes=="success"),1]
   es.w <- window(es$z.e, start = -width, end = width)
-
+  
 ### Remapping event frame
   if (to.remap == TRUE) {
     es.w <- switch(remap,

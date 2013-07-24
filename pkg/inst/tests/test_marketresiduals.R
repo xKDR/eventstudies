@@ -3,14 +3,16 @@ context("Market residuals")
 test_that("test.market.residuals", {
 library(eventstudies)
 
-load(system.file("data", "mmData.rda", package = "eventstudies"))
+load(system.file("data", "StockPriceReturns.rda", package = "eventstudies"))
 
-mm.formula <- paste("ranbaxyacp","~","nifty",sep="")
-mm.result <- marketResidual(mm.formula=mm.formula,data.object=mmData)
+mm.result <- marketResidual(data.object=StockPriceReturns[,c("BHEL","nifty")],
+                            market.name="nifty")
+mm.result <- mm.result[complete.cases(mm.result),]
 
 # Calculating manually
-result <- lm(ranbaxyacp ~ nifty, data=mmData)
+result <- lm(BHEL ~ nifty, data=StockPriceReturns)
 resid.res <- xts(result$resid,as.Date(attr(result$resid,"names")))
+colnames(resid.res) <- "BHEL"
 
 expect_that(mm.result,equals(resid.res))
 

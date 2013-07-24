@@ -8,18 +8,18 @@
 
 \usage{
 eventstudy(inputData = NULL,
-                       eventList,
-                       width = 10,
-                       levels =  FALSE,
-                       type = "marketResidual",
-                       to.remap = TRUE,
-                       remap = "cumsum",
-                       inference = TRUE,
-                       inference.strategy = "bootstrap",
-                       to.plot = TRUE,
-                       xlab = "Event time",
-                       ylab = "Cumulative returns of response series",
-                       main = "Event study plot", ...)
+           eventList,
+           width = 10,
+           levels =  FALSE,
+           type = "marketResidual",
+           to.remap = TRUE,
+           remap = "cumsum",
+           inference = TRUE,
+           inference.strategy = "bootstrap",
+           to.plot = TRUE,
+           xlab = "Event time",
+           ylab = "Cumulative returns of response series",
+           main = "Event study plot", ...)
 }
 
 \arguments{

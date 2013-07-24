@@ -6,14 +6,12 @@
 \description{ This function extracts market return using regression from the firm return to get the residual return
 }
 
-\usage{marketResidual(mm.formula=NULL, data.object)
+\usage{marketResidual(data.object, market.name=NULL)
 }
 
 \arguments{
-  \item{data.object}{Single time series object with all the variables}
-  \item{mm.formula}{Here the input is the linear model (lm) formula for eg: a ~ b + c
-                    If formula is not given then first column will be treated as 
-                    dependent and rest will be independent}
+  \item{data.object}{Single time series object with firm/firms and stock index data}
+  \item{market.name}{Column name of the market index in the data}
 
 }
 \value{ Market residual after extracting market returns from the firm return
@@ -22,11 +20,9 @@
 \author{Vikram Bahure}
 
 \examples{ 
-data(mmData)
-# Forumla for market model
-mm.formula <- paste("ranbaxyacp","~","nifty","+","drug",sep="")
+data(StockPriceReturns)
 # Extracting market residual
-mm.result <- marketResidual(mm.formula=mm.formula,data.object=mmData)
+mm.result <- marketResidual(data.object=StockPriceReturns, market.name="nifty")
 
 }
 

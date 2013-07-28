@@ -10,7 +10,7 @@
 eventstudy(inputData = NULL,
            eventList,
            width = 10,
-           levels =  FALSE,
+           is.levels =  FALSE,
            type = "marketResidual",
            to.remap = TRUE,
            remap = "cumsum",
@@ -29,7 +29,7 @@ eventstudy(inputData = NULL,
   \item{type}{This argument gives an option to use different market model adjustment like "marketResidual", "excessReturn", "AMM" and "None"}
   \item{to.remap}{If TRUE then remap the event frame is done}
   \item{remap}{This argument is used when to.remap is TRUE to estimate cumulative sum (cumsum), cumulative product (cumprod) or reindex the event frame}
-  \item{levels}{If the data is in returns format then levels is FALSE else TRUE}
+  \item{is.levels}{If the data is in returns format then is.levels is FALSE else TRUE}
   \item{inference}{This argument is used to compute confidence interval for the estimator}
   \item{inference.strategy}{If inference is TRUE then this argument gives an option to select different inference strategy to compute confidence intervals. Default to bootstrap.}
   \item{to.plot}{This argument will generate an eventstudy plot of the inference estimated. If to.plot is equal to TRUE then function would generate the plot else it would not. }

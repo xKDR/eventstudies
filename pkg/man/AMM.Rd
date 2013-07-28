@@ -46,14 +46,21 @@ Company_B <- y3c3$Company_B
 Company_C <- y3c3$Company_C
 regressand <- cbind(Company_A,Company_B,Company_C)
 
-# One firm
+## One firm
 of <- AMM(amm.type="onefirm",rj=Company_A,
-            nlags=NA,
             verbose=TRUE,
             dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
                        "2008-01-05","2009-01-03")),
            rM1=NIFTY_INDEX, others=INRUSD,
            switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+
+## Many firms
+mf <- AMM(amm.type="manyfirms",regressand=regressand,
+          verbose=TRUE,
+          dates= NULL,
+          rM1=NIFTY_INDEX, others=INRUSD,
+          switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+
 }
 
 \keyword{AMM}

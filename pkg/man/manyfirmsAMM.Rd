@@ -9,7 +9,7 @@ periods}
   matrix of data obtained from \code{makeX}, and a matrix of LHS variables}
 
 \usage{
-manyfirmsAMM(regressand, regressors, lags, dates = NULL, periodnames = NULL, verbose = FALSE)
+manyfirmsAMM(regressand, regressors, nlags, dates = NULL, periodnames = NULL, verbose = FALSE)
 }
 
 \arguments{
@@ -23,7 +23,7 @@ manyfirmsAMM(regressand, regressors, lags, dates = NULL, periodnames = NULL, ver
   market model} 
 
   \item{dates}{A set of dates that mark out subperiods of
-  interest} 
+  interest. If dates is NULL then full period is considered.} 
 
   \item{periodnames}{Name for each subperiod that has been marked
   by the dates above.} 
@@ -54,7 +54,7 @@ regressors <- makeX(rM1=NIFTY_INDEX, others=INRUSD,
            dates=as.Date(c("2005-01-15","2006-01-07","2007-01-06",
                        "2008-01-05","2009-01-03")), verbose=FALSE)
 regressand <- cbind(Company_A,Company_B,Company_C)
-res <- manyfirmsAMM(regressand,regressors,lags=1,
+res <- manyfirmsAMM(regressand,regressors,nlags=1,
                      dates=as.Date(c("2005-01-15","2006-01-07","2007-01-06",
                        "2008-01-05","2009-01-03")),periodnames=c("P1","P2","P3","P4"),
                      verbose=FALSE)

@@ -327,6 +327,14 @@ es.er <- eventstudy(inputData = StockPriceReturns, eventList = SplitDates,
                     type = "excessReturn", market.name = "nifty")
 
 ## Event study using augmented market model (AMM) and bootstrap
+data(inr)
+inrusd <- zoo(diff(log(inr))*100,index(inr))
+all.data <- merge(StockPriceReturns,inrusd, all = FALSE)
+all.data <- window(all.data, start="2004-01-01")
+all.data <- all.data[-which(is.na(all.data$nifty)),]
+cn.names <- which(colnames(all.data)%in%c("nifty","inr"))
+stock.data <- all.data[,-cn.names]
+
 of <- AMM(amm.type="onefirm",rj=y3c3$Company_A,
             nlags=NA,
             verbose=TRUE,
@@ -335,18 +343,26 @@ of <- AMM(amm.type="onefirm",rj=y3c3$Company_A,
            rM1=y3c3$NIFTY_INDEX, others=y3c3$INRUSD,
            switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
 
-## es.ammonefirm <- eventstudy(inputData = NULL, 
-##                             eventList = SplitDates, 
-##                             width = 10, to.remap = TRUE, remap = "cumsum", 
-##                             to.plot = TRUE, inference = TRUE, 
-##                             inference.strategy = "bootstrap",
-##                             type = "AMM", amm.type="onefirm",
-##                             rj=y3c3$Company_A,
-##                             rM1=y3c3$NIFTY_INDEX, others=y3c3$INRUSD,
-##                             nlags=NA, verbose=TRUE,
-##                             dates= as.Date(c("2005-01-15","2006-01-07",
-##                               "2007-01-06","2008-01-05","2009-01-03")),
-##                             switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+
+mf <- AMM(amm.type="manyfirms",regressand=StockPriceReturns[,1:3],
+          nlags=NA, verbose=TRUE, dates= NULL,
+          rM1=all.data$nifty, others=all.data$inr,
+          switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+mf1 <- mf$residual
+mf1 <- mf1[complete.cases(mf1),]
+p1 <- phys2eventtime(z = mf1, events = SplitDates, width = 10)
+
+es.ammonefirm <- eventstudy(inputData = stock.data[,1:4], 
+                            eventList = SplitDates, 
+                            width = 10, to.remap = TRUE, remap = "cumsum", 
+                            to.plot = TRUE, inference = TRUE, 
+                            inference.strategy = "bootstrap",
+                            type = "AMM", amm.type="manyfirms",
+                            rM1=all.data$nifty, others=all.data$inr,
+                            nlags=NA, verbose=TRUE,
+                            dates= NULL,
+                            switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+
 @ 
 
 

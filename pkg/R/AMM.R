@@ -5,8 +5,7 @@
 AMM <- function(amm.type = NULL, ...) {
 
   ## List of models currently supported
-  modelsList <- c("onefirm",
-                  "firmExposures","manyfirms")
+  modelsList <- c("onefirm","firmExposures")
 
   if (is.null(amm.type) || length(amm.type) != 1) {
     stop("Argument amm.type not provided or incorrect")
@@ -27,7 +26,7 @@ AMM <- function(amm.type = NULL, ...) {
   regressand <- NULL
   periodnames <- NULL
 
-                                        # parse the input arguments for the model
+                                     # parse the input arguments for the model
   modelArgs <- list(...)
                                         # assign values
   for (i in 1:length(modelArgs)) {
@@ -76,22 +75,6 @@ AMM <- function(amm.type = NULL, ...) {
     X <- makeX(rM1, others, switch.to.innov,
                rM1purge, nlags, dates, verbose)
     result <- onefirmAMM(rj, X, nlags, verbose, dates)
-  }
-
-  ##-----------
-  ## Many firms
-  ##-----------
-  if(amm.type == "manyfirms") {
-                                        # Checking required arguments
-    if (match("regressand", names(modelArgs), nomatch = -1) == -1) {
-      stop("Input regressand (firm data) is missing")
-    }
-
-    X <- makeX(rM1, others, switch.to.innov,
-               rM1purge, nlags, dates, verbose)
-    result <- manyfirmsAMM(regressand, regressors=X, lags=nlags,
-                           verbose = verbose,
-                           dates = dates, periodnames = periodnames)
   }
 
   ##---------------
@@ -162,13 +145,13 @@ onefirmAMM <- function(rj,X,nlags=NA,verbose=FALSE,dates=NULL,residual=TRUE){
 ########################
 # Many firms AMM
 ########################
-manyfirmsAMM <-function(regressand,regressors,
-                        lags,dates=NULL, periodnames=NULL,verbose=FALSE){
-  ## Assigning value for coding usage
-  rawdates <- 1
+manyfirmsAMM <-
+function(regressand,regressors,
+                          lags,dates=NULL, periodnames=NULL,verbose=FALSE){
+  require("doMC")
+  registerDoMC()
   if(is.null(dates)){
     dates=c(start(regressors),end(regressors))
-    rawdates <- NULL
     periodnames="Full"
   }
   nperiods <- length(periodnames)
@@ -176,10 +159,10 @@ manyfirmsAMM <-function(regressand,regressors,
     cat("Mistake in length of dates versus length of periods.\n")
     return(NULL)
   }
-
   nfirms <- ncol(regressand)
 
   # Let's get "exposure' and 'sds'. Setting up structures:-
+
   exposures <- matrix(NA,nrow=nfirms,ncol=nperiods*ncol(regressors))
   rownames(exposures) <- colnames(regressand)
   tmp <- NULL
@@ -196,47 +179,26 @@ manyfirmsAMM <-function(regressand,regressors,
   # Setup a list structure for an OLS that failed
   empty <- list(exposures=rep(NA,ncol(regressors)),
                 s.exposures=rep(NA,ncol(regressors)))
-  this.resid.final <- list()
-  for(i in 1:NCOL(regressand)){
-    if (verbose) {cat ("Working on", colnames(regressand)[i],"\n")}
+  
+  for(i in 1:ncol(regressand)){
+    cat("Doing",colnames(regressand)[i])
+    if (verbose) {cat ("Doing", colnames(regressand)[i])}
     rj <- regressand[,i]
     dataset <- cbind(rj, regressors)   # This is the full time-series
     this.exp <- this.sds <- NULL
     for(j in 1:nperiods){              # now we chop it up 
       t1 <- dates[j]
       t2 <- dates[j+1]
-     # if (j != nperiods) {t2 <- t2-1} # I don't know why I wrote this now :-( But this created problems.
       this <- window(dataset,start=t1, end=t2)
       fe <- firmExposures(this[,1],this[,-1],nlags=lags,verbose)
       if(is.null(fe)) {fe <- empty}
       this.exp <- c(this.exp, fe$exposures)
       this.sds <- c(this.sds, fe$s.exposures)
-### Getting residual
-      if(j==1){
-        this.resid <- xts(fe$residuals,
-           as.Date(fe$residuals,attr(fe$residuals,"names")))
-        colnames(this.resid) <- paste(dates[j],"to",dates[j+1],sep=".")
-      } else {
-        tmp.resid <- xts(fe$residuals,
-           as.Date(fe$residuals,attr(fe$residuals,"names")))
-        colnames(tmp.resid) <- paste(dates[j],"to",dates[j+1],sep=".")
-        this.resid <- merge(this.resid, tmp.resid, all=TRUE)
-      }
     }
-    exposures[i,] <- this.exp
-    sds[i,] <- this.sds
-    this.resid.final[[i]] <- this.resid
+    exposures[colnames(regressand)[i],] <- this.exp
+    sds[colnames(regressand)[i],] <- this.sds
   }
-  names(this.resid.final) <- colnames(regressand)
-  ## Merging all firms for no period break
-  if(is.null(rawdates)){
-      final.resid <- do.call(merge,this.resid.final)
-      colnames(final.resid) <- colnames(regressand)
-      this.resid.final <- final.resid
-    }
-    
-  list(exposures=exposures, sds=sds, sig=exposures/sds,
-       residual=this.resid.final)
+  list(exposures=exposures, sds=sds, sig=exposures/sds)
 }
 
 ###############################################

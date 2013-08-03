@@ -1,4 +1,4 @@
-library(zoo)
+nlibrary(zoo)
 
 # Upon input
 #   z is a zoo object containing input data. E.g. this could be all the 
@@ -16,36 +16,32 @@ phys2eventtime <- function(z, events, width=10) {
   # Just in case events$unit has been sent in as a factor --
   events$unit <- as.character(events$unit)
   if(is.factor(events$when)) stop("Sorry you provided a factor as an index")
-  # Given a zoo time-series vector x, and an event date "when",
+  # Given a zoo time-series z, and an event date "when",
   # try to shift this vector into event time, where the event date
   # becomes 0 and all other dates shift correspondingly.
   # If this can't be done, then send back NULL with an error code.
-  timeshift <- function(x, when) {
-    location <- findInterval(when, index(x))
-    if ((location <= 1) | (location >= length(x))) {
+  ## takes the event list as an argument and uses already existing
+  ## time-series variable z
+  timeshift <- function(x) {
+    firm.present <- match(x[1], colnames(z), nomatch = -1) != -1
+    if (!firm.present) {
+      return(list(result=NULL, outcome="unitmissing"))
+    }
+    location <- match(as.Date(x[2]), index(z[,x[1]]), nomatch = -1)
+    if (location == -1 | location == 1 | !firm.present) {
       return(list(result=NULL, outcome="wrongspan"))
     }
-    remapped <- zoo(as.numeric(x), order.by=(-location+1):(length(x)-location))
-    list(result=remapped, outcome="success")
+    remapped <- zoo(as.numeric(z[,x[1]]), order.by=(-location+1):(length(z[,x[1]])-location))
+    return(list(result=remapped, outcome="success"))
   }
+  
+  answer <- apply(events, 1, timeshift)
+  answer <- unlist(answer, recursive = FALSE)
+  rownums <- grep("outcome", names(answer))
+  outcomes <- as.character(do.call("c", answer[rownums]))
+  z.e <- do.call("cbind", answer[rownums[which(answer[rownums] == "success")] - 1])
+  colnames(z.e) <- which(outcomes == "success")
 
-  # Main loop to build up a data object in event time --
-  outcomes <- character(nrow(events))
-  z.e <- zoo(1, order.by=as.integer(1)) # zoo::cbind() requires initialising z.e
-  for (eventnum in 1:nrow(events)) {
-    if (!(events$unit[eventnum] %in% colnames(z))) {
-      outcomes[eventnum] <- "unitmissing"
-      next
-    }
-    attempt <- timeshift(z[,events$unit[eventnum]], events$when[eventnum])
-    if (attempt$outcome=="success") {
-      z.e <- cbind(z.e, attempt$result)
-    }
-    outcomes[eventnum] <- attempt$outcome
-  }
-  outcomes <- outcomes
-  z.e <- z.e[,-1, drop = FALSE]                       #get rid of that junk initialisation
-  colnames(z.e) <- which(outcomes=="success")
   ## Now worry about whether there's information within the event window
   ## (This entire cleaning+checking can be switched off by specifying width=0)
   badcolumns <- NULL

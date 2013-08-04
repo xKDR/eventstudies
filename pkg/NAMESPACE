@@ -1,8 +1,7 @@
 export(eventstudy, inference.bootstrap, inference.wilcox, phys2eventtime,
        remap.cumsum, remap.cumprod, remap.event.reindex, ees, eesPlot)
 export(marketResidual,
-       excessReturn
-       )
+       excessReturn)
 export(AMM,
        onefirmAMM,
        manyfirmsAMM,

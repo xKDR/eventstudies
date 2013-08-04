@@ -81,6 +81,9 @@ AMM <- function(amm.type = NULL, ...) {
     if (match("rj", names(modelArgs), nomatch = -1) == -1) {
       stop("Input rj (firm data) is missing")
     }
+    if(NCOL(rj)<2){
+      stop("Less than two firms in inputData")
+    }
     
     X <- makeX(rM1, others, switch.to.innov,
                rM1purge, nlags, dates, verbose)

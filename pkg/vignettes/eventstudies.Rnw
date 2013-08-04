@@ -338,6 +338,7 @@ of <- AMM(amm.type="onefirm",rj=y3c3$Company_A,
 of.r <- AMM(amm.type="manyfirms", rj=stock.data[,1:5],verbose=TRUE, dates=NULL, 
             rM1=all.data$nifty, others=all.data$inr, switch.to.innov=TRUE,
             rM1purge=TRUE, nlags=1)
+
 es.ammonefirm <- eventstudy(inputData = stock.data[,1:4], 
                             eventList = SplitDates, 
                             width = 10, to.remap = TRUE, remap = "cumsum", 

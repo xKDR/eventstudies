@@ -1,4 +1,4 @@
-nlibrary(zoo)
+library(zoo)
 
 # Upon input
 #   z is a zoo object containing input data. E.g. this could be all the 

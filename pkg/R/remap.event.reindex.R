@@ -5,8 +5,12 @@
 # values are scaled accordingly.
 remap.event.reindex <- function(z) {
   eventvals <- as.numeric(window(z, start=0, end=0))
-  for (i in 1:ncol(z)) {
-    z[,i] <- 100*z[,i]/eventvals[i]
+  for (i in 1:NCOL(z)) {
+    if(NCOL(z)==1){
+      z <- 100*z[,i]/eventvals[i]
+    } else {
+      z[,i] <- 100*z[,i]/eventvals[i]
+    }
   }
   z
 }

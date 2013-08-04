@@ -30,11 +30,11 @@ eventstudy <- function(inputData = NULL,
   if (type == "AMM") {
     if(amm.type == "onefirm"){
       tmp.outputModel <- AMM(rj = inputData, ...)
-      outputModel <- zoo(tmp.outputModel$residual,index(tmp.outputModel))
+      outputModel <- zoo(coredata(tmp.outputModel),index(tmp.outputModel))
     }
     if(amm.type == "manyfirms"){
-      tmp.outputModel <- AMM(regressand = inputData, ...)
-      outputModel <- zoo(tmp.outputModel$residual,index(tmp.outputModel))
+      tmp.outputModel <- AMM(rj = inputData, ...)
+      outputModel <- zoo(coredata(tmp.outputModel),index(tmp.outputModel))
     }
     if(amm.type == "firmExposures"){
       stop("amm.type firmExposures not used for event study analysis")
@@ -51,11 +51,22 @@ eventstudy <- function(inputData = NULL,
   if (type == "excessReturn") {
     outputModel <- excessReturn(data.object = inputData, ...)
   }
-
+  ##Converting index outputModel to Date
+  index(outputModel) <- as.Date(index(outputModel))
+  
+  
 ### Convert to event frame
   es <- phys2eventtime(z=outputModel, events=eventList, width=width)
-  colnames(es) <- eventList[which(es$outcomes=="success"),1]
   es.w <- window(es$z.e, start = -width, end = width)
+  ## Adding column names to event output
+  cn.names <- eventList[which(es$outcomes=="success"),1]
+  if(length(cn.names)==1){
+    cat("Event date exists only for",cn.names,"\n")
+    inference <- FALSE
+    cat("No inference strategy for one column","\n")
+  } else {
+    colnames(es.w) <- cn.names
+  }
   
 ### Remapping event frame
   if (to.remap == TRUE) {

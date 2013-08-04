@@ -328,7 +328,6 @@ cn.names <- which(colnames(all.data)%in%c("nifty","inr"))
 stock.data <- all.data[,-cn.names]
 
 of <- AMM(amm.type="onefirm",rj=y3c3$Company_A,
-            nlags=NA,
             verbose=TRUE,
             dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
                        "2008-01-05","2009-01-03")),
@@ -336,14 +335,9 @@ of <- AMM(amm.type="onefirm",rj=y3c3$Company_A,
            switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
 
 
-mf <- AMM(amm.type="manyfirms",regressand=StockPriceReturns[,1:3],
-          nlags=NA, verbose=TRUE, dates= NULL,
-          rM1=all.data$nifty, others=all.data$inr,
-          switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
-mf1 <- mf$residual
-mf1 <- mf1[complete.cases(mf1),]
-p1 <- phys2eventtime(z = mf1, events = SplitDates, width = 10)
-
+of.r <- AMM(amm.type="manyfirms", rj=stock.data[,1:5],verbose=TRUE, dates=NULL, 
+            rM1=all.data$nifty, others=all.data$inr, switch.to.innov=TRUE,
+            rM1purge=TRUE, nlags=1)
 es.ammonefirm <- eventstudy(inputData = stock.data[,1:4], 
                             eventList = SplitDates, 
                             width = 10, to.remap = TRUE, remap = "cumsum", 
@@ -351,7 +345,7 @@ es.ammonefirm <- eventstudy(inputData = stock.data[,1:4],
                             inference.strategy = "bootstrap",
                             type = "AMM", amm.type="manyfirms",
                             rM1=all.data$nifty, others=all.data$inr,
-                            nlags=NA, verbose=TRUE,
+                            nlags=1, verbose=TRUE,
                             dates= NULL,
                             switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
 

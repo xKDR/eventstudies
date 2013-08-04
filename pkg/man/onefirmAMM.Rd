@@ -56,7 +56,7 @@ rhs.dat <- makeX(NIFTY_INDEX, others=INRUSD,
 # Run AMM for one firm across different periods
 onefirmAMM(rj=Company_A,
             X=rhs.dat,
-            nlags=NA,
+            nlags=1,
             verbose=TRUE,
             dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
                        "2008-01-05","2009-01-03")))

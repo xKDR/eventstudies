@@ -5,7 +5,7 @@
 AMM <- function(amm.type = NULL, ...) {
 
   ## List of models currently supported
-  modelsList <- c("onefirm","firmExposures")
+  modelsList <- c("onefirm","manyfirms","firmExposures")
 
   if (is.null(amm.type) || length(amm.type) != 1) {
     stop("Argument amm.type not provided or incorrect")
@@ -23,8 +23,6 @@ AMM <- function(amm.type = NULL, ...) {
   switch.to.innov <- NULL
   verbose <- NULL
   dates <- NULL
-  regressand <- NULL
-  periodnames <- NULL
 
                                      # parse the input arguments for the model
   modelArgs <- list(...)
@@ -49,16 +47,13 @@ AMM <- function(amm.type = NULL, ...) {
   
                                         # Checking remaining arguments
   if (match("nlags", names(modelArgs), nomatch = -1) == -1) {
-    nlags <- NA
+    nlags <- 1
   }
   if (match("verbose", names(modelArgs), nomatch = -1) == -1) {
     verbose <- FALSE
   }
   if (match("dates", names(modelArgs), nomatch = -1) == -1) {
     dates <- NULL
-  }
-  if (match("periodnames", names(modelArgs), nomatch = -1) == -1) {
-    periodnames <- NULL
   }
 
   ## Assign values
@@ -75,8 +70,28 @@ AMM <- function(amm.type = NULL, ...) {
     X <- makeX(rM1, others, switch.to.innov,
                rM1purge, nlags, dates, verbose)
     result <- onefirmAMM(rj, X, nlags, verbose, dates)
+    result <- result$residuals
   }
 
+  ##-----------
+  ## Many firms
+  ##-----------
+  if(amm.type == "manyfirms") {
+                                        # Checking required arguments
+    if (match("rj", names(modelArgs), nomatch = -1) == -1) {
+      stop("Input rj (firm data) is missing")
+    }
+    
+    X <- makeX(rM1, others, switch.to.innov,
+               rM1purge, nlags, dates, verbose)
+    result <- xts()
+    for(i in 1:NCOL(rj)){
+      tmp <- onefirmAMM(rj[,i], X, nlags, verbose, dates)
+      result <- merge(result,tmp$residuals)
+    }
+    colnames(result) <- colnames(rj)
+  }
+  
   ##---------------
   ## Firm exposures
   ##---------------
@@ -98,11 +113,19 @@ AMM <- function(amm.type = NULL, ...) {
 #######################
 # AMM for one firm
 #######################
-onefirmAMM <- function(rj,X,nlags=NA,verbose=FALSE,dates=NULL,residual=TRUE){
-  exposures <- data.frame(matrix(NA,ncol=ncol(X),nrow=(length(dates)-1)))
+onefirmAMM <- function(rj,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
+  ## Creating empty frames
+  if(is.null(dates)){
+    dates.no <- c(start(rj),end(rj))
+  } else{
+    dates.no <- dates
+  }
+  exposures <- data.frame(matrix(NA,ncol=ncol(X),nrow=(length(dates.no)-1)))
   colnames(exposures) <- colnames(X)
   sds <- exposures
   periodnames <- NULL
+  
+  ## Getting firm exposure, amm residuals
   if(is.null(dates)){
    res <- firmExposures(rj,X,verbose=verbose,nlags=nlags)
    exposures <- res$exposure

@@ -174,8 +174,9 @@ onefirmAMM <- function(rj,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
 manyfirmsAMM <-
 function(regressand,regressors,
                           lags,dates=NULL, periodnames=NULL,verbose=FALSE){
-  require("doMC")
+ # require("doMC")
   registerDoMC()
+  cat("All available cores will be used for this program.\n")
   if(is.null(dates)){
     dates=c(start(regressors),end(regressors))
     periodnames="Full"

@@ -334,21 +334,27 @@ of <- AMM(amm.type="onefirm",rj=y3c3$Company_A,
            rM1=y3c3$NIFTY_INDEX, others=y3c3$INRUSD,
            switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
 
+of1 <- AMM(amm.type="onefirm",rj=y3c3$Company_A,
+           verbose=TRUE,
+           dates= NULL,
+           rM1=y3c3$NIFTY_INDEX, others=y3c3$INRUSD,
+           switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+
 
 of.r <- AMM(amm.type="manyfirms", rj=stock.data[,1:5],verbose=TRUE, dates=NULL, 
             rM1=all.data$nifty, others=all.data$inr, switch.to.innov=TRUE,
             rM1purge=TRUE, nlags=1)
 
-es.ammonefirm <- eventstudy(inputData = stock.data[,1:4], 
-                            eventList = SplitDates, 
-                            width = 10, to.remap = TRUE, remap = "cumsum", 
-                            to.plot = TRUE, inference = TRUE, 
-                            inference.strategy = "bootstrap",
-                            type = "AMM", amm.type="manyfirms",
-                            rM1=all.data$nifty, others=all.data$inr,
-                            nlags=1, verbose=TRUE,
-                            dates= NULL,
-                            switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+es.amm <- eventstudy(inputData = stock.data, 
+                     eventList = SplitDates, 
+                     width = 10, to.remap = TRUE, remap = "cumsum", 
+                     to.plot = TRUE, inference = TRUE, 
+                     inference.strategy = "bootstrap",
+                     type = "AMM", amm.type="manyfirms",
+                     rM1=all.data$nifty, others=all.data$inr,
+                     nlags=1, verbose=TRUE,
+                     dates= NULL,
+                     switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
 
 @ 
 

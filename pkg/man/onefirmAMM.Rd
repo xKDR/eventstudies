@@ -10,7 +10,7 @@
 }
 
 \usage{
-onefirmAMM(rj, X, nlags = NA, verbose = FALSE, dates = NULL, residual = TRUE)
+onefirmAMM(rj, X, nlags = 1, verbose = FALSE, dates = NULL, residual = TRUE)
 }
 
 \arguments{

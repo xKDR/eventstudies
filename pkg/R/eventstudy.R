@@ -17,10 +17,6 @@ eventstudy <- function(inputData = NULL,
     outputModel <- inputData
   }
 
-  ## else {
-  ##   stop("inputData or \"None\" type missing")
-  ## }
-
   if (is.levels == TRUE) {
     inputData <- diff(log(inputData)) * 100
   }
@@ -51,10 +47,12 @@ eventstudy <- function(inputData = NULL,
   if (type == "excessReturn") {
     outputModel <- excessReturn(data.object = inputData, ...)
   }
-  ##Converting index outputModel to Date
+  
+### Converting index outputModel to Date
   index(outputModel) <- as.Date(index(outputModel))
-  
-  
+  ## Stop if there is only one firm: phys2eventtime breaks down
+  if(NCOL(outputModel)==1){stop("Event study does not work for one firm/column")}
+    
 ### Convert to event frame
   es <- phys2eventtime(z=outputModel, events=eventList, width=width)
   es.w <- window(es$z.e, start = -width, end = width)

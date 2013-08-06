@@ -27,8 +27,11 @@ phys2eventtime <- function(z, events, width=10) {
     if (!firm.present) {
       return(list(result=NULL, outcome="unitmissing"))
     }
-    location <- match(as.Date(x[2]), index(z[,x[1]]), nomatch = -1)
-    if (location == -1 | location == 1 | !firm.present) {
+                                        # take the previous date if
+                                        # the exact event date is not
+                                        # found
+    location <- findInterval(as.Date(x[2]), index(z[, x[1]]))
+    if ((location <= 1) | (location >= length(index(z)))) {
       return(list(result=NULL, outcome="wrongspan"))
     }
     remapped <- zoo(as.numeric(z[,x[1]]), order.by=(-location+1):(length(z[,x[1]])-location))

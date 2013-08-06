@@ -11,8 +11,7 @@ AMM(amm.type=NULL, ...)
 }
 
 \arguments{
-  \item{amm.type}{Type of AMM to be performed: On one firm "onefirm" or
-    just firm exposure "firmExposures"}
+  \item{amm.type}{If amm.type take following inputs: all, residual and firmExposures. If amm.type is residual it gives only AMM residual as output, if amm.type is firmExposures then it gives only firm exposure as output else if all output is needed then option all is used.}
   \item{...}{Accepts specific arguments for the model.}
 }
 \value{The function returns the exposures, HAC adjusted standard
@@ -33,7 +32,6 @@ of the exposures estimated for the firm rj.}
 \author{Vikram Bahure}
 
 \seealso{ \code{\link{firmExposures}},
-\code{\link{manyfirmsAMM}}
 \code{\link{onefirmAMM}}}
 
 \examples{ 
@@ -47,7 +45,7 @@ Company_C <- y3c3$Company_C
 regressand <- cbind(Company_A,Company_B,Company_C)
 
 ## One firm
-of <- AMM(amm.type="onefirm",rj=Company_A,
+of <- AMM(amm.type="residual",rj=Company_A,
             verbose=TRUE,
             dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
                        "2008-01-05","2009-01-03")),

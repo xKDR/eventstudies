@@ -24,18 +24,9 @@ eventstudy <- function(inputData = NULL,
 ### Run models
   ## AMM
   if (type == "AMM") {
-    if(amm.type == "onefirm"){
-      tmp.outputModel <- AMM(rj = inputData, ...)
-      outputModel <- zoo(coredata(tmp.outputModel),index(tmp.outputModel))
-    }
-    if(amm.type == "manyfirms"){
-      tmp.outputModel <- AMM(rj = inputData, ...)
-      outputModel <- zoo(coredata(tmp.outputModel),index(tmp.outputModel))
-    }
-    if(amm.type == "firmExposures"){
-      stop("amm.type firmExposures not used for event study analysis")
-    }
-    
+    amm.type <- "residual"
+    tmp.outputModel <- AMM(rj = inputData, ...)
+    outputModel <- zoo(coredata(tmp.outputModel),index(tmp.outputModel))
   }
 
   ## marketResidual

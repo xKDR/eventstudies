@@ -188,8 +188,8 @@ Company_B <- y3c3$Company_B
 Company_C <- y3c3$Company_C
 regressand <- cbind(Company_A,Company_B,Company_C)
 
-## One firm
-of <- AMM(amm.type="onefirm",rj=Company_A,
+## AMM output
+of <- AMM(amm.type="all",rj=Company_A,
           nlags=NA,
           verbose=TRUE,
           dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
@@ -327,21 +327,21 @@ all.data <- all.data[-which(is.na(all.data$nifty)),]
 cn.names <- which(colnames(all.data)%in%c("nifty","inr"))
 stock.data <- all.data[,-cn.names]
 
-of <- AMM(amm.type="onefirm",rj=y3c3$Company_A,
+of <- AMM(amm.type="residual",rj=y3c3$Company_A,
             verbose=TRUE,
             dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
                        "2008-01-05","2009-01-03")),
            rM1=y3c3$NIFTY_INDEX, others=y3c3$INRUSD,
            switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
 
-of1 <- AMM(amm.type="onefirm",rj=y3c3$Company_A,
+of1 <- AMM(amm.type="all",rj=y3c3$Company_A,
            verbose=TRUE,
            dates= NULL,
            rM1=y3c3$NIFTY_INDEX, others=y3c3$INRUSD,
            switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
 
 
-of.r <- AMM(amm.type="manyfirms", rj=stock.data[,1:5],verbose=TRUE, dates=NULL, 
+of.r <- AMM(amm.type="residual", rj=stock.data[,1:5],verbose=TRUE, dates=NULL, 
             rM1=all.data$nifty, others=all.data$inr, switch.to.innov=TRUE,
             rM1purge=TRUE, nlags=1)
 
@@ -350,7 +350,7 @@ es.amm <- eventstudy(inputData = stock.data,
                      width = 10, to.remap = TRUE, remap = "cumsum", 
                      to.plot = TRUE, inference = TRUE, 
                      inference.strategy = "bootstrap",
-                     type = "AMM", amm.type="manyfirms",
+                     type = "AMM", amm.type="residual",
                      rM1=all.data$nifty, others=all.data$inr,
                      nlags=1, verbose=TRUE,
                      dates= NULL,

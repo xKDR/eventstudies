@@ -5,7 +5,7 @@
 AMM <- function(amm.type = NULL, ...) {
 
   ## List of models currently supported
-  modelsList <- c("onefirm","manyfirms","firmExposures")
+  modelsList <- c("all","residual","firmExposures")
 
   if (is.null(amm.type) || length(amm.type) != 1) {
     stop("Argument amm.type not provided or incorrect")
@@ -58,26 +58,26 @@ AMM <- function(amm.type = NULL, ...) {
 
   ## Assign values
   
-  ##-----------
-  ## One firm
-  ##-----------
-  if(amm.type == "onefirm") {
+  ##----
+  ## AMM
+  ##----
+  if(amm.type == "residual") {
+    ## One firm
+    if(NCOL(rj)==1){
                                         # Checking required arguments
-    if (match("rj", names(modelArgs), nomatch = -1) == -1) {
-      stop("Input rj (firm data) is missing")
+      if (match("rj", names(modelArgs), nomatch = -1) == -1) {
+        stop("Input rj (firm data) is missing")
+      }
+      
+      X <- makeX(rM1, others, switch.to.innov,
+                 rM1purge, nlags, dates, verbose)
+      result <- onefirmAMM(rj, X, nlags, verbose, dates)
+      result <- result$residuals
     }
-
-    X <- makeX(rM1, others, switch.to.innov,
-               rM1purge, nlags, dates, verbose)
-    result <- onefirmAMM(rj, X, nlags, verbose, dates)
-    result <- result$residuals
-  }
-
-  ##-----------
-  ## Many firms
-  ##-----------
-  if(amm.type == "manyfirms") {
-                                        # Checking required arguments
+    
+    ## Many firms
+    if(NCOL(rj)>1){
+                                           # Checking required arguments
     if (match("rj", names(modelArgs), nomatch = -1) == -1) {
       stop("Input rj (firm data) is missing")
     }
@@ -93,8 +93,46 @@ AMM <- function(amm.type = NULL, ...) {
       result <- merge(result,tmp$residuals)
     }
     colnames(result) <- colnames(rj)
+    }
   }
-  
+
+  ##----
+  ## All
+  ##----
+  if(amm.type == "all") {
+    ## One firm
+    if(NCOL(rj)==1){
+                                        # Checking required arguments
+      if (match("rj", names(modelArgs), nomatch = -1) == -1) {
+        stop("Input rj (firm data) is missing")
+      }
+      
+      X <- makeX(rM1, others, switch.to.innov,
+                 rM1purge, nlags, dates, verbose)
+      result <- onefirmAMM(rj, X, nlags, verbose, dates)
+    }
+    
+    ## Many firms
+    if(NCOL(rj)>1){
+                                           # Checking required arguments
+    if (match("rj", names(modelArgs), nomatch = -1) == -1) {
+      stop("Input rj (firm data) is missing")
+    }
+    if(NCOL(rj)<2){
+      stop("Less than two firms in inputData")
+    }
+    
+    X <- makeX(rM1, others, switch.to.innov,
+               rM1purge, nlags, dates, verbose)
+    result <- list()
+    for(i in 1:NCOL(rj)){
+      tmp <- onefirmAMM(rj[,i], X, nlags, verbose, dates)
+      result[[i]] <- tmp
+    }
+    names(result) <- colnames(rj)
+    }
+  }
+
   ##---------------
   ## Firm exposures
   ##---------------
@@ -174,9 +212,8 @@ onefirmAMM <- function(rj,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
 manyfirmsAMM <-
 function(regressand,regressors,
                           lags,dates=NULL, periodnames=NULL,verbose=FALSE){
- # require("doMC")
+  require("doMC")
   registerDoMC()
-  cat("All available cores will be used for this program.\n")
   if(is.null(dates)){
     dates=c(start(regressors),end(regressors))
     periodnames="Full"

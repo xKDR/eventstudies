@@ -31,8 +31,9 @@ Event study methodology has been primarily used to evaluate the impact
 of specific events on the value of the firm. The typical procedure for
 conducting an event study involves \citep{MacKinlay}
 \begin{itemize}
- \item Defining the event of interest and the event window which is
-   larger than the specific period of interest. % Generally the event
+\item Defining the event of interest and the event window. The event
+  window is larger than the specific period of
+  interest. % Generally the event
   % period itself is not included in the estimation period to prevent
   % the event from influencing the normal performance model parameter
   % estimates.
@@ -44,13 +45,17 @@ conducting an event study involves \citep{MacKinlay}
    on stock prices of information that is specific to the firm under
    question (e.g. stock split annoucement) and information that is
    likely to affect stock prices marketwide (e.g. interest rates)
+ \item Analysis of firm returns around the event date  
 \end{itemize}
 
-The \textbf{eventstudies} package makes possible BLAH. All functions
-in this package are implemented in the R system for statistical
-computing. The package, and R are available at no cost under the terms
-of the general public license (GPL) from the comprehensive R archive
-network (CRAN, \texttt{http://CRAN.R-project.org}).
+The \textbf{eventstudies} package brings together the various aspects
+of an event study analysis in one library. It provides for functions
+to calculate returns, transform data into event-time, and conduct
+inference on the unit of interest. All functions in this package are
+implemented in the R system for statistical computing. The package,
+and R are available at no cost under the terms of the general public
+license (GPL) from the comprehensive R archive network (CRAN,
+\texttt{http://CRAN.R-project.org}).
 
 This paper is organised as follows. A skeletal event study model is
 presented in Section \ref{s::model}. Section \ref{s:approach}
@@ -61,18 +66,10 @@ functionalities of the package are discussed in Section
 inference in section \ref{ss:inference}. Section \ref{s:conclusion}
 conclues the paper.
 
-
-
-% In this package, there are three major functions
-% \textit{phys2eventtime}, \textit{remap.cumsum} and
-% \textit{inference.Ecar}. \textit{phys2eventtime} changes the
-% physical dates to event time frame on which event study analysis can
-% be done with ease. \textit{remap.cumsum}
-% can be used to convert returns to cumulative sum or product in the
-% event time frame. \textit{inference.Ecar} generates bootstrap
-% inference for the event time response of the variable. 
-
 \section{Skeletal event study model} \label{s:model}
+
+In this section, we present a model to evaluate the impact of stock
+splits on returns. 
 
 Let day-0 identify the stock split date under scrutiny and let days
 t = ... -3,-2,-1 represent trading days leading up to the event. If
@@ -111,31 +108,39 @@ the control period. A common assumption used to formulate tests of
 statistical significance is that abnormal returns are normally
 distributed.
 
-
 \section{Software approach} \label{s:approach}
 The package offers the following functionalities:
-
- Models for calculating returns. These include:
-   \begin{itemize}
-   \item Excess returns model  
-   \item Market residual model
-   \item Augmented market model (AMM)
-   \end{itemize}
-   
-\begin{itemize}
+\begin{enumerate}
+ \item Models for calculating returns. These include:
+  \begin{itemize}
+   \item \texttt{excessReturn}: estimation of excess return i.e. $R_j -
+     R_m$ where $R_j$ is the return of firm $j$ and $R_m$ is the market
+     return.
+   \item \texttt{marketResidual}: estimation of market residual after
+     extracting market returns from firm returns.
+   \item \texttt{AMM}: estimation of market residual after extracting
+     market returns and currency returns from firm returns. 
+  \end{itemize}
  \item Coverting the data-set to an event frame. This requires:
    \begin{itemize}
    \item A time series object of stock price returns
    \item Event dates object with two columns, \textit{unit} and
      \textit{when}, the date of occurrence of the event.
    \end{itemize}
-
  \item Procedures for inference. These include:
    \begin{itemize}
    \item Bootstrapping
    \item Wilcoxon signed rank test  
    \end{itemize}
-\end{itemize}
+\end{enumerate}
+
+
+The first argument of the first two models is the \texttt{data.oject}
+which is a time-series of stock returns. The second argument is
+\texttt{market.name}, a column name indicating market returns. 
+
+The output from these two models is another time-series object which
+is used for converting to event time.
 
 
 \section{Example: Performing Eventstudy analysis} 
@@ -146,6 +151,8 @@ on the stock price of the firm. The data-set consist of the returns
 series of the thirty index companies, as of 2013, of the Bombay Stock
 Exchange (BSE), from 2001 to 2013.  We have stock split dates for each
 firm from 2000 onwards.
+
+\subsection{Basic data files}
 
 We first create a \textit{zoo} object for stock price returns for the
 thirty firms. For event dates, a data frame with two columns
@@ -163,12 +170,15 @@ data(SplitDates)
 head(SplitDates)
 @ 
 
+\subsection{Calculating returns}
+
 \subsection{Using the market model}
 <<>>=
 data(StockPriceReturns)
 # Excess return
 er.result <- excessReturn(market.name="nifty",
                           data.object=StockPriceReturns)
+
 
 @ 
 
@@ -196,6 +206,8 @@ result1 <- AMM(amm.type="all",rj=y3c3$Company_A,
            rM1=y3c3$NIFTY_INDEX, others=y3c3$INRUSD,
            switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
 
+
+
 ## With AMM different structural periods  
 result2 <- AMM(amm.type="all",rj=Company_A,
                nlags=NA,
@@ -206,6 +218,9 @@ result2 <- AMM(amm.type="all",rj=Company_A,
                switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
 
 @ 
+
+
+
 \subsection{Converting physical dates to event frame}
 The first step towards event study analysis is to convert the physical
 dates to event time frame.  The event date and the returns on that

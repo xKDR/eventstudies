@@ -7,7 +7,7 @@
 \title{It is the data-set used for event-study analysis.}
 
 \description{
-It has stock price returns for index constituents of Bombay Stock Exchange (BSE).
+It has stock price returns for index constituents of Bombay Stock Exchange (BSE), nifty index and INR/USD returns.
 }
 
 \usage{data(StockPriceReturns)}

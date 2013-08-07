@@ -190,32 +190,34 @@ mm.result <- marketResidual(data.object=StockPriceReturns, market.name="nifty")
 %AMM model
 <<>>=
 # Create RHS before running AMM()
-data("y3c3")
-NIFTY_INDEX <- y3c3$NIFTY_INDEX
-INRUSD <- y3c3$INRUSD
-Company_A <- y3c3$Company_A
-Company_B <- y3c3$Company_B
-Company_C <- y3c3$Company_C
-regressand <- cbind(Company_A,Company_B,Company_C)
+nifty.index <- StockPriceReturns$nifty
+inrusd <- StockPriceReturns$inr
 
 ## AMM output
-## With no structural break dates: dates=NULL
-result1 <- AMM(amm.type="all",rj=y3c3$Company_A,
-           verbose=TRUE,
-           dates= NULL,
-           rM1=y3c3$NIFTY_INDEX, others=y3c3$INRUSD,
-           switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+## For Full period: dates=NULL
+amm.residual <- AMM(amm.type="residual",rj=StockPriceReturns[,1:3],
+                    verbose=TRUE,
+                    dates= NULL,
+                    rM1=nifty.index, others=inrusd,
+                    switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+
+amm.output <- AMM(amm.type="all",rj=StockPriceReturns[,1:3],
+                  verbose=TRUE,
+                  dates= NULL,
+                  rM1=nifty.index, others=inrusd,
+                  switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
 
 
-
-## With AMM different structural periods  
-result2 <- AMM(amm.type="all",rj=Company_A,
-               nlags=NA,
-               verbose=TRUE,
-               dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
-                 "2008-01-05","2009-01-03")),
-               rM1=NIFTY_INDEX, others=INRUSD,
-               switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+## ## With AMM different structural periods  
+## structural.break.dates <- c(start(StockPriceReturns),as.Date("2007-01-06"),
+##                             end(StockPriceReturns))
+## amm.output.different.periods <- AMM(amm.type = "all",rj = StockPriceReturns[,1],
+##                                     nlags = NA,
+##                                     verbose =TRUE,
+##                                     dates = structural.break.dates,
+##                                     rM1 = nifty.index, others = inrusd,
+##                                     switch.to.innov = TRUE, rM1purge = TRUE, 
+##                                     nlags = 1)
 
 @ 
 
@@ -342,13 +344,8 @@ es.er <- eventstudy(inputData = StockPriceReturns, eventList = SplitDates,
                     type = "excessReturn", market.name = "nifty")
 
 ## Event study using augmented market model (AMM) and bootstrap
-data(inr)
-inrusd <- zoo(diff(log(inr))*100,index(inr))
-all.data <- merge(StockPriceReturns,inrusd, all = FALSE)
-all.data <- window(all.data, start="2004-01-01")
-all.data <- all.data[-which(is.na(all.data$nifty)),]
-cn.names <- which(colnames(all.data)%in%c("nifty","inr"))
-stock.data <- all.data[,-cn.names]
+cn.names <- which(colnames(StockPriceReturns)%in%c("nifty","inr"))
+stock.data <- StockPriceReturns[,-cn.names]
 
 es.amm <- eventstudy(inputData = stock.data, 
                      eventList = SplitDates, 
@@ -356,7 +353,7 @@ es.amm <- eventstudy(inputData = stock.data,
                      to.plot = TRUE, inference = TRUE, 
                      inference.strategy = "bootstrap",
                      type = "AMM", amm.type="residual",
-                     rM1=all.data$nifty, others=all.data$inr,
+                     rM1=StockPriceReturns$nifty, others=StockPriceReturns$inr,
                      nlags=1, verbose=TRUE,
                      dates= NULL,
                      switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)

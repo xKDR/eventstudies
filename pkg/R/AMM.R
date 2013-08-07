@@ -171,6 +171,7 @@ onefirmAMM <- function(rj,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
    res <- firmExposures(rj,X,verbose=verbose,nlags=nlags)
    exposures <- res$exposure
    sds <- res$s.exposure
+   m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
    if(residual==TRUE){
      m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
    }
@@ -178,9 +179,9 @@ onefirmAMM <- function(rj,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
    tmp <- window(rj,start=dates[1],end=dates[1+1])
    rhs <- window(X,start=dates[1],end=dates[1+1])
    res <- firmExposures(rj=tmp,
-                          X=rhs,
-                          verbose=verbose,
-                          nlags=nlags)
+                        X=rhs,
+                        verbose=verbose,
+                        nlags=nlags)
    exposures[1,] <- res$exposure
    periodnames <- c(periodnames,paste(dates[1],dates[1+1],sep=" TO "))
    sds[1,] <- res$s.exposure

@@ -16,7 +16,7 @@ AMM(amm.type=NULL, ...)
 }
 \value{The function returns the exposures, HAC adjusted standard
   errors, the number of lags used, and the residuals from the fitted
-  model. Default is NULL.
+    model. Default is NULL.
 
 \item{exposures}{This contains the exposure estimates for the firm
 j}

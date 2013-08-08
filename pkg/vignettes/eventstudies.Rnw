@@ -110,39 +110,57 @@ distributed.
 
 \section{Software approach} \label{s:approach}
 The package offers the following functionalities:
-\begin{enumerate}
- \item Models for calculating returns. These include:
+\begin{itemize}
+ \item Models for calculating returns
+ \item Coverting data to event-frame and remapping event-frame
+ \item Procedures for inference
+\end{itemize}
+
+\subsection*{Models for calculating returns}
+
   \begin{itemize}
    \item \texttt{excessReturn}: estimation of excess return i.e. $R_j -
      R_m$ where $R_j$ is the return of firm $j$ and $R_m$ is the market
      return.
    \item \texttt{marketResidual}: estimation of market residual after
-     extracting market returns from firm returns.
-   \item \texttt{AMM}: estimation of market residual after extracting
-     market returns and currency returns from firm returns. 
+     extracting market returns from firm returns. 
+     
+     The first argument of the two functions is the \texttt{data.oject}
+     which is a time-series of stock returns. The second argument is
+     \texttt{market.name}, a column name indicating market returns.
+     
+   \item \texttt{AMM}: estimation of the Augmented market model which
+     gives the market residual after extracting market returns and
+     currency returns from firm returns. The function allows for
+     specifying the type of the AMM model as well.     
   \end{itemize}
- \item Coverting the data-set to an event frame. This requires:
+  
+  The output from these models is another time-series object which is
+  used for converting to event time.
+
+  \subsection*{Coverting the data-set to an event frame}
+  These include:
    \begin{itemize}
-   \item A time series object of stock price returns
-   \item Event dates object with two columns, \textit{unit} and
-     \textit{when}, the date of occurrence of the event.
+   \item \texttt{phys2eventtime}: conversion to an event frame. This
+     requires a time series object of stock price returns and an
+     object with two columns \textit{unit} and \textit{when}, the date
+     of occurrence of the event.
+     
+   \item \texttt{remap.cumsum}: conversion of returns to cumulative
+     returns   
    \end{itemize}
- \item Procedures for inference. These include:
+   
+  \subsection*{Procedures for inference} 
+  These include:
    \begin{itemize}
-   \item Bootstrapping
-   \item Wilcoxon signed rank test  
+   \item \texttt{inference.bootstrap}: estimation of bootstrap to
+     generate the distribution of  cumulative returns series.
+   \item \texttt{inference.wilcox}: estimation of wilcox inference to
+     generate the distribution of cumulative returns series.
    \end{itemize}
 \end{enumerate}
 
-
-The first argument of the first two models is the \texttt{data.oject}
-which is a time-series of stock returns. The second argument is
-\texttt{market.name}, a column name indicating market returns. 
-
-The output from these two models is another time-series object which
-is used for converting to event time.
-
-
+     
 \section{Example: Performing Eventstudy analysis} 
 \label{s:example}
 
@@ -150,41 +168,40 @@ We demonstrate the package with a study of the impact of stock splits
 on the stock price of the firm. The data-set consist of the returns
 series of the thirty index companies, as of 2013, of the Bombay Stock
 Exchange (BSE), from 2001 to 2013.  We have stock split dates for each
-firm from 2000 onwards.
-
-\subsection{Basic data files}
+firm from 2000 onwards. 
 
 We first create a \textit{zoo} object for stock price returns for the
-thirty firms. For event dates, a data frame with two columns
-\textit{unit} and \textit{when} is formed. \textit{unit} has name of
-the response series (firm name as in column name of time series
-object) along with event date in \textit{when}. \textit{unit} should
-be in \textit{character} format and \textit{when} in \textit{Date}
-format.
+thirty firms. This is called \textit{StockPriceReturns}. The column
+\texttt{nifty} is the market return and \texttt{inr} the INR-USD
+exchange rate.
 
 <<>>=
 library(eventstudies)
 data(StockPriceReturns)
 str(StockPriceReturns)
-data(SplitDates)
-head(SplitDates)
+head(StockPriceReturns)
 @ 
 
 \subsection{Calculating returns}
 
-\subsection{Using the market model}
+The function \texttt{excessReturn} calculates the excess returns while
+\texttt{marketResidual} calculates the market model. It requires the
+user to specify the \texttt{market.name} and \texttt{data.object}. The
+result is stored in \texttt{er.result}.
+
 <<>>=
 data(StockPriceReturns)
 # Excess return
 er.result <- excessReturn(market.name="nifty",
                           data.object=StockPriceReturns)
-
+head(er.result)
 
 @ 
-
 <<>>=
 # Extracting market residual
 mm.result <- marketResidual(data.object=StockPriceReturns, market.name="nifty")
+head(mm.result)
+
 @ 
 
 %AMM model
@@ -208,29 +225,31 @@ amm.output <- AMM(amm.type="all",rj=StockPriceReturns[,1:3],
                   switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
 
 
-## ## With AMM different structural periods  
-## structural.break.dates <- c(start(StockPriceReturns),as.Date("2007-01-06"),
-##                             end(StockPriceReturns))
-## amm.output.different.periods <- AMM(amm.type = "all",rj = StockPriceReturns[,1],
-##                                     nlags = NA,
-##                                     verbose =TRUE,
-##                                     dates = structural.break.dates,
-##                                     rM1 = nifty.index, others = inrusd,
-##                                     switch.to.innov = TRUE, rM1purge = TRUE, 
-##                                     nlags = 1)
 
 @ 
 
 
+\subsection{Conversion to event frame}
 
-\subsection{Converting physical dates to event frame}
-The first step towards event study analysis is to convert the physical
-dates to event time frame.  The event date and the returns on that
-date are indexed to 0. Post-event dates are indexed to positive, and
-pre-event dates as negative. This is done using the
-\textit{phys2eventtime} function.
+Before the data is converted to event frame, we need to know the dates
+of interest. This is done with a data frame with two columns
+\textit{unit} and \textit{when}. \textit{unit} has name of
+the response series (firm name as in column name of time series
+object) along with event date in \textit{when}. \textit{unit} should
+be in \textit{character} format and \textit{when} in \textit{Date}
+format.
 
-The output for \textit{phys2eventtime} is a list. The first element of
+<<>>=
+data(SplitDates)
+head(SplitDates)
+@ 
+
+
+The event date and the returns on that date are indexed to
+0. Post-event dates are indexed to positive, and pre-event dates as
+negative. This is done using the \texttt{phys2eventtime} function.
+
+The output for \texttt{phys2eventtime} is a list. The first element of
 a list is a time series object which is converted to event 
 time and the second element is \textit{outcomes} which shows if there
 was any \textit{NA} in the dataset. If the outcome is \textit{success}
@@ -256,10 +275,9 @@ In this example, es.w contains the returns in event-time form for all
 the stocks. In this you only get variables for whom all data is
 available. 
 
-\subsection{Remapping event frame}
 In event study analysis the variable of interest is cumulative
-returns. The \textit{remap.cumsum} function is used to
-convert the returns to cumulative returns.
+returns. The \texttt{remap.cumsum} function is used to convert the
+returns to cumulative returns.
 <<>>=
 es.cs <- remap.cumsum(es.w,is.pc=FALSE,base=0)
 es.cs[,1]

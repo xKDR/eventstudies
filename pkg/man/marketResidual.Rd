@@ -6,12 +6,12 @@
 \description{ This function extracts market return using regression from the firm return to get the residual return
 }
 
-\usage{marketResidual(data.object, market.name=NULL)
+\usage{marketResidual(firm.returns, market.returns)
 }
 
 \arguments{
-  \item{data.object}{Single time series object with firm/firms and stock index data}
-  \item{market.name}{Column name of the market index in the data}
+  \item{firm.returns}{Single time series object with all firm returns}
+  \item{market.returns}{Market index returns}
 
 }
 \value{ Market residual after extracting market returns from the firm return
@@ -21,8 +21,9 @@
 
 \examples{ 
 data(StockPriceReturns)
+data(nifty.index)
 # Extracting market residual
-mm.result <- marketResidual(data.object=StockPriceReturns, market.name="nifty")
+mm.result <- marketResidual(firm.returns=StockPriceReturns, market.name=nifty.index)
 
 }
 

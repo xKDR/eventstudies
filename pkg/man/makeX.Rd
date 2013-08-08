@@ -11,11 +11,11 @@ of Augmented Market Models
 }
 
 \usage{
-makeX(rM1, others, switch.to.innov = rep(TRUE, NCOL(others)), rM1purge = TRUE, nlags = 5, dates = NULL, verbose = FALSE)
+makeX(market.returns, others, switch.to.innov = rep(TRUE, NCOL(others)), market.returns.purge = TRUE, nlags = 5, dates = NULL, verbose = FALSE)
 }
 
 \arguments{
-  \item{rM1}{This is generally fixed to the stock market index. The
+  \item{market.returns}{This is generally fixed to the stock market index. The
   first column vector of this matrix contains this variable. 
 }
 
@@ -29,13 +29,13 @@ makeX(rM1, others, switch.to.innov = rep(TRUE, NCOL(others)), rM1purge = TRUE, n
     'others' is switched from raw values to AR residuals. 
 }
 
-  \item{rM1purge}{whether or not the effects of all these 'others' are
-  purged from 'rM1' (i.e., is it replaced by residuals of a model
-  explaining rM1 using all these 'others'). 
+  \item{market.returns.purge}{whether or not the effects of all these 'others' are
+  purged from 'market.returns' (i.e., is it replaced by residuals of a model
+  explaining market.returns using all these 'others'). 
 }
 
   \item{nlags}{The number of lag terms present in this model explaining
-  rM1 using all these 'others'.
+  market.returns using all these 'others'.
 }
 
   \item{dates}{Specified break dates (either from structural breaks in
@@ -64,12 +64,12 @@ makeX(rM1, others, switch.to.innov = rep(TRUE, NCOL(others)), rM1purge = TRUE, n
 \examples{
 # makeX
 data("firmExposuresData")
-rj  <- firmExposuresData$Company_A
-rM1 <- firmExposuresData$NIFTY_INDEX
+firm.returns  <- firmExposuresData$Company_A
+market.returns <- firmExposuresData$NIFTY_INDEX
 rM2 <- firmExposuresData$usdinr
 rM3 <- firmExposuresData$baa
-X <- makeX(rM1, others=rM2,
-           switch.to.innov=FALSE, rM1purge=FALSE, verbose=FALSE)
+X <- makeX(market.returns, others=rM2,
+           switch.to.innov=FALSE, market.returns.purge=FALSE, verbose=FALSE)
 }
 
 \keyword{makeX}

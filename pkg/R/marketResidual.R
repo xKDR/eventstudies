@@ -2,55 +2,40 @@
 # Market model adjustment
 #########################
 ## Argument:
-## 1. data.object: Single time series object with all the variables
-## 2. market.name: Column name of market index in the data
+## 1. firm.returns: Firm returns of which market residual is to computed
+## 2. market.returns: Market Index returns 
 ## Output:
 ## Value: Market residual after extracting market returns from the firm return
 
-marketResidual <- function(data.object, market.name=NULL){
-### Checking arguments
-  if(is.null(market.name)==TRUE){
-    stop("Column name of market index not provided")
-  }
-  cn.names <- colnames(data.object)
-  cn.names <- cn.names[-which(cn.names%in%market.name)]
-  ## Market residual
-  formula <- paste(cn.names[1],"~",market.name,sep=" ")
-  tmp <- marketResidual.onefirm(mm.formula = formula,
-                                data.object = data.object,
-                                firm.name = cn.names[1])
-  ## tmp <- tmp[complete.cases(tmp),]
-  if(length(cn.names)>1){
-    for(i in 2:length(cn.names)){
-      ## Getting formula
-      formula <- paste(cn.names[i],"~",market.name,sep=" ")
-      ## Market residual
-      tmp.resid <- marketResidual.onefirm(mm.formula = formula,
-                                          data.object = data.object,
-                                          firm.name = cn.names[i])
-      ## tmp.resid <- tmp.resid[complete.cases(tmp.resid),]
-      tmp <- merge(tmp,tmp.resid,all=TRUE)
+marketResidual <- function(firm.returns, market.returns){
+  ## Checking
+  if(NCOL(firm.returns)>1){
+    result <- mm.residual(firm.returns[,1], market.returns)
+    for(i in 2:NCOL(firm.returns)){
+      res <- mm.residual(firm.returns[,i], market.returns)
+      result <- cbind(result,res)
     }
+    colnames(result) <- colnames(firm.returns)
+  } else {
+    result <- mm.residual(firm.returns, market.returns)
   }
-  colnames(tmp) <- cn.names
-  return(tmp)
+  result <- zoo(result)
+  return(result)
 }
 
-marketResidual.onefirm <- function(mm.formula=NULL,data.object,firm.name){
-### Market residual one firm
+mm.residual <- function(firm.returns, market.returns){
   ## Storing NA observations
-  na.date <- data.object[which(complete.cases(data.object[,firm.name])==FALSE),
-                         firm.name]
-### Checking arguments
-  if(is.null(mm.formula)==TRUE){
-    print("Formula for market residual model not provided")
-  }
-  ## Extracting market residuals
-  reg <- lm(as.formula(mm.formula),data=data.object)
-  resid <- xts(reg$residuals,as.Date(attr(reg$residuals,"names")))
-  suppressWarnings(tot.resid <- rbind(resid,
-                                      xts(rep(NA,NROW(na.date)),
-                                          index(na.date))))
+    na.date <- firm.returns[which(complete.cases(firm.returns)==FALSE)]
+    firm <- firm.returns
+    market <- market.returns
+    mm.data <- merge(firm,market,all=TRUE)
+    colnames(mm.data) <- c("firm","market")
+    reg <- lm(firm ~ market, data = mm.data)
+    resid <- xts(reg$residuals,as.Date(attr(reg$residuals,"names")))
+    suppressWarnings(tot.resid <- rbind(resid,
+                                        xts(rep(NA,NROW(na.date)),
+                                            index(na.date))))
+    colnames(tot.resid) <- "firm.residual"
   return(tot.resid)
-}
 
+}

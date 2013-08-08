@@ -3,18 +3,18 @@
 
 \title{A function that estimates exposure for a single firm over multiple periods}
 
-\description{This function typically utilises an rj vector
+\description{This function typically utilises an firm.returns vector
   and an X matrix of explanatory variables obtained out of
   using the makeX function. This would compute the exposure
   for all columns in X for the specified time periods. 
 }
 
 \usage{
-onefirmAMM(rj, X, nlags = 1, verbose = FALSE, dates = NULL, residual = TRUE)
+onefirmAMM(firm.returns, X, nlags = 1, verbose = FALSE, dates = NULL, residual = TRUE)
 }
 
 \arguments{
-  \item{rj}{A vector of data for one firm
+  \item{firm.returns}{A vector of data for one firm
   }
   \item{X}{A matrix of explanatory variables obtained from
     the makeX function. The first variable is always the
@@ -49,12 +49,12 @@ NIFTY_INDEX <- y3c3$NIFTY_INDEX
 INRUSD <- y3c3$INRUSD
 Company_A <- y3c3$Company_A
 rhs.dat <- makeX(NIFTY_INDEX, others=INRUSD,
-           switch.to.innov=TRUE, rM1purge=TRUE, nlags=1,
+           switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1,
            dates=as.Date(c("2005-01-15","2006-01-07","2007-01-06",
                        "2008-01-05","2009-01-03")), verbose=FALSE)
 
 # Run AMM for one firm across different periods
-onefirmAMM(rj=Company_A,
+onefirmAMM(firm.returns=Company_A,
             X=rhs.dat,
             nlags=1,
             verbose=TRUE,

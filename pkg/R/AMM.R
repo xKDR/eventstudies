@@ -15,9 +15,9 @@ AMM <- function(amm.type = NULL, ...) {
   }
 
                                         # NULLify all the values before use
-  rj <- NULL
-  rM1 <- NULL
-  rM1purge <- NULL
+  firm.returns <- NULL
+  market.returns <- NULL
+  market.returns.purge <- NULL
   nlags <- NULL
   others <- NULL
   switch.to.innov <- NULL
@@ -32,14 +32,14 @@ AMM <- function(amm.type = NULL, ...) {
   }
 
                                       # Checking required arguments
-  if (match("rM1", names(modelArgs), nomatch = -1) == -1) {
-    stop("Input rM1 (stock market index) is missing")
+  if (match("market.returns", names(modelArgs), nomatch = -1) == -1) {
+    stop("Input market.returns (stock market index) is missing")
   }
   if (match("others", names(modelArgs), nomatch = -1) == -1) {
     stop("Input 'others' (time series of other regressor or interest) is missing")
   }
-  if (match("rM1purge", names(modelArgs), nomatch = -1) == -1) {
-    stop("Input rM1purge is missing")
+  if (match("market.returns.purge", names(modelArgs), nomatch = -1) == -1) {
+    stop("Input market.returns.purge is missing")
   }
   if (match("switch.to.innov", names(modelArgs), nomatch = -1) == -1) {
     stop("Input switch.to.innov is missing")
@@ -63,36 +63,36 @@ AMM <- function(amm.type = NULL, ...) {
   ##----
   if(amm.type == "residual") {
     ## One firm
-    if(NCOL(rj)==1){
+    if(NCOL(firm.returns)==1){
                                         # Checking required arguments
-      if (match("rj", names(modelArgs), nomatch = -1) == -1) {
-        stop("Input rj (firm data) is missing")
+      if (match("firm.returns", names(modelArgs), nomatch = -1) == -1) {
+        stop("Input firm.returns (firm data) is missing")
       }
       
-      X <- makeX(rM1, others, switch.to.innov,
-                 rM1purge, nlags, dates, verbose)
-      result <- onefirmAMM(rj, X, nlags, verbose, dates)
+      X <- makeX(market.returns, others, switch.to.innov,
+                 market.returns.purge, nlags, dates, verbose)
+      result <- onefirmAMM(firm.returns, X, nlags, verbose, dates)
       result <- result$residuals
     }
     
     ## Many firms
-    if(NCOL(rj)>1){
+    if(NCOL(firm.returns)>1){
                                            # Checking required arguments
-    if (match("rj", names(modelArgs), nomatch = -1) == -1) {
-      stop("Input rj (firm data) is missing")
+    if (match("firm.returns", names(modelArgs), nomatch = -1) == -1) {
+      stop("Input firm.returns (firm data) is missing")
     }
-    if(NCOL(rj)<2){
+    if(NCOL(firm.returns)<2){
       stop("Less than two firms in inputData")
     }
     
-    X <- makeX(rM1, others, switch.to.innov,
-               rM1purge, nlags, dates, verbose)
+    X <- makeX(market.returns, others, switch.to.innov,
+               market.returns.purge, nlags, dates, verbose)
     result <- xts()
-    for(i in 1:NCOL(rj)){
-      tmp <- onefirmAMM(rj[,i], X, nlags, verbose, dates)
+    for(i in 1:NCOL(firm.returns)){
+      tmp <- onefirmAMM(firm.returns[,i], X, nlags, verbose, dates)
       result <- merge(result,tmp$residuals)
     }
-    colnames(result) <- colnames(rj)
+    colnames(result) <- colnames(firm.returns)
     }
   }
 
@@ -101,35 +101,35 @@ AMM <- function(amm.type = NULL, ...) {
   ##----
   if(amm.type == "all") {
     ## One firm
-    if(NCOL(rj)==1){
+    if(NCOL(firm.returns)==1){
                                         # Checking required arguments
-      if (match("rj", names(modelArgs), nomatch = -1) == -1) {
-        stop("Input rj (firm data) is missing")
+      if (match("firm.returns", names(modelArgs), nomatch = -1) == -1) {
+        stop("Input firm.returns (firm data) is missing")
       }
       
-      X <- makeX(rM1, others, switch.to.innov,
-                 rM1purge, nlags, dates, verbose)
-      result <- onefirmAMM(rj, X, nlags, verbose, dates)
+      X <- makeX(market.returns, others, switch.to.innov,
+                 market.returns.purge, nlags, dates, verbose)
+      result <- onefirmAMM(firm.returns, X, nlags, verbose, dates)
     }
     
     ## Many firms
-    if(NCOL(rj)>1){
+    if(NCOL(firm.returns)>1){
                                            # Checking required arguments
-    if (match("rj", names(modelArgs), nomatch = -1) == -1) {
-      stop("Input rj (firm data) is missing")
+    if (match("firm.returns", names(modelArgs), nomatch = -1) == -1) {
+      stop("Input firm.returns (firm data) is missing")
     }
-    if(NCOL(rj)<2){
+    if(NCOL(firm.returns)<2){
       stop("Less than two firms in inputData")
     }
     
-    X <- makeX(rM1, others, switch.to.innov,
-               rM1purge, nlags, dates, verbose)
+    X <- makeX(market.returns, others, switch.to.innov,
+               market.returns.purge, nlags, dates, verbose)
     result <- list()
-    for(i in 1:NCOL(rj)){
-      tmp <- onefirmAMM(rj[,i], X, nlags, verbose, dates)
+    for(i in 1:NCOL(firm.returns)){
+      tmp <- onefirmAMM(firm.returns[,i], X, nlags, verbose, dates)
       result[[i]] <- tmp
     }
-    names(result) <- colnames(rj)
+    names(result) <- colnames(firm.returns)
     }
   }
 
@@ -138,14 +138,14 @@ AMM <- function(amm.type = NULL, ...) {
   ##---------------
   if (amm.type=="firmExposures") {
                                         # Checking required arguments
-    if (match("rj", names(modelArgs), nomatch = -1) == -1) {
-      stop("Input rj (firm data) is missing")
+    if (match("firm.returns", names(modelArgs), nomatch = -1) == -1) {
+      stop("Input firm.returns (firm data) is missing")
     }
     
-    X <- makeX(rM1, others, switch.to.innov,
-               rM1purge, nlags, dates, verbose)
+    X <- makeX(market.returns, others, switch.to.innov,
+               market.returns.purge, nlags, dates, verbose)
 
-    result <- firmExposures(rj, X, nlags, verbose)
+    result <- firmExposures(firm.returns, X, nlags, verbose)
   }
 
   return(result)
@@ -154,10 +154,10 @@ AMM <- function(amm.type = NULL, ...) {
 #######################
 # AMM for one firm
 #######################
-onefirmAMM <- function(rj,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
+onefirmAMM <- function(firm.returns,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
   ## Creating empty frames
   if(is.null(dates)){
-    dates.no <- c(start(rj),end(rj))
+    dates.no <- c(start(firm.returns),end(firm.returns))
   } else{
     dates.no <- dates
   }
@@ -168,7 +168,7 @@ onefirmAMM <- function(rj,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
   
   ## Getting firm exposure, amm residuals
   if(is.null(dates)){
-   res <- firmExposures(rj,X,verbose=verbose,nlags=nlags)
+   res <- firmExposures(firm.returns,X,verbose=verbose,nlags=nlags)
    exposures <- res$exposure
    sds <- res$s.exposure
    m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
@@ -176,9 +176,9 @@ onefirmAMM <- function(rj,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
      m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
    }
  }else{
-   tmp <- window(rj,start=dates[1],end=dates[1+1])
+   tmp <- window(firm.returns,start=dates[1],end=dates[1+1])
    rhs <- window(X,start=dates[1],end=dates[1+1])
-   res <- firmExposures(rj=tmp,
+   res <- firmExposures(firm.returns=tmp,
                         X=rhs,
                         verbose=verbose,
                         nlags=nlags)
@@ -188,9 +188,9 @@ onefirmAMM <- function(rj,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
    m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
    colnames(m.residuals) <- paste(dates[1],"to",dates[1+1],sep=".")
    for(i in 2:(length(dates)-1)){
-     tmp <- window(rj,start=dates[i],end=dates[i+1])
+     tmp <- window(firm.returns,start=dates[i],end=dates[i+1])
      rhs <- window(X,start=dates[i],end=dates[i+1])
-     res <- firmExposures(rj=tmp,
+     res <- firmExposures(firm.returns=tmp,
                           X=rhs,
                           verbose=verbose,
                           nlags=nlags)
@@ -248,8 +248,8 @@ function(regressand,regressors,
   for(i in 1:ncol(regressand)){
     cat("Doing",colnames(regressand)[i])
     if (verbose) {cat ("Doing", colnames(regressand)[i])}
-    rj <- regressand[,i]
-    dataset <- cbind(rj, regressors)   # This is the full time-series
+    firm.returns <- regressand[,i]
+    dataset <- cbind(firm.returns, regressors)   # This is the full time-series
     this.exp <- this.sds <- NULL
     for(j in 1:nperiods){              # now we chop it up 
       t1 <- dates[j]
@@ -269,10 +269,10 @@ function(regressand,regressors,
 ###############################################
 # Estimating one firm's exposure in one period.
 ###############################################
-firmExposures <- function(rj, X, nlags=NA, verbose=FALSE) {
+firmExposures <- function(firm.returns, X, nlags=NA, verbose=FALSE) {
   do.ols <- function(nlags) {
-    tmp <- cbind(rj, X[,1]) # Assume 1st is stock index, and no lags are required there.
-    labels <- c("rj","rM1")
+    tmp <- cbind(firm.returns, X[,1]) # Assume 1st is stock index, and no lags are required there.
+    labels <- c("firm.returns","market.returns")
     if (NCOL(X) > 1) {
       for (i in 2:NCOL(X)) {
         for (j in 0:nlags) {
@@ -287,7 +287,7 @@ firmExposures <- function(rj, X, nlags=NA, verbose=FALSE) {
     }
 
     colnames(tmp) <- labels          # So the OLS results will look nice
-    lm(rj ~ ., data=as.data.frame(tmp))
+    lm(firm.returns ~ ., data=as.data.frame(tmp))
   }
 
   if (is.na(nlags)) {
@@ -295,7 +295,7 @@ firmExposures <- function(rj, X, nlags=NA, verbose=FALSE) {
     bestlag <- 0
     bestm <- NULL
     bestAIC <- Inf
-    for (trylag in 0:min(10,log10(length(rj)))) {
+    for (trylag in 0:min(10,log10(length(firm.returns)))) {
       thism <- do.ols(trylag)
       thisAIC <- AIC(thism, k=log(length(thism$fitted.values)))
       if (verbose) {cat(trylag, " lags, SBC = ", thisAIC, "\n")}
@@ -317,11 +317,11 @@ firmExposures <- function(rj, X, nlags=NA, verbose=FALSE) {
   # Compute a series of exposure measures, and their standard errors.
   beta <- m$coefficients
   Sigma <- vcovHAC(m)
-  # First the rM1
-  exposures <- beta[2]                  # no lags for rM1
+  # First the market.returns
+  exposures <- beta[2]                  # no lags for market.returns
   s.exposures <- sqrt(Sigma[2,2])
   # From here on, there's a block of 1+nlags coeffs for each
-  # of the non-rM1 regressors.
+  # of the non-market.returns regressors.
   if (NCOL(X) > 1) {
     for (i in 2:NCOL(X)) {
       n.block1 <- 2 + ((i-2)*(1+nlags)) # Just 2 for the 1st case.
@@ -364,8 +364,8 @@ ARinnovations <- function(x) {
 # ---------------------------------------------------------------------------
 # The workhorse called by makeX to return a nice matrix of RHS
 # variables to be used in an analysis. 
-do.one.piece <- function(rM1, others, switch.to.innov, rM1purge, nlags, verbose=FALSE) {
-  thedates <- index(rM1)
+do.one.piece <- function(market.returns, others, switch.to.innov, market.returns.purge, nlags, verbose=FALSE) {
+  thedates <- index(market.returns)
   if (verbose) {
     cat("   Doing work for period from ",
         as.character(head(thedates,1)), " to ",
@@ -392,8 +392,8 @@ do.one.piece <- function(rM1, others, switch.to.innov, rM1purge, nlags, verbose=
     }
   }
   if (NCOL(innov) > 1) {colnames(innov) <- colnames(others)}
-  rM1.purged <- rM1
-  if (rM1purge) {
+  market.returns.purged <- market.returns
+  if (market.returns.purge) {
     firstpass <- TRUE
     for (i in 1:NCOL(innov)) {
       for (j in 0:nlags) {
@@ -408,41 +408,41 @@ do.one.piece <- function(rM1, others, switch.to.innov, rM1purge, nlags, verbose=
       }
     }
     if (NCOL(z) > 1) {colnames(z) <- labels}
-    m <- lm(rM1 ~ ., as.data.frame(cbind(rM1, z)))
+    m <- lm(market.returns ~ ., as.data.frame(cbind(market.returns, z)))
     if (verbose) {
-      cat("   Model explaining rM1:\n")
+      cat("   Model explaining market.returns:\n")
       print(summary(m))
     }
     how.many.NAs <- nlags + max(otherlags)
-    rM1.purged <- zoo(c(rep(NA,how.many.NAs),m$residuals),
+    market.returns.purged <- zoo(c(rep(NA,how.many.NAs),m$residuals),
                       order.by=thedates)
   }
                                         #    if (verbose) {cat("   Finished do.one.piece()\n")}
-  list(rM1.purged=rM1.purged, innov=innov)
+  list(market.returns.purged=market.returns.purged, innov=innov)
 }                              
 
 # A function that calls do.one.piece, and works through several
 # different periods to provide the right RHS matrix. 
-makeX <- function(rM1, others,
+makeX <- function(market.returns, others,
                   switch.to.innov=rep(TRUE, NCOL(others)),
-                  rM1purge=TRUE,
+                  market.returns.purge=TRUE,
                   nlags=5,
                   dates=NULL,
                   verbose=FALSE) {
   if (verbose) {cat("0. Checking args\n")}
-  stopifnot(all.equal(index(rM1), index(others)),
+  stopifnot(all.equal(index(market.returns), index(others)),
             length(switch.to.innov)==NCOL(others))
   if (!is.null(dates)) {
     stopifnot(class(dates) == "Date")
   }
   if (verbose) {cat("1. Checking dates.\n")}
   if (is.null(dates)) {
-    dates <- c(start(rM1),end(rM1))
+    dates <- c(start(market.returns),end(market.returns))
   }
-  if(head(dates,1)!=head(index(rM1),1)){
+  if(head(dates,1)!=head(index(market.returns),1)){
     stop("Start date provided and the start date of the dataset do not match \n")
   }
-  if(tail(dates,1)!=tail(index(rM1),1)){
+  if(tail(dates,1)!=tail(index(market.returns),1)){
     stop("End date provided and the end date of the dataset do not match \n")
   }
   if (verbose) {cat("2. Run through all the pieces --\n")}
@@ -453,21 +453,21 @@ makeX <- function(rM1, others,
     if (verbose) {
       cat("   Focusing down from date = ", as.character(t1), " to ", as.character(t2), "\n")
     }
-    tmp.rM1 <- window(rM1, start=t1, end=t2)
+    tmp.market.returns <- window(market.returns, start=t1, end=t2)
     tmp.others <- window(others, start=t1, end=t2)
-    a <- do.one.piece(tmp.rM1, tmp.others, switch.to.innov, rM1purge, nlags, verbose)
+    a <- do.one.piece(tmp.market.returns, tmp.others, switch.to.innov, market.returns.purge, nlags, verbose)
     if (i > 1) {
-      res.rM1 <- c(res.rM1, a$rM1.purged)
+      res.market.returns <- c(res.market.returns, a$market.returns.purged)
       res.innov <- rbind(res.innov, a$innov)
     } else {
-      res.rM1 <- a$rM1.purged
+      res.market.returns <- a$market.returns.purged
       res.innov <- a$innov
     }
   }
   if (verbose) {cat("2. Make a clean X and send it back --\n")}
-  X <- cbind(res.rM1, res.innov)
-  if (NCOL(res.innov) == 1) {colnames(X) <- c("rM1","z")}
-  else {colnames(X) <- c("rM1", colnames(res.innov))}
+  X <- cbind(res.market.returns, res.innov)
+  if (NCOL(res.innov) == 1) {colnames(X) <- c("market.returns","z")}
+  else {colnames(X) <- c("market.returns", colnames(res.innov))}
   X
 }
 

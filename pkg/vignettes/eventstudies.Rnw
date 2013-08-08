@@ -190,16 +190,16 @@ user to specify the \texttt{market.name} and \texttt{data.object}. The
 result is stored in \texttt{er.result}.
 
 <<>>=
-data(StockPriceReturns)
 # Excess return
-er.result <- excessReturn(market.name="nifty",
-                          data.object=StockPriceReturns)
+er.result <- excessReturn(firm.returns = StockPriceReturns,
+                          market.returns = nifty.index)
 head(er.result)
 
 @ 
 <<>>=
 # Extracting market residual
-mm.result <- marketResidual(data.object=StockPriceReturns, market.name="nifty")
+mm.result <- marketResidual(firm.returns = StockPriceReturns, 
+                            market.returns = nifty.index)
 head(mm.result)
 
 @ 
@@ -207,24 +207,28 @@ head(mm.result)
 %AMM model
 <<>>=
 # Create RHS before running AMM()
-nifty.index <- StockPriceReturns$nifty
-inrusd <- StockPriceReturns$inr
+data(nifty.index)
+data(inr)
+inrusd <- diff(log(inr))*100
+all.data <- merge(StockPriceReturns,nifty.index,inrusd,all=TRUE)
+StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("nifty.index",
+                                                             "inr"))]
+nifty.index <- all.data$nifty.index
+inrusd <- all.data$inr
 
 ## AMM output
 ## For Full period: dates=NULL
-amm.residual <- AMM(amm.type="residual",rj=StockPriceReturns[,1:3],
+amm.residual <- AMM(amm.type="residual",firm.returns=StockPriceReturns[,1:3],
                     verbose=TRUE,
                     dates= NULL,
-                    rM1=nifty.index, others=inrusd,
-                    switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+                    market.returns=nifty.index, others=inrusd,
+                    switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
 
-amm.output <- AMM(amm.type="all",rj=StockPriceReturns[,1:3],
+amm.output <- AMM(amm.type="all",firm.returns=StockPriceReturns[,1:3],
                   verbose=TRUE,
                   dates= NULL,
-                  rM1=nifty.index, others=inrusd,
-                  switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
-
-
+                  market.returns=nifty.index, others=inrusd,
+                  switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
 
 @ 
 
@@ -340,40 +344,41 @@ confidence interval.
 
 <<>>=
 ## Event study without adjustment
-es.na <- eventstudy(inputData = StockPriceReturns, eventList = SplitDates, 
+es.na <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
                     width = 10, to.remap = TRUE, remap = "cumsum", 
                     to.plot = TRUE, inference = TRUE, 
                     inference.strategy = "wilcoxon",
                     type = "None")
 
 ## Event study using market residual and bootstrap
-es.mm <- eventstudy(inputData = StockPriceReturns, eventList = SplitDates, 
+es.mm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
                     width = 10, to.remap = TRUE, remap = "cumsum", 
                     to.plot = TRUE, inference = TRUE, 
                     inference.strategy = "bootstrap",
-                    type = "marketResidual", market.name = "nifty")
+                    type = "marketResidual", market.returns = nifty.index)
 
 ## Event study using excess return and bootstrap
-es.er <- eventstudy(inputData = StockPriceReturns, eventList = SplitDates, 
+es.er <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
                     width = 10, to.remap = TRUE, remap = "cumsum", 
                     to.plot = TRUE, inference = TRUE, 
                     inference.strategy = "bootstrap",
-                    type = "excessReturn", market.name = "nifty")
+                    type = "excessReturn", market.returns = nifty.index)
 
 ## Event study using augmented market model (AMM) and bootstrap
 cn.names <- which(colnames(StockPriceReturns)%in%c("nifty","inr"))
 stock.data <- StockPriceReturns[,-cn.names]
 
-es.amm <- eventstudy(inputData = stock.data, 
+es.amm <- eventstudy(firm.returns = StockPriceReturns, 
                      eventList = SplitDates, 
                      width = 10, to.remap = TRUE, remap = "cumsum", 
                      to.plot = TRUE, inference = TRUE, 
                      inference.strategy = "bootstrap",
                      type = "AMM", amm.type="residual",
-                     rM1=StockPriceReturns$nifty, others=StockPriceReturns$inr,
+                     market.returns=nifty.index,
+                     others=inrusd,
                      nlags=1, verbose=TRUE,
                      dates= NULL,
-                     switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+                     switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
 
 @ 
 

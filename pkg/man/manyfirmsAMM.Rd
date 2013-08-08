@@ -49,8 +49,8 @@ INRUSD <- y3c3$INRUSD
 Company_A <- y3c3$Company_A
 Company_B <- y3c3$Company_B
 Company_C <- y3c3$Company_C
-regressors <- makeX(rM1=NIFTY_INDEX, others=INRUSD,
-           switch.to.innov=TRUE, rM1purge=TRUE, nlags=1,
+regressors <- makeX(market.returns=NIFTY_INDEX, others=INRUSD,
+           switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1,
            dates=as.Date(c("2005-01-15","2006-01-07","2007-01-06",
                        "2008-01-05","2009-01-03")), verbose=FALSE)
 regressand <- cbind(Company_A,Company_B,Company_C)

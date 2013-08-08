@@ -7,12 +7,8 @@
 # Output:
 # Value: Excess market return
 
-excessReturn <- function(data.object, market.name=NULL){
-  if(is.null(market.name)==TRUE){
-    stop("Column name for market index not provided")
-  }
-  cn.names <- colnames(data.object)
-  cn.names <- cn.names[-which(cn.names%in%market.name)]
-  ma.ret <- data.object[,cn.names]-data.object[,market.name]
+excessReturn <- function(firm.returns, market.returns){
+  ## Getting market return
+  ma.ret <- firm.returns-market.returns
   return(ma.ret)
 }

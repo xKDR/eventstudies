@@ -6,12 +6,11 @@
 \description{ This function estimates excess return. If the the firm return is rj and market return is rM then output will be rj less rM.
 }
 
-\usage{excessReturn(data.object, market.name=NULL)
-}
+\usage{excessReturn(firm.returns, market.returns)
 
 \arguments{
-  \item{data.object}{This is a time series object with firm return and market return}
-  \item{market.name}{It is the market (index) column name in the data object}
+  \item{firm.returns}{Firm returns of which excess return from market is to be calculated}
+  \item{market.returns}{Market index returns}
 
 }
 \value{Excess market return}
@@ -20,8 +19,9 @@
 
 \examples{ 
 data(StockPriceReturns)
-er.result <- excessReturn(market.name="nifty",
-                          data.object=StockPriceReturns)
+data(nifty.index)
+er.result <- excessReturn(firm.returns = StockPriceReturns,
+			  market.returns = nifty.index)
 
 }
 

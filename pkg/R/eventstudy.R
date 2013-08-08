@@ -1,4 +1,4 @@
-eventstudy <- function(inputData = NULL,
+eventstudy <- function(firm.returns = NULL,
                        eventList,
                        width = 10,
                        is.levels =  FALSE,
@@ -13,30 +13,30 @@ eventstudy <- function(inputData = NULL,
                        main = "Event study plot",
                        ...) {
                                         # type = "marketResidual", "excessReturn", "AMM", "None"
-  if (type == "None" && !is.null(inputData)) {
-    outputModel <- inputData
+  if (type == "None" && !is.null(firm.returns)) {
+    outputModel <- firm.returns
   }
 
   if (is.levels == TRUE) {
-    inputData <- diff(log(inputData)) * 100
+    firm.returns <- diff(log(firm.returns)) * 100
   }
 
 ### Run models
   ## AMM
   if (type == "AMM") {
     amm.type <- "residual"
-    tmp.outputModel <- AMM(rj = inputData, ...)
+    tmp.outputModel <- AMM(amm.type, ...)
     outputModel <- zoo(coredata(tmp.outputModel),index(tmp.outputModel))
   }
 
   ## marketResidual
   if (type == "marketResidual") {
-    outputModel <- marketResidual(data.object = inputData, ...)
+    outputModel <- marketResidual(firm.returns, ...)
   }
 
   ## excessReturn
   if (type == "excessReturn") {
-    outputModel <- excessReturn(data.object = inputData, ...)
+    outputModel <- excessReturn(firm.returns, ...)
   }
   
 ### Converting index outputModel to Date

@@ -60,11 +60,11 @@ of the exposures estimated for the firm rj.}
 # firmExposures
 data("firmExposuresData")
 rj  <- firmExposuresData$Company_A
-rM1 <- firmExposuresData$NIFTY_INDEX
+market.returns <- firmExposuresData$NIFTY_INDEX
 rM2 <- firmExposuresData$usdinr
 rM3 <- firmExposuresData$baa
-X <- makeX(rM1, others=rM2,
-           switch.to.innov=FALSE, rM1purge=FALSE, verbose=FALSE)
+X <- makeX(market.returns, others=rM2,
+           switch.to.innov=FALSE, market.returns.purge=FALSE, verbose=FALSE)
 a <- firmExposures(rj, X, nlags=0, verbose=FALSE)
 print(a)
 }

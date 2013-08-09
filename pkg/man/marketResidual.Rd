@@ -23,7 +23,7 @@
 data(StockPriceReturns)
 data(nifty.index)
 # Extracting market residual
-mm.result <- marketResidual(firm.returns=StockPriceReturns, market.name=nifty.index)
+mm.result <- marketResidual(firm.returns=StockPriceReturns, market.returns=nifty.index)
 
 }
 

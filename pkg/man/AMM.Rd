@@ -45,12 +45,12 @@ Company_C <- y3c3$Company_C
 regressand <- cbind(Company_A,Company_B,Company_C)
 
 ## One firm
-of <- AMM(amm.type="residual",rj=Company_A,
+of <- AMM(amm.type="residual",firm.returns=Company_A,
             verbose=TRUE,
             dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
                        "2008-01-05","2009-01-03")),
-           rM1=NIFTY_INDEX, others=INRUSD,
-           switch.to.innov=TRUE, rM1purge=TRUE, nlags=1)
+           market.returns=NIFTY_INDEX, others=INRUSD,
+           switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
 }
 
 \keyword{AMM}

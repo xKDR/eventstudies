@@ -4,18 +4,18 @@
 \title{A function that estimates exposure for a single firm in a
 single period}
 
-\description{This function typically utilises an rj vector
+\description{This function typically utilises an firm.returns vector
   and an X matrix of explanatory variables obtained 
   using the makeX function. This would compute the exposure
   for all columns in X.
 }
 
 \usage{
-firmExposures(rj, X, nlags = NA, verbose = FALSE)
+firmExposures(firm.returns, X, nlags = NA, verbose = FALSE)
 }
 
 \arguments{
-  \item{rj}{A vector of data for one firm}
+  \item{firm.returns}{A vector of data for one firm}
 
   \item{X}{A matrix of explanatory variables obtained from
     the makeX function. The first variable is always the
@@ -42,7 +42,7 @@ firmExposures(rj, X, nlags = NA, verbose = FALSE)
 j}
 
 \item{s.exposures}{This contains the HAC adjusted standard error
-of the exposures estimated for the firm rj.}
+of the exposures estimated for the firm firm.returns.}
 
 \item{nlags}{Specifies the lag length provided by the user}
 
@@ -59,13 +59,13 @@ of the exposures estimated for the firm rj.}
 \examples{
 # firmExposures
 data("firmExposuresData")
-rj  <- firmExposuresData$Company_A
+firm.returns  <- firmExposuresData$Company_A
 market.returns <- firmExposuresData$NIFTY_INDEX
 rM2 <- firmExposuresData$usdinr
 rM3 <- firmExposuresData$baa
 X <- makeX(market.returns, others=rM2,
            switch.to.innov=FALSE, market.returns.purge=FALSE, verbose=FALSE)
-a <- firmExposures(rj, X, nlags=0, verbose=FALSE)
+a <- firmExposures(firm.returns, X, nlags=0, verbose=FALSE)
 print(a)
 }
 

@@ -7,7 +7,7 @@
 }
 
 \usage{
-eventstudy(inputData = NULL,
+eventstudy(firm.returns = NULL,
            eventList,
            width = 10,
            is.levels =  FALSE,
@@ -23,7 +23,7 @@ eventstudy(inputData = NULL,
 }
 
 \arguments{
-  \item{inputData}{Data on which event study is to be performed}
+  \item{firm.returns}{Data on which event study is to be performed}
   \item{eventList}{A data frame with event dates. It has two columns 'unit' and 'when'. The first column 'unit' consists of column names of the event stock and 'when' is the respective event date}
   \item{width}{It studies the performance of observations before and after the event}
   \item{type}{This argument gives an option to use different market model adjustment like "marketResidual", "excessReturn", "AMM" and "None"}
@@ -65,7 +65,7 @@ eventstudy(inputData = NULL,
 ## data("SplitDates")
 
 ## Event study without adjustment
-## es <- eventstudy(inputData = StockPriceReturns, eventList = SplitDates, width = 10,type = "None", to.remap = TRUE, remap = "cumsum", to.plot = FALSE,inference = TRUE, inference.strategy = "bootstrap")
+## es <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, width = 10,type = "None", to.remap = TRUE, remap = "cumsum", to.plot = FALSE,inference = TRUE, inference.strategy = "bootstrap")
 
 }
 

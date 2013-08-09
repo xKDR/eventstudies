@@ -158,7 +158,7 @@ The package offers the following functionalities:
    \item \texttt{inference.wilcox}: estimation of wilcox inference to
      generate the distribution of cumulative returns series.
    \end{itemize}
-\end{enumerate}
+%\end{enumerate}
 
      
 \section{Example: Performing Eventstudy analysis} 
@@ -178,6 +178,7 @@ exchange rate.
 <<>>=
 library(eventstudies)
 data(StockPriceReturns)
+data(nifty.index)
 str(StockPriceReturns)
 head(StockPriceReturns)
 @ 
@@ -193,14 +194,14 @@ result is stored in \texttt{er.result}.
 # Excess return
 er.result <- excessReturn(firm.returns = StockPriceReturns,
                           market.returns = nifty.index)
-head(er.result)
+head(er.result[,1:3])
 
 @ 
 <<>>=
 # Extracting market residual
 mm.result <- marketResidual(firm.returns = StockPriceReturns, 
                             market.returns = nifty.index)
-head(mm.result)
+head(mm.result[,1:3])
 
 @ 
 
@@ -365,9 +366,6 @@ es.er <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates,
                     type = "excessReturn", market.returns = nifty.index)
 
 ## Event study using augmented market model (AMM) and bootstrap
-cn.names <- which(colnames(StockPriceReturns)%in%c("nifty","inr"))
-stock.data <- StockPriceReturns[,-cn.names]
-
 es.amm <- eventstudy(firm.returns = StockPriceReturns, 
                      eventList = SplitDates, 
                      width = 10, to.remap = TRUE, remap = "cumsum", 

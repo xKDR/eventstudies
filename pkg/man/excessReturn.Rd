@@ -3,10 +3,10 @@
 
 \title{A function that estimates excess return}
 
-\description{ This function estimates excess return. If the the firm return is rj and market return is rM then output will be rj less rM.
+\description{ This function estimates excess return. If the the firm return is rj and market return is market.returns then output will be firm.returns less market.returns.
 }
 
-\usage{excessReturn(firm.returns, market.returns)
+\usage{excessReturn(firm.returns, market.returns)}
 
 \arguments{
   \item{firm.returns}{Firm returns of which excess return from market is to be calculated}

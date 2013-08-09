@@ -25,7 +25,7 @@ eventstudy <- function(firm.returns = NULL,
   ## AMM
   if (type == "AMM") {
     amm.type <- "residual"
-    tmp.outputModel <- AMM(amm.type, ...)
+    tmp.outputModel <- AMM(amm.type, firm.returns = firm.returns, ...)
     outputModel <- zoo(coredata(tmp.outputModel),index(tmp.outputModel))
   }
 
@@ -84,5 +84,5 @@ eventstudy <- function(firm.returns = NULL,
     result <- es.w
   }
     
-  return(result)
+  return(list(result, es$outcomes))
 }

@@ -373,10 +373,10 @@ es.amm <- eventstudy(firm.returns = StockPriceReturns,
                      width = 10, to.remap = TRUE, remap = "cumsum", 
                      to.plot = TRUE, inference = TRUE, 
                      inference.strategy = "bootstrap",
-                     type = "AMM", amm.type="residual",
+                     type = "AMM",
                      market.returns=nifty.index,
                      others=inrusd,
-                     nlags=1, verbose=TRUE,
+                     verbose=TRUE,
                      dates= NULL,
                      switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
 

@@ -38,6 +38,10 @@ eventstudy(inputData = NULL,
   \item{main}{If to.plot is TRUE then the plot generated will take this as main title}
   \item{...}{Accepts specific arguments for the model.}
 }
+
+\details{If type = "AMM", then the default output is "residual".
+  }
+
 \value{ Output is mean estimate  of abnormal returns and confidence interval using particular inference strategy
 }
 

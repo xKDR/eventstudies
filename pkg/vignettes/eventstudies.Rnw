@@ -226,7 +226,6 @@ supported: \textit{residual} and \textit{all}.
 %AMM model
 <<>>=
 # Create RHS before running AMM()
-data(nifty.index)
 data(inr)
 inrusd <- diff(log(inr))*100
 all.data <- merge(StockPriceReturns,nifty.index,inrusd,all=TRUE)

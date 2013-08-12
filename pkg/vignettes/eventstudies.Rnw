@@ -184,8 +184,8 @@ library(eventstudies)
 data(StockPriceReturns)
 data(nifty.index)
 str(StockPriceReturns)
-head(StockPriceReturns)
-head(nifty.index)
+#head(StockPriceReturns)
+#head(nifty.index)
 @ 
 
 \subsection{Calculating returns}
@@ -199,6 +199,7 @@ stored in \texttt{er.result} and \texttt{mm.result} respectively.
 # Excess return
 er.result <- excessReturn(firm.returns = StockPriceReturns,
                           market.returns = nifty.index)
+er.result <- er.result[rowSums(is.na(er.result))!=NCOL(er.result),]
 head(er.result[,1:3])
 
 @ 
@@ -206,6 +207,7 @@ head(er.result[,1:3])
 # Extracting market residual
 mm.result <- marketResidual(firm.returns = StockPriceReturns, 
                             market.returns = nifty.index)
+mm.result <- mm.result[rowSums(is.na(mm.result))!=NCOL(mm.result),]
 head(mm.result[,1:3])
 
 @ 
@@ -236,13 +238,13 @@ inrusd <- all.data$inr
 ## AMM output
 ## For Full period: dates=NULL
 amm.residual <- AMM(amm.type="residual",firm.returns=StockPriceReturns[,1:3],
-                    verbose=TRUE,
+                    verbose=FALSE,
                     dates= NULL,
                     market.returns=nifty.index, others=inrusd,
-                    switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
+                    switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=0)
 
 amm.output <- AMM(amm.type="all",firm.returns=StockPriceReturns[,1:3],
-                  verbose=TRUE,
+                  verbose=FALSE,
                   dates= NULL,
                   market.returns=nifty.index, others=inrusd,
                   switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
@@ -393,7 +395,7 @@ es.amm <- eventstudy(firm.returns = StockPriceReturns,
                      type = "AMM",
                      market.returns=nifty.index,
                      others=inrusd,
-                     verbose=TRUE,
+                     verbose=FALSE,
                      dates= NULL,
                      switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
 

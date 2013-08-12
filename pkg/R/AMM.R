@@ -87,13 +87,15 @@ AMM <- function(amm.type = NULL, ...) {
     
     X <- makeX(market.returns, others, switch.to.innov,
                market.returns.purge, nlags, dates, verbose)
-    result <- xts()
-    for(i in 1:NCOL(firm.returns)){
+    tmp.result <- onefirmAMM(firm.returns[,1], X, nlags, verbose, dates)
+    result <- tmp.result$residuals
+    for(i in 2:NCOL(firm.returns)){
       tmp <- onefirmAMM(firm.returns[,i], X, nlags, verbose, dates)
       result <- merge(result,tmp$residuals)
     }
     colnames(result) <- colnames(firm.returns)
     }
+    index(result) <- as.Date(index(result))
   }
 
   ##----

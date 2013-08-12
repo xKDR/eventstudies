@@ -378,6 +378,7 @@ es.mm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates,
                     to.plot = FALSE, inference = TRUE, 
                     inference.strategy = "bootstrap",
                     type = "marketResidual", market.returns = nifty.index)
+es.mm
 
 ## Event study using excess return and bootstrap
 es.er <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 

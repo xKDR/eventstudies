@@ -375,14 +375,14 @@ es.na <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates,
 ## Event study using market residual and bootstrap
 es.mm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
                     width = 10, to.remap = TRUE, remap = "cumsum", 
-                    to.plot = TRUE, inference = TRUE, 
+                    to.plot = FALSE, inference = TRUE, 
                     inference.strategy = "bootstrap",
                     type = "marketResidual", market.returns = nifty.index)
 
 ## Event study using excess return and bootstrap
 es.er <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
                     width = 10, to.remap = TRUE, remap = "cumsum", 
-                    to.plot = TRUE, inference = TRUE, 
+                    to.plot = FALSE, inference = TRUE, 
                     inference.strategy = "bootstrap",
                     type = "excessReturn", market.returns = nifty.index)
 
@@ -390,13 +390,11 @@ es.er <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates,
 es.amm <- eventstudy(firm.returns = StockPriceReturns, 
                      eventList = SplitDates, 
                      width = 10, to.remap = TRUE, remap = "cumsum", 
-                     to.plot = TRUE, inference = TRUE, 
+                     to.plot = FALSE, inference = TRUE, 
                      inference.strategy = "bootstrap",
                      type = "AMM",
-                     market.returns=nifty.index,
-                     others=inrusd,
-                     verbose=FALSE,
-                     dates= NULL,
+                     market.returns = nifty.index,
+                     others=inrusd, verbose=FALSE, dates= NULL,
                      switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
 
 @ 

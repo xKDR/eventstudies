@@ -4,15 +4,13 @@
 
 \alias{eesData}
 
-\title{It is the data-set used for event-study analysis.}
+\title{Returns data used for extreme events analysis}
 
-\description{
-It is a time series object with daily series for S&P 500 and Nifty (NSE index).	
-}
+\description{A daily time series object for S&P 500 and the NIFTY Index.}
 
 \usage{data(eesData)}
 
-\format{An object with class attributes \code{zoo} containing resposne series for eventstudy.}
+\format{\code{zoo}}
 
 \examples{
     data(eesData)

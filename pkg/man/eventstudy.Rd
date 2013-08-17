@@ -1,10 +1,9 @@
 \name{eventstudy}
 \alias{eventstudy}
 
-\title{Performs event study using different methods and computes confidence intervals using different inference models}
+\title{A wrapper that performs eventstudies using different methods}
 
-\description{ This function generates event study output and further computes confidence intervals using bootstrap or wilcox method.
-}
+\description{This function undertakes an eventstudy based on the inference methodology chosen by the user.}
 
 \usage{
 eventstudy(firm.returns = NULL,

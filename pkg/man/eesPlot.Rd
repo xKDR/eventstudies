@@ -2,12 +2,12 @@
 \alias{eesPlot}
 
 \title{
-Plotting clustered and unclustered extreme event study plot.
+Plotting clustered and unclustered extreme events retuns.
 }
 
 \description{
-This function generates an extreme event study plot by marking extreme events and fusing clustered events together. It plots event study plot for lower tail and upper tail events. Tail events are defined as per given probability value. The value of the event series and response series should be in returns.
- }
+This function creates an event study plot that treats all clustered events as one event. It plots both the lower and upper tail events and the events are defined based on the cut off probability values provided (in percentage terms).}
+
 
 \usage{
 eesPlot(z, response.series.name, event.series.name, titlestring, ylab, width, prob.value)
@@ -16,17 +16,15 @@ eesPlot(z, response.series.name, event.series.name, titlestring, ylab, width, pr
 \arguments{
   \item{z}{Data object with both response and event series on which event study is to be performed}
   \item{response.series.name}{Column name of the series in 'z' on which response is to be observed }
-  \item{event.series.name}{Column name of the series in 'z' on which event is to be observed }
-  \item{titlestring}{Title for event study plot: Preferred to be response series name}
+  \item{event.series.name}{Column name of the series in 'z' on which event is to be defined }
+  \item{titlestring}{Title for event study plot}
   \item{ylab}{Y-axis label}
   \item{width}{Width for event study plot}
-  \item{prob.value}{It is the tail value on the basis of which the
-  extreme event are defined. For eg: prob.value of 5 will consider 5\% tail on both sides.} 
+  \item{prob.value}{Cut-off values in the probability distribution (in percentage terms)} 
 }
 
 \value{
- It gives an extreme event study plot for very bad (lower tail) and very good (upper tail) events on event series. 
-}
+A plot of the response series with lower and upper tail events defined on the event series.}
 
 \examples{
 library(eventstudies)

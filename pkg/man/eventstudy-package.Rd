@@ -26,9 +26,9 @@ procedures.
 }
 
 \author{
-Ajay Shah, Vimal Balasubramniam, Vikram Bahure
+Ajay Shah, Chirag Anand, Vikram Bahure, Vimal Balasubramaniam
 
-Maintainer: economics.vikram@gmail.com
+Maintainer: Vikram Bahure <economics.vikram@gmail.com>
 }
 
 \keyword{ eventstudies }

@@ -4,15 +4,14 @@
 
 \alias{StockPriceReturns}
 
-\title{It is the data-set used for event-study analysis.}
+\title{An example dataset of stock price returns to perform eventstudy analysis.}
 
-\description{
-It has stock price returns for index constituents of Bombay Stock Exchange (BSE), nifty index and INR/USD returns.
-}
+\description{Daily stock price returns for the index constituents of the Bombay Stock Exchange Index (SENSEX) and the National Stock Exchange of India Index (NIFTY), NIFTY index, and the Rupee-Dollar exchange rate returns.}
+
 
 \usage{data(StockPriceReturns)}
 
-\format{An object with class attributes \code{zoo} containing resposne series for eventstudy.}
+\format{\code{zoo}}
 
 \examples{
     data(StockPriceReturns)

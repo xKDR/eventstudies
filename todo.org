@@ -1,0 +1,35 @@
+List of things need to be done.
+
+* eventstudies package
+  - should work with data.frames, zoo, xts
+  - create a generic "eventstudies" class
+  - DESIGN!!!
+
+* phys2eventtime
+  - more testing: all output is unitmissing
+  - parallelise (provide an argument to the user)
+  - document:
+  > stopifnot(sum(outcomes=="success") == NCOL(z.e))
+    - if data is missing within the width around the event date, we
+      simply discard that particular observation from the dataset! 
+
+* AMM()
+  - vectorise it
+  - parallelise it
+  - don't ask the user for amm.type in the eventstudies() function
+  - separate vignette
+  - Rewriting? # XXX
+
+* Vignette
+  - improvements in AMM()
+  - missing entries in .bib
+  - need to define all the variables used
+  - citation for Corrado (2011) seems misplaced in the beginning. It
+    seems as though we are replicating his work on stock-splits, which
+    isn't the case
+
+* man pages
+  - modify ess.Rd: put reference to Patnaik, Shah, and Singh (2013)
+
+* es-match
+  - synthetic returns

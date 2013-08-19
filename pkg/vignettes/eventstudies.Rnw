@@ -11,9 +11,10 @@
 \author{Vikram Bahure and Renuka Sane and Ajay Shah\thanks{We thank
     Chirag Anand for valuable inputs in the creation of this vignette.}} 
 \begin{document}
-% \VignetteIndexEntry{eventstudies: A package with functionality
-% to do Event Studies} \VignetteDepends{} \VignetteKeywords{event
-% studies} \VignettePackage{eventstudies}
+% \VignetteIndexEntry{eventstudies: A package with functionality to do Event Studies} 
+% \VignetteDepends{} 
+% \VignetteKeywords{eventstudies} 
+% \VignettePackage{eventstudies}
 \maketitle
 
 \begin{abstract}
@@ -194,7 +195,8 @@ library(eventstudies)
 data(StockPriceReturns)
 data(nifty.index) 
 str(StockPriceReturns) 
-head(StockPriceReturns)
+## head(StockPriceReturns)
+head(StockPriceReturns[rowSums(is.na((StockPriceReturns)))==3,1:3]) 
 head(nifty.index) 
 @
 
@@ -260,15 +262,16 @@ inrusd <- all.data$inr
 
 ## AMM output ## For Full period: dates=NULL 
 
-amm.residual <- AMM(amm.type="residual",firm.returns=StockPriceReturns[,1:3],
-verbose=FALSE, dates= NULL, market.returns=nifty.index,
-others=inrusd, switch.to.innov=TRUE, market.returns.purge=TRUE,
-nlags=0)
+amm.residual <- AMM(firm.returns=StockPriceReturns[,1:3],
+                    verbose=FALSE, market.returns=nifty.index,
+                    others=inrusd, switch.to.innov=TRUE, 
+                    market.returns.purge=TRUE, nlags=0)
 
-amm.output <- AMM(amm.type="all",firm.returns=StockPriceReturns[,1:3],
-verbose=FALSE, dates= NULL, market.returns=nifty.index,
-others=inrusd, switch.to.innov=TRUE, market.returns.purge=TRUE,
-nlags=1)
+
+amm.output <- AMM(firm.returns=StockPriceReturns[,1:3],
+                  verbose=FALSE, market.returns=nifty.index,
+                  others=inrusd, switch.to.innov=TRUE, 
+                  market.returns.purge=TRUE,nlags=1)
 
 @
 
@@ -354,7 +357,9 @@ result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE)
 \subsubsection{Wilcoxon signed rank test}
 We next compute the Wilcoxon signed rank test, which is a
 non-parametric inference test to compute the confidence interval.
-<<>>= result <- inference.wilcox(es.w=es.cs, to.plot=TRUE) @
+<<>>= 
+result <- inference.wilcox(es.w=es.cs, to.plot=TRUE) 
+@
 \begin{figure}[t]
   \begin{center}
     \caption{Stock splits event and response of respective stock
@@ -372,32 +377,38 @@ non-parametric inference test to compute the confidence interval.
 functions. Several examples of the use of this function are
 provided below.
 
-<<>>= ## Event study without adjustment 
+<<>>= 
+## Event study without adjustment 
 es.na <- eventstudy(firm.returns = StockPriceReturns, eventList =
-SplitDates, width = 10, to.remap = TRUE, remap = "cumsum", to.plot
-= TRUE, inference = TRUE, inference.strategy = "wilcoxon", type =
-"None")
+                    SplitDates, width = 10, to.remap = TRUE, 
+                    remap = "cumsum", 
+                    to.plot = TRUE, inference = TRUE, 
+                    inference.strategy = "wilcoxon", type = "None")
+                    
 
 ## Event study using market residual and bootstrap 
-es.mm <- eventstudy(firm.returns = StockPriceReturns, eventList =
-SplitDates, width = 10, to.remap = TRUE, remap = "cumsum", to.plot
-= FALSE, inference = TRUE, inference.strategy = "bootstrap", type
-= "marketResidual", market.returns = nifty.index) 
+es.mm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
+                    width = 10, to.remap = TRUE, remap = "cumsum", 
+                    to.plot = FALSE, inference = TRUE, 
+                    inference.strategy = "bootstrap", 
+                    type = "marketResidual", market.returns = nifty.index) 
 es.mm
 
 ## Event study using excess return and bootstrap 
-es.er <- eventstudy(firm.returns = StockPriceReturns, eventList =
-SplitDates, width = 10, to.remap = TRUE, remap = "cumsum", to.plot
-= FALSE, inference = TRUE, inference.strategy = "bootstrap", type
-= "excessReturn", market.returns = nifty.index)
+es.er <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
+                    width = 10, to.remap = TRUE, remap = "cumsum", 
+                    to.plot = FALSE, inference = TRUE, 
+                    inference.strategy = "bootstrap", type = "excessReturn", 
+                    market.returns = nifty.index)
 
 ## Event study using augmented market model (AMM) and bootstrap
-es.amm <- eventstudy(firm.returns = StockPriceReturns, eventList =
-SplitDates, width = 10, to.remap = TRUE, remap = "cumsum", to.plot
-= FALSE, inference = TRUE, inference.strategy = "bootstrap", type
-= "AMM", market.returns = nifty.index, others=inrusd,
-verbose=FALSE, dates= NULL, switch.to.innov=TRUE,
-market.returns.purge=TRUE, nlags=1)
+es.amm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
+                     width = 10, to.remap = TRUE, remap = "cumsum", 
+                     to.plot = FALSE, inference = TRUE, 
+                     inference.strategy = "bootstrap", 
+                     type = "AMM", market.returns = nifty.index, 
+                     others=inrusd, verbose=FALSE, 
+                     switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
 
 @
 

@@ -1,18 +1,11 @@
+###########################
+## Event study AMM function
+###########################
 ##########################
 # Generalised AMM function
 ##########################
 
-AMM <- function(amm.type = NULL, ...) {
-
-  ## List of models currently supported
-  modelsList <- c("all","residual","firmExposures")
-
-  if (is.null(amm.type) || length(amm.type) != 1) {
-    stop("Argument amm.type not provided or incorrect")
-  }
-  if (match(amm.type, modelsList, nomatch = -1) == -1) {
-    stop("Unknown model provided")
-  }
+AMM <- function(...) {
 
                                         # NULLify all the values before use
   firm.returns <- NULL
@@ -57,27 +50,22 @@ AMM <- function(amm.type = NULL, ...) {
   }
 
   ## Assign values
-  
-  ##----
-  ## AMM
-  ##----
-  if(amm.type == "residual") {
-    ## One firm
-    if(NCOL(firm.returns)==1){
+  ## One firm
+  if(NCOL(firm.returns)==1){
                                         # Checking required arguments
-      if (match("firm.returns", names(modelArgs), nomatch = -1) == -1) {
-        stop("Input firm.returns (firm data) is missing")
-      }
-      
-      X <- makeX(market.returns, others, switch.to.innov,
-                 market.returns.purge, nlags, dates, verbose)
-      result <- onefirmAMM(firm.returns, X, nlags, verbose, dates)
-      result <- result$residuals
+    if (match("firm.returns", names(modelArgs), nomatch = -1) == -1) {
+      stop("Input firm.returns (firm data) is missing")
     }
     
-    ## Many firms
-    if(NCOL(firm.returns)>1){
-                                           # Checking required arguments
+    X <- makeX(market.returns, others, switch.to.innov,
+               market.returns.purge, nlags, dates, verbose)
+    result <- onefirmAMM(firm.returns, X, nlags, verbose, dates)
+    result <- result$residuals
+  }
+    
+  ## Many firms
+  if(NCOL(firm.returns)>1){
+                                        # Checking required arguments
     if (match("firm.returns", names(modelArgs), nomatch = -1) == -1) {
       stop("Input firm.returns (firm data) is missing")
     }
@@ -94,61 +82,8 @@ AMM <- function(amm.type = NULL, ...) {
       result <- merge(result,tmp$residuals)
     }
     colnames(result) <- colnames(firm.returns)
-    }
-    index(result) <- as.Date(index(result))
   }
-
-  ##----
-  ## All
-  ##----
-  if(amm.type == "all") {
-    ## One firm
-    if(NCOL(firm.returns)==1){
-                                        # Checking required arguments
-      if (match("firm.returns", names(modelArgs), nomatch = -1) == -1) {
-        stop("Input firm.returns (firm data) is missing")
-      }
-      
-      X <- makeX(market.returns, others, switch.to.innov,
-                 market.returns.purge, nlags, dates, verbose)
-      result <- onefirmAMM(firm.returns, X, nlags, verbose, dates)
-    }
-    
-    ## Many firms
-    if(NCOL(firm.returns)>1){
-                                           # Checking required arguments
-    if (match("firm.returns", names(modelArgs), nomatch = -1) == -1) {
-      stop("Input firm.returns (firm data) is missing")
-    }
-    if(NCOL(firm.returns)<2){
-      stop("Less than two firms in inputData")
-    }
-    
-    X <- makeX(market.returns, others, switch.to.innov,
-               market.returns.purge, nlags, dates, verbose)
-    result <- list()
-    for(i in 1:NCOL(firm.returns)){
-      tmp <- onefirmAMM(firm.returns[,i], X, nlags, verbose, dates)
-      result[[i]] <- tmp
-    }
-    names(result) <- colnames(firm.returns)
-    }
-  }
-
-  ##---------------
-  ## Firm exposures
-  ##---------------
-  if (amm.type=="firmExposures") {
-                                        # Checking required arguments
-    if (match("firm.returns", names(modelArgs), nomatch = -1) == -1) {
-      stop("Input firm.returns (firm data) is missing")
-    }
-    
-    X <- makeX(market.returns, others, switch.to.innov,
-               market.returns.purge, nlags, dates, verbose)
-
-    result <- firmExposures(firm.returns, X, nlags, verbose)
-  }
+  index(result) <- as.Date(index(result))
 
   return(result)
 }

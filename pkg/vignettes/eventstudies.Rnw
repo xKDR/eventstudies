@@ -189,9 +189,14 @@ Our data consists of a \textit{zoo} object for stock price returns
 for the thirty firms. This is called \textit{StockPriceReturns}
 and another zoo object, \textit{nifty.index}, of market returns.
 
-<<>>= library(eventstudies) data(StockPriceReturns)
-data(nifty.index) str(StockPriceReturns) head(StockPriceReturns)
-head(nifty.index) @
+<<>>= 
+library(eventstudies) 
+data(StockPriceReturns)
+data(nifty.index) 
+str(StockPriceReturns) 
+head(StockPriceReturns)
+head(nifty.index) 
+@
 
 The dates of interest and the firms on which the event occurred
 are stored in a data frame, \textit{SplitDates} with two columns
@@ -200,7 +205,11 @@ of the occurrence of the event. \textit{unit} should be in
 \textit{character} format and \textit{when} in \textit{Date}
 format.
 
-<<>>= data(SplitDates) head(SplitDates) @
+<<>>= 
+data(SplitDates) 
+head(SplitDates) 
+@
+
 \subsection{Calculating returns}
 
 The function \texttt{excessReturn} calculates the excess returns
@@ -209,15 +218,20 @@ inputs are \texttt{firm.returns} and \texttt{market.returns}. The
 results are stored in \texttt{er.result} and \texttt{mm.result}
 respectively.
 
-<<>>= # Excess return er.result <- excessReturn(firm.returns =
-StockPriceReturns, market.returns = nifty.index) er.result <-
-er.result[rowSums(is.na(er.result))!=NCOL(er.result),]
+<<>>= # Excess return 
+er.result <- excessReturn(firm.returns = StockPriceReturns, market.returns = nifty.index) 
+
+er.result <- er.result[rowSums(is.na(er.result))!=NCOL(er.result),]
 head(er.result[,1:3])
 
-@ <<>>= # Extracting market residual mm.result <-
-marketResidual(firm.returns = StockPriceReturns, market.returns =
-nifty.index) mm.result <-
-mm.result[rowSums(is.na(mm.result))!=NCOL(mm.result),]
+@ 
+
+<<>>= 
+# Extracting market residual 
+mm.result <- marketResidual(firm.returns = StockPriceReturns, market.returns =
+nifty.index) 
+
+mm.result <- mm.result[rowSums(is.na(mm.result))!=NCOL(mm.result),]
 head(mm.result[,1:3])
 
 @
@@ -234,22 +248,24 @@ returns can be specified using \texttt{others}. Two types of the
 AMM model are supported: \textit{residual} and \textit{all}.
 
 % AMM model
-<<>>= # Create RHS before running AMM() data(inr) inrusd <-
-diff(log(inr))*100 all.data <-
-merge(StockPriceReturns,nifty.index,inrusd,all=TRUE)
-StockPriceReturns <-
-all.data[,-which(colnames(all.data)%in%c("nifty.index",
-"inr"))] nifty.index <- all.data$nifty.index inrusd <-
-all.data$inr
+<<>>= 
+# Create RHS before running AMM() 
+data(inr) 
+inrusd <- diff(log(inr))*100 
+all.data <- merge(StockPriceReturns,nifty.index,inrusd,all=TRUE)
+StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("nifty.index",
+"inr"))] 
+nifty.index <- all.data$nifty.index 
+inrusd <- all.data$inr
 
-## AMM output ## For Full period: dates=NULL amm.residual <-
-AMM(amm.type="residual",firm.returns=StockPriceReturns[,1:3],
+## AMM output ## For Full period: dates=NULL 
+
+amm.residual <- AMM(amm.type="residual",firm.returns=StockPriceReturns[,1:3],
 verbose=FALSE, dates= NULL, market.returns=nifty.index,
 others=inrusd, switch.to.innov=TRUE, market.returns.purge=TRUE,
 nlags=0)
 
-amm.output <-
-AMM(amm.type="all",firm.returns=StockPriceReturns[,1:3],
+amm.output <- AMM(amm.type="all",firm.returns=StockPriceReturns[,1:3],
 verbose=FALSE, dates= NULL, market.returns=nifty.index,
 others=inrusd, switch.to.innov=TRUE, market.returns.purge=TRUE,
 nlags=1)
@@ -266,11 +282,17 @@ a returns series, \textit{StockPriceReturns}, a data-frame with
 event unit and time, \textit{SplitDates}, and the width for
 creating the event-frame.
 
-<<>>= es <- phys2eventtime(z=StockPriceReturns, events=SplitDates,
-width=10) str(es) es$outcomes es.w <- window(es$z.e, start=-10,
-end=10) colnames(es.w) <-
-SplitDates[which(es$outcomes=="success"),1] SplitDates[1,]
-StockPriceReturns[SplitDates[1,2],SplitDates[1,1]] es.w[,1] @
+<<>>= 
+es <- phys2eventtime(z=StockPriceReturns, events=SplitDates,
+width=10) 
+str(es) 
+es$outcomes 
+es.w <- window(es$z.e, start=-10,end=10) 
+colnames(es.w) <- SplitDates[which(es$outcomes=="success"),1] 
+SplitDates[1,]
+StockPriceReturns[SplitDates[1,2],SplitDates[1,1]] 
+es.w[,1] 
+@
 
 The output for \texttt{phys2eventtime} is a list. The first
 element of a list is a time series object which is converted to
@@ -293,7 +315,10 @@ Once the returns are converted to event-time,
 \texttt{remap.cumsum} function is used to convert the returns to
 cumulative returns.
 
-<<>>= es.cs <- remap.cumsum(es.w,is.pc=FALSE,base=0) es.cs[,1] @
+<<>>= 
+es.cs <- remap.cumsum(es.w,is.pc=FALSE,base=0) 
+es.cs[,1] 
+@
 
 \subsection{Inference procedures}
 \subsubsection{Bootstrap inference}
@@ -311,7 +336,10 @@ generate distribution of $\overline{CR}$. The bootstrap generates
 confidence interval at 2.5 percent and 97.5 percent for the
 estimate.
 
-<<>>= result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE) @
+<<>>= 
+result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE) 
+@
+
 \begin{figure}[t]
   \begin{center}
     \caption{Stock splits event and response of respective stock
@@ -344,20 +372,21 @@ non-parametric inference test to compute the confidence interval.
 functions. Several examples of the use of this function are
 provided below.
 
-<<>>= ## Event study without adjustment es.na <-
-eventstudy(firm.returns = StockPriceReturns, eventList =
+<<>>= ## Event study without adjustment 
+es.na <- eventstudy(firm.returns = StockPriceReturns, eventList =
 SplitDates, width = 10, to.remap = TRUE, remap = "cumsum", to.plot
 = TRUE, inference = TRUE, inference.strategy = "wilcoxon", type =
 "None")
 
-## Event study using market residual and bootstrap es.mm <-
-eventstudy(firm.returns = StockPriceReturns, eventList =
+## Event study using market residual and bootstrap 
+es.mm <- eventstudy(firm.returns = StockPriceReturns, eventList =
 SplitDates, width = 10, to.remap = TRUE, remap = "cumsum", to.plot
 = FALSE, inference = TRUE, inference.strategy = "bootstrap", type
-= "marketResidual", market.returns = nifty.index) es.mm
+= "marketResidual", market.returns = nifty.index) 
+es.mm
 
-## Event study using excess return and bootstrap es.er <-
-eventstudy(firm.returns = StockPriceReturns, eventList =
+## Event study using excess return and bootstrap 
+es.er <- eventstudy(firm.returns = StockPriceReturns, eventList =
 SplitDates, width = 10, to.remap = TRUE, remap = "cumsum", to.plot
 = FALSE, inference = TRUE, inference.strategy = "bootstrap", type
 = "excessReturn", market.returns = nifty.index)

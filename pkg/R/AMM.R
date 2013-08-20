@@ -77,12 +77,28 @@ AMM <- function(...) {
                market.returns.purge, nlags, dates, verbose)
     tmp.result <- onefirmAMM(firm.returns[,1], X, nlags, verbose, dates)
     result <- tmp.result$residuals
+    remove.columns <- NULL
     for(i in 2:NCOL(firm.returns)){
+      cat("Computing AMM residuals for",
+          colnames(firm.returns)[i],"and", "column no.",i,"\n")
+      ## Checking number of observations
       tmp <- onefirmAMM(firm.returns[,i], X, nlags, verbose, dates)
+      if(is.null(tmp)){
+        remove.columns <- c(remove.columns,colnames(firm.returns)[i])
+        next("Cannot compute AMM residuals due to less observations")
+      }
       result <- merge(result,tmp$residuals)
     }
-    colnames(result) <- colnames(firm.returns)
+    ## Removing columns with less obs
+    if(is.null(remove.columns)!=TRUE){
+      cn.names <- colnames(firm.returns)[-which(colnames(firm.returns)%in%remove.columns)]
+      cat(length(remove.columns), "columns removed:",remove.columns,"\n")
+    } else {
+      cn.names <- colnames(firm.returns)
+    }
+    colnames(result) <- cn.names
   }
+  
   index(result) <- as.Date(index(result))
 
   return(result)
@@ -106,11 +122,16 @@ onefirmAMM <- function(firm.returns,X,nlags=1,verbose=FALSE,dates=NULL,residual=
   ## Getting firm exposure, amm residuals
   if(is.null(dates)){
    res <- firmExposures(firm.returns,X,verbose=verbose,nlags=nlags)
-   exposures <- res$exposure
-   sds <- res$s.exposure
-   m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
-   if(residual==TRUE){
+   if(is.null(res)!=TRUE){
+     exposures <- res$exposure
+     sds <- res$s.exposure
      m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
+     if(residual==TRUE){
+       m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
+     }
+     rval <- list(exposures=exposures,sds=sds,residuals=m.residuals)
+   } else {
+     rval <- NULL
    }
  }else{
    tmp <- window(firm.returns,start=dates[1],end=dates[1+1])
@@ -139,8 +160,8 @@ onefirmAMM <- function(firm.returns,X,nlags=1,verbose=FALSE,dates=NULL,residual=
      m.residuals <- merge(m.residuals, period.resid, all=TRUE)
    }
    rownames(exposures) <- rownames(sds) <- periodnames
- }
-  rval <- list(exposures=exposures,sds=sds,residuals=m.residuals)
+   rval <- list(exposures=exposures,sds=sds,residuals=m.residuals)
+ } 
   return(rval)
 }
 
@@ -496,3 +517,4 @@ kernel.plots <- function(draws, logscale=NULL) {
           }
 	}
   }
+

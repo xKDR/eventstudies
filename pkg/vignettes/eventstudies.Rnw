@@ -260,18 +260,11 @@ StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("nifty.index",
 nifty.index <- all.data$nifty.index 
 inrusd <- all.data$inr
 
-## AMM output ## For Full period: dates=NULL 
-
+## AMM output ##
 amm.residual <- AMM(firm.returns=StockPriceReturns[,1:3],
                     verbose=FALSE, market.returns=nifty.index,
                     others=inrusd, switch.to.innov=TRUE, 
                     market.returns.purge=TRUE, nlags=0)
-
-
-amm.output <- AMM(firm.returns=StockPriceReturns[,1:3],
-                  verbose=FALSE, market.returns=nifty.index,
-                  others=inrusd, switch.to.innov=TRUE, 
-                  market.returns.purge=TRUE,nlags=1)
 
 @
 

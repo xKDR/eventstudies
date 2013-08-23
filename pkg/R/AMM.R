@@ -7,22 +7,12 @@
 
 AMM <- function(...) {
 
-                                        # NULLify all the values before use
-  firm.returns <- NULL
-  market.returns <- NULL
-  market.returns.purge <- NULL
-  nlags <- NULL
-  others <- NULL
-  switch.to.innov <- NULL
-  verbose <- NULL
-  dates <- NULL
-
-                                     # parse the input arguments for the model
+                                        # extract the arguments for
+                                        # the model and load into the
+                                        # current (function's)
+                                        # environment
   modelArgs <- list(...)
-                                        # assign values
-  for (i in 1:length(modelArgs)) {
-    eval(parse(text = paste(names(modelArgs)[i], "<-", "modelArgs[[i]]")))
-  }
+  list2env(list(...), envir = environment())
 
                                       # Checking required arguments
   if (match("market.returns", names(modelArgs), nomatch = -1) == -1) {

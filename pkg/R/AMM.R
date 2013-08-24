@@ -6,15 +6,19 @@
 ##########################
 
 AMM <- function(...) {
-
+  firm.returns <- NULL
+  market.returns <- NULL
+  others <- NULL
+  switch.to.innov <- NULL
+  market.returns.purge <- NULL
                                         # extract the arguments for
                                         # the model and load into the
                                         # current (function's)
                                         # environment
   modelArgs <- list(...)
-  list2env(list(...), envir = environment())
+  list2env(list(...))
 
-                                      # Checking required arguments
+                                        # Checking required arguments
   if (match("market.returns", names(modelArgs), nomatch = -1) == -1) {
     stop("Input market.returns (stock market index) is missing")
   }

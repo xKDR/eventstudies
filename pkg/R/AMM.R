@@ -6,17 +6,8 @@
 ##########################
 
 AMM <- function(...) {
-  firm.returns <- NULL
-  market.returns <- NULL
-  others <- NULL
-  switch.to.innov <- NULL
-  market.returns.purge <- NULL
-                                        # extract the arguments for
-                                        # the model and load into the
-                                        # current (function's)
-                                        # environment
+
   modelArgs <- list(...)
-  list2env(list(...))
 
                                         # Checking required arguments
   if (match("market.returns", names(modelArgs), nomatch = -1) == -1) {
@@ -31,19 +22,30 @@ AMM <- function(...) {
   if (match("switch.to.innov", names(modelArgs), nomatch = -1) == -1) {
     stop("Input switch.to.innov is missing")
   }
-  
+
+  firm.returns <- modelArgs$firm.returns
+  market.returns <- modelArgs$market.returns
+  others <- modelArgs$others
+  switch.to.innov <- modelArgs$switch.to.innov
+  market.returns.purge <- modelArgs$market.returns.purge
+
                                         # Checking remaining arguments
   if (match("nlags", names(modelArgs), nomatch = -1) == -1) {
     nlags <- 1
+  } else {
+    nlags <- modelArgs$nlags
   }
   if (match("verbose", names(modelArgs), nomatch = -1) == -1) {
     verbose <- FALSE
+  } else {
+    verbose <- modelArgs$verbose
   }
   if (match("dates", names(modelArgs), nomatch = -1) == -1) {
     dates <- NULL
+  } else {
+    dates <- modelArgs$dates
   }
-
-  ## Assign values
+  
   ## One firm
   if(NCOL(firm.returns)==1){
                                         # Checking required arguments

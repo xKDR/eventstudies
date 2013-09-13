@@ -31,7 +31,7 @@ AMM <- function(...) {
 
                                         # Checking remaining arguments
   if (match("nlags", names(modelArgs), nomatch = -1) == -1) {
-    nlags <- 1
+    nlags <- 0
   } else {
     nlags <- modelArgs$nlags
   }
@@ -95,7 +95,7 @@ AMM <- function(...) {
     colnames(result) <- cn.names
   }
   
-  index(result) <- as.Date(index(result))
+  ## index(result) <- as.Date(index(result))
 
   return(result)
 }
@@ -221,7 +221,7 @@ function(regressand,regressors,
 }
 
 ###############################################
-# Estimating one firm's exposure in one period.
+## Estimating one firm's exposure in one period.
 ###############################################
 firmExposures <- function(firm.returns, X, nlags=NA, verbose=FALSE) {
   do.ols <- function(nlags) {

@@ -264,7 +264,7 @@ inrusd <- all.data$inr
 amm.residual <- AMM(firm.returns=StockPriceReturns[,1:3],
                     verbose=FALSE, market.returns=nifty.index,
                     others=inrusd, switch.to.innov=TRUE, 
-                    market.returns.purge=TRUE, nlags=0)
+                    market.returns.purge=TRUE, nlags=1)
 
 @
 

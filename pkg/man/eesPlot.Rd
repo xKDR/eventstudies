@@ -6,7 +6,7 @@ Plotting clustered and unclustered extreme events retuns.
 }
 
 \description{
-This function creates an event study plot that treats all clustered events as one event. It plots both the lower and upper tail events and the events are defined based on the cut off probability values provided (in percentage terms).}
+This function replicates result of Patnaik, Shah and Singh (2013). The function creates an event study plot that treats all clustered events as one event. It plots both the lower and upper tail events and the events are defined based on the cut off probability values provided (in percentage terms).}
 
 
 \usage{

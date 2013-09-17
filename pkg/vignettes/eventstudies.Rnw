@@ -341,8 +341,10 @@ result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE)
     \caption{Stock splits event and response of respective stock
       returns: Bootstrap CI}
     \setkeys{Gin}{width=0.8\linewidth}
-    \setkeys{Gin}{height=0.8\linewidth} <<fig=TRUE,echo=FALSE>>=
-    result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE) @
+    \setkeys{Gin}{height=0.8\linewidth} 
+<<fig=TRUE,echo=FALSE>>=
+result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE) 
+@
   \end{center}
   \label{fig:one}
 \end{figure}
@@ -358,8 +360,10 @@ result <- inference.wilcox(es.w=es.cs, to.plot=TRUE)
     \caption{Stock splits event and response of respective stock
       returns: Wilcoxon CI}
     \setkeys{Gin}{width=0.8\linewidth}
-    \setkeys{Gin}{height=0.8\linewidth} <<fig=TRUE,echo=FALSE>>=
-    result <- inference.wilcox(es.w=es.cs, to.plot=TRUE) @
+    \setkeys{Gin}{height=0.8\linewidth} 
+<<fig=TRUE,echo=FALSE>>=
+result <- inference.wilcox(es.w=es.cs, to.plot=TRUE) 
+@
   \end{center}
   \label{fig:two}
 \end{figure}

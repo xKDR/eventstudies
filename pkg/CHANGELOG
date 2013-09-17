@@ -1,0 +1,10 @@
+ChangeLog
+===========
+- 1.2 (released XXX):
+	* eventstudy: added one main function to do eventstudy
+	* Models: Added market model to handle excess return and market	residuals
+	* AMM: added Augmented Market Model functions
+	* phys2eventtime: modified phys2eventtime function <needs more description>
+	* bootstrap: added inference wilcox and inference bootstrap methods
+	* Tests: added unit tests to test the models
+	* Documentation: updated vignette and manuals, made them more descriptive

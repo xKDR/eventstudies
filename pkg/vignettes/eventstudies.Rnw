@@ -26,7 +26,7 @@
   R. \texttt{eventstudies} provides the toolbox to carry out an
   event-study analysis. It contains functions to transform data
   into the event-time frame and procedures for statistical
-  inference. In this vignette, we provide a finance example and
+  inference. In this vignette, we provide an example from the field of finance and
   utilise the rich features of this package.
 \end{abstract}
 
@@ -53,7 +53,7 @@ procedure for conducting an event study involves
 \end{enumerate}
 
 The \textbf{eventstudies} package brings together the various
-aspects of an event study analysis in one library. It provides for
+aspects of an event study analysis in one package. It provides for
 functions to calculate returns, transform data into event-time,
 and inference procedures. All functions in this package are
 implemented in the R system for statistical computing. The
@@ -134,18 +134,21 @@ Firm returns can be calculated using the following functions:
   obtain idiosyncratic firm returns, controlling for the market
   returns. 
   
-\item \texttt{AMM}: estimation of the Augmented market model which
+\item \texttt{AMM}: estimation of the augmented market model which
   provides user the capability to run a multivariate market model
   with orthogonalisation and obtain idiosyncratic returns. 
 
 \end{itemize}
  
-% Once AMM() is rewritten, one paragraph on the onefirmAMM
-% arguments here used with AMM(...). 
+The function \texttt{AMM} is a generic function that allows users 
+to run an augmented market model and undertake the analysis of the
+market model in a multivariate setting and obtain the idiosyncratic returns. 
+Often times, there is a need for an auxilliary regression that purges the effect of the explanatory
+variables on one another. This function allows for the estimation of such a residual for a single
+firm using the function \texttt{onefirmAMM}. Advanced users may also want to look at \texttt{manyfirmsAMM}. 
 
-The output from these models is also a time-series object. This
-becomes the input for converting to event time. % Check if I can
-                                % work with 'xts' and/or 'zoo'? 
+The output from all these models are also time series objects of class ``zoo'' or ``xts''. This
+becomes the input for the remaining steps in the event study analysis, of which the first step is to convert a timeseries object into the event-time frame.
 
 \subsection{Converting the data-set to an event time}
 
@@ -154,33 +157,47 @@ cumulate returns is done using the following functions:
 
 \begin{itemize}
 \item \texttt{phys2eventtime}: conversion to an event frame. This
-  requires a time series object of stock price returns and an
-  object with two columns \textit{unit} and \textit{when}, the
+  requires a time series object of stock price returns (our outcome variable) and a
+  data frame with two columns \textit{outcome.unit} and \textit{event.date}, the
   firms and the date on which the event occurred respectively.
    
 \item \texttt{remap.cumsum}: conversion of returns to cumulative
-  returns. The input for this function is the time-series data in
-  event-time that is the output from \texttt{phys2eventtime}.
+  returns. The input for this function is the time-series object in
+  event-time that is obtained as the output from \texttt{phys2eventtime}. 
 \end{itemize}
 
+The function \texttt{phys2eventtime} is generic and can handle objects of any time frequency, 
+including intra-day high frequency data. While \texttt{remap.cumsum} is sufficiently general
+to be used on any time series object for which we would like to obtain cumulative values, in
+this context, the attempt is to cumulate idiosyncratic returns to obtain a clear identification
+of the magnitude and size of the impact of an event. % TODO: Cite Brown and Warner (1983) here. 
+
+At this point of analysis, we hold one important data object organised in event-time, where each 
+column of this object corresponds to the event on the outcome unit, with values before and after the
+event organised as before and after $-T,-(T-1),...,-3,-2,-1,0,1,2,3,...,T-1,T$. The package, once again, is very general and allows users to decide on the number of time units before and after the event that must be used for statistical inference. 
+
 \subsection{Procedures for inference}  
+
 Procedures for inference include:
 \begin{itemize}
-\item \texttt{inference.bootstrap}: estimation of bootstrap to
-  generate the distribution of cumulative returns series.
   
 \item \texttt{inference.wilcox}: estimation of wilcox inference to
   generate the distribution of cumulative returns series.
+
+\item \texttt{inference.bootstrap}: estimation of bootstrap to
+  generate the distribution of cumulative returns series.
 \end{itemize}
- 
-The arguments for both these include \texttt{es.w}, the cumulative
-returns in event-time. The argument \texttt{to.plot} plots the
-confidence interval around returns series.
+
+The second stage in the analysis of eventstudies is statistical inference. At present, we have two different inference procedures incorporated into the package. The first of the two, \texttt{inference.wilcox} is a traditional test of inference for eventstudies. The second inference procedure, \texttt{inference.bootstrap} is another non-parametric procedure that exploits the multiplicity of outcome units for which such an event has taken place. For example, a corporate action event such as stock splits may have taken place for many firms (outcome units) at different points in time. This cross-sectional variation in outcome is exploited by the bootstrap inference procedure. 
+
+The inference procedures would generally require no more than the object generated in the first stage of our analysis, for instance, the cumulative returns in event-time (\texttt{es.w}), and whether the user wants a plot of the results using the inference procedure used. 
+
+We intend to expand the suite of inference procedures available for analysis to include the more traditional procedures such as the Patell $t-test$. 
 
 \section{Example: Performing eventstudy analysis}
 \label{s:example}
 
-We demonstrate the package with a study of the impact of stock
+In this section, we demonstrate the package with a study of the impact of stock
 splits on the stock prices of firms. We use the returns series of
 the thirty index companies, as of 2013, of the Bombay Stock
 Exchange (BSE), from 2001 to 2013.  We have stock split dates for
@@ -411,14 +428,15 @@ es.amm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates,
 
 
 \section{Computational details}
-The package code is purely written in R. It has dependencies to
+The package code is written in R. It has dependencies to
 zoo
 (\href{http://cran.r-project.org/web/packages/zoo/index.html}{Zeileis
   2012}) and boot
 (\href{http://cran.r-project.org/web/packages/boot/index.html}{Ripley
   2013}).  R itself as well as these packages can be obtained from
 \href{http://CRAN.R-project.org/}{CRAN}.
-% \section{Acknowledgments}
+
+%\section{Acknowledgments}
 
 % \newpage
 \bibliographystyle{jss} \bibliography{es}

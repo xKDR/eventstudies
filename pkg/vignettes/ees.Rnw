@@ -8,7 +8,7 @@
 \usepackage{parskip}
 \usepackage{amsmath}
 \title{Introduction to the \textbf{extreme events} functionality}
-\author{Ajay Shah, Vimal Balasubramaniam and Vikram Bahure}
+\author{Vikram Bahure \and Vimal Balasubramaniam \and Ajay Shah}
 \begin{document}
 %\VignetteIndexEntry{eventstudies: Extreme events functionality}
 % \VignetteDepends{}
@@ -27,8 +27,7 @@ and explore this wrapper in detail in this document.
 \SweaveOpts{engine=R,pdf=TRUE}
 \section{Introduction}
 
-An extreme-event analysis is an analysis of an outcome variable surrounding 
-a tail (either right or left tail) event on another variable.  This \textit{eventstudies} package includes an extreme events
+An extreme-event analysis is an analysis of an outcome variable surrounding  a tail (either right or left tail) event on another variable.  This \textit{eventstudies} package includes an extreme events
 functionality as a wrapper in \texttt{ees}.
 
 There are several concerns with an extreme-event analysis. Firstly, what happens when multiple tail events (``Clustered events'') occur within one another? We facilitate this analysis with summary statistics on the distribution and run length of events, quantile values to determine ``tail events'', and yearly distribution of the extreme-events. Secondly, do results change when we use ``clustered events'' and ``unclustered events'' separately, or, together in the same analysis? This wrapper also facilitates such sensitivity analysis in the study of extreme-events. 
@@ -108,28 +107,19 @@ output$lower.tail$runlength
 @ 
 
 \subsection{Extreme event quantile values}
-Quantile values show 0\%, 25\%, median, 75\%,100\% and mean values for
-the extreme events data. The results shown below match the second row
-of Table 4 in the paper.
+Quantile values show 0\%, 25\%, median, 75\%,100\% and mean values for the extreme events data. The results shown below match the second row of Table 4 in the paper.
 <<>>=
 output$lower.tail$quantile.values
 @ 
 
 \subsection{Yearly distribution of extreme events}
-This table shows the yearly distribution and
-the median value for extreme events data. The results shown below
-are in line with the third and forth column for S\&P 500 in the Table 5 of the
-paper.  
+This table shows the yearly distribution and the median value for extreme events data. The results shown below are in line with the third and forth column for S\&P 500 in the Table 5 of the paper.  
 
 <<>>=
 output$lower.tail$yearly.extreme.event
 @ 
 
-The yearly distribution for extreme events include unclustered event
-and clustered events which are fused. While in extreme event distribution of
-clustered and unclustered event, the clustered events are defined as
-total events in a cluster. For example, if there is a clustered event
-with three consecutive extreme events then we treat that as a single event for analysis. 
+The yearly distribution for extreme events include unclustered event and clustered events which are fused. While in extreme event distribution of clustered and unclustered event, the clustered events are defined as total events in a cluster. For example, if there is a clustered event with three consecutive extreme events then we treat that as a single event for analysis. 
 
 \section{Extreme event study plot}
 

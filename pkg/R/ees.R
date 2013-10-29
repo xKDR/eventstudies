@@ -3,8 +3,7 @@
 ############################
 # Identifying extreme events
 ############################
-# libraries required
-library(zoo)
+
 #----------------------------------------------------------------
 # INPUT:
 # 'input'     : Data series for which extreme events are 
@@ -811,7 +810,7 @@ eesPlot <- function(z, response.series.name,
 # -using eventstudy package
 #--------------------------
 corecomp <- function(z,dlist,seriesname,width) {
-  events <- data.frame(unit=rep(seriesname, length(dlist)), when=dlist)
+  events <- data.frame(outcome.unit=rep(seriesname, length(dlist)), event.when=dlist)
   es.results <- phys2eventtime(z, events, width=0)
   es.w <- window(es.results$z.e, start=-width, end=+width)
   # Replaing NA's with zeroes

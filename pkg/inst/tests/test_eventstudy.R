@@ -14,12 +14,12 @@ p <- structure(c(33.16, 34.0967, 35.3683, 34.46, 34.17, 35.89, 36.19,
                  12426, 12429, 12430, 12431, 12432), class = "Date"),
                  class = "zoo")
 # An example events list
-eventslist <- data.frame(unit=c("ITC","Reliance","Infosys",
+eventslist <- data.frame(outcome.unit=c("ITC","Reliance","Infosys",
                            "ITC","Reliance","Junk"),
-                         when=as.Date(c(
+                         event.when=as.Date(c(
                            "2004-01-02", "2004-01-08", "2004-01-14",
                            "2005-01-15", "2004-01-01", "2005-01-01")))
-eventslist$unit <- as.character(eventslist$unit)
+eventslist$outcome.unit <- as.character(eventslist$outcome.unit)
 
 # What we expect if we don't worry about width --
 rawres <- structure(list(z.e = structure(c(NA, NA, NA, NA, NA, NA,

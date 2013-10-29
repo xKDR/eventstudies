@@ -16,9 +16,9 @@ phys2eventtime(z, events, width = 10)
 \arguments{
   \item{z}{Time series data for which event frame is to be generated.}
 
-  \item{events}{It is a data frame with two columns: unit and when. unit
+  \item{events}{It is a data frame with two columns: outcome.unit and event.when. outcome.unit
   has column name of which response is to measured on the event date,
-  while when has the event date. See details.}
+  while event.when has the event date. See details.}
 
   \item{width}{Width corresponds to the number of days on each side of the event date.For a given width, if there is any NA in the event window then the last observation is carried forward.}
 

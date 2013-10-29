@@ -1,11 +1,9 @@
-library(zoo)
-
 # Upon input
 #   z is a zoo object containing input data. E.g. this could be all the 
 #     prices of a bunch of stocks. The column name is the unit name.
 #   events is a data.frame containing 2 columns. The first column
-#     ("unit") is the name of the unit. The second column is the date/time
-#     ("when") when the event happened.
+#     ("outcome.unit") is the name of the unit. The second column is the date/time
+#     ("event.when") when the event happened.
 # For each event, the outcome can be:
 #   unitmissing : a unit named in events isn't in z
 #   wrongspan : the event date isn't placed within the span of data for the unit
@@ -13,10 +11,10 @@ library(zoo)
 #   success : all is well.
 # A vector of these outcomes is returned.
 phys2eventtime <- function(z, events, width=10) {
-  # Just in case events$unit has been sent in as a factor --
-  events$unit <- as.character(events$unit)
-  if(is.factor(events$when)) stop("Sorry you provided a factor as an index")
-  # Given a zoo time-series z, and an event date "when",
+  # Just in case events$outcome.unit has been sent in as a factor --
+  events$outcome.unit <- as.character(events$outcome.unit)
+  if(is.factor(events$event.when)) stop("Sorry you provided a factor as an index")
+  # Given a zoo time-series z, and an event date "event.when",
   # try to shift this vector into event time, where the event date
   # becomes 0 and all other dates shift correspondingly.
   # If this can't be done, then send back NULL with an error code.

@@ -7,8 +7,8 @@ load(system.file("data", "inr.rda",package = "eventstudies"))
 
 inr_returns <- diff(log(inr))[-1]
 
-eventslist <- data.frame(unit=rep("inr",10),
-                         when=as.Date(c(
+eventslist <- data.frame(outcome.unit=rep("inr",10),
+                         event.when=as.Date(c(
                            "2010-04-20","2010-07-02","2010-07-27",
                            "2010-09-16","2010-11-02","2011-01-25",
                            "2011-03-17","2011-05-03","2011-06-16",

@@ -23,7 +23,7 @@ eventstudy(firm.returns = NULL,
 
 \arguments{
   \item{firm.returns}{Data on which event study is to be performed}
-  \item{eventList}{A data frame with event dates. It has two columns 'unit' and 'when'. The first column 'unit' consists of column names of the event stock and 'when' is the respective event date}
+  \item{eventList}{A data frame with event dates. It has two columns 'outcome.unit' and 'event.when'. The first column 'outcome.unit' consists of column names of the event stock and 'event.when' is the respective event date}
   \item{width}{It studies the performance of observations before and after the event}
   \item{type}{This argument gives an option to use different market model adjustment like "marketResidual", "excessReturn", "AMM" and "None"}
   \item{to.remap}{If TRUE then remap the event frame is done}

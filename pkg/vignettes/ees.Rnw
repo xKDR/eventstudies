@@ -65,7 +65,7 @@ an event study analysis is if the parameters for such an exercise is validated b
 
 \subsection{Summary statistics}
 
-In \textt{output\$data.summary}, we present the minimum, maximum, inter-quartile range (IQR), standard deviation (sd), and the distribution at 5\%, 25\%, Median, Mean, 75\%, and 95\%. This analysis for the S\&P 500 is identical to the results presented in Table 1 of Patnaik, Shah and Singh (2013). 
+In \texttt{output\$data.summary}, we present the minimum, maximum, inter-quartile range (IQR), standard deviation (sd), and the distribution at 5\%, 25\%, Median, Mean, 75\%, and 95\%. This analysis for the S\&P 500 is identical to the results presented in Table 1 of Patnaik, Shah and Singh (2013). 
 
 <<>>==
 output$data.summary

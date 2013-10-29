@@ -17,10 +17,10 @@
 \maketitle
 
 \begin{abstract}
-One specific application of the eventstudies package is Patnaik, Shah and Singh (2013) % TODO: Bibliography please. 
+One specific application of the eventstudies package is \citet{PatnaikShahSingh2013}.
 in this document. The function \texttt{ees} is a wrapper available in the package for 
 users to undertake similar ``extreme-events'' analysis. 
-We replicate the published work of Patnaik, Shah and Singh (2013) % TODO: bibtex please 
+We replicate the published work of \citet{PatnaikShahSingh2013}
 and explore this wrapper in detail in this document. 
 \end{abstract}
 
@@ -32,7 +32,7 @@ functionality as a wrapper in \texttt{ees}.
 
 There are several concerns with an extreme-event analysis. Firstly, what happens when multiple tail events (``Clustered events'') occur within one another? We facilitate this analysis with summary statistics on the distribution and run length of events, quantile values to determine ``tail events'', and yearly distribution of the extreme-events. Secondly, do results change when we use ``clustered events'' and ``unclustered events'' separately, or, together in the same analysis? This wrapper also facilitates such sensitivity analysis in the study of extreme-events. 
 
-In the next few sections, we replicate one sub-section of results from Patnaik, Shah and Singh (2013) % TODO: bibtex citation. 
+In the next few sections, we replicate one sub-section of results from \citet{PatnaikShahSingh2013} 
 that studies whether extreme events on the S\&P 500 affects returns on the domestic Indian stock market measured by the Nifty Index. A detailed mathematical overview of the methodology is also available in the paper. 
 
 
@@ -83,6 +83,7 @@ returns for extreme events and the second column \textit{cluster.pattern} record
 The overall dataset looks as follows: 
 
 <<>>=
+head(output$lower.tail$data)
 str(output$lower.tail$data)
 @
 
@@ -150,5 +151,6 @@ The package code is written in R. It has dependencies to zoo
   2013}).  R itself as well as these packages can be obtained from \href{http://CRAN.R-project.org/}{CRAN}.
 
 %\section{Acknowledgments}
+\bibliographystyle{jss} \bibliography{ees}
 
 \end{document}

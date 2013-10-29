@@ -109,7 +109,13 @@ The conversion of the returns data to event-time, and to cumulate returns is don
 \item \texttt{remap.cumsum}: conversion of returns to cumulative returns. The input for this function is the time-series object in event-time that is obtained as the output from \texttt{phys2eventtime}. 
 \end{itemize}
 
-The function \texttt{phys2eventtime} is generic and can handle objects of any time frequency, including intra-day high frequency data. While \texttt{remap.cumsum} is sufficiently general to be used on any time series object for which we would like to obtain cumulative values, in this context, the attempt is to cumulate idiosyncratic returns to obtain a clear identification of the magnitude and size of the impact of an event. % TODO: Cite Brown and Warner (1983) here. 
+The function \texttt{phys2eventtime} is generic and can handle objects
+of any time frequency, including intra-day high frequency data. While
+\texttt{remap.cumsum} is sufficiently general to be used on any time
+series object for which we would like to obtain cumulative values, in
+this context, the attempt is to cumulate idiosyncratic returns to
+obtain a clear identification of the magnitude and size of the impact
+of an event \citep{brown1985using}.
 
 At this point of analysis, we hold one important data object organised in event-time, where each  column of this object corresponds to the event on the outcome unit, with values before and after the event organised as before and after $-T,-(T-1),...,-3,-2,-1,0,1,2,3,...,T-1,T$. The package, once again, is very general and allows users to decide on the number of time units before and after the event that must be used for statistical inference. 
 
@@ -228,7 +234,7 @@ The last stage in the analysis of an event-study is that of obtaining statistica
 While the package is sufficiently generalised to undertake a wide array of inference procedures, at present it contains only two inference procedures: 1/ The bootstrap and 2/ Wilcoxon Rank test. We look at both in turn below: 
 
 \subsubsection{Bootstrap inference}
-We hold an event time object that contains several cross-sectional observations for a single definition of an event: The stock split. At each event time, i.e., $-T,-(T-1),...,0,...,(T-1),T$, we hold observations for 30 stocks. At this point, without any assumption on the distribution of these cross sectional returns, we can generate the sampling distribution for the location estimator (mean in this case) using non-parametric inference procedures. The bootstrap is our primary function in the suite of inference procedures under construction.\footnote{Detaild explanation of the methodology is presented in \citep{PatnaikShahSingh2013}. This specific approach is based on \citet{davison1986efficient}.}
+We hold an event time object that contains several cross-sectional observations for a single definition of an event: The stock split. At each event time, i.e., $-T,-(T-1),...,0,...,(T-1),T$, we hold observations for 30 stocks. At this point, without any assumption on the distribution of these cross sectional returns, we can generate the sampling distribution for the location estimator (mean in this case) using non-parametric inference procedures. The bootstrap is our primary function in the suite of inference procedures under construction.\footnote{Detaild explanation of the methodology is presented in \citep{PSS2013}. This specific approach is based on \citet{davison1986efficient}.}
 
 \textit{inference.bootstrap} performs the bootstrap to generate distribution of $\overline{CR}$. The bootstrap generates confidence interval at 2.5 percent and 97.5 percent for the estimate.
 

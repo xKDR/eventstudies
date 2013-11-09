@@ -1,7 +1,6 @@
 library(boot)
 library(zoo)
 
-
 # This does bootstrap inference for the difference in the
 # average "car" between t1 and t2 (both in event time).
 # es.w is a zoo object, where rows are in event time
@@ -35,11 +34,11 @@ plotInference <- function(inference, xlab, ylab, main){
   big <- max(abs(inference))
   hilo <- c(-big,big)
   width <- (nrow(inference)-1)/2
-  plot(-width:width, inference[,"Mean"], type="l", lwd=2, ylim=hilo,
+  plot(-width:width, inference[,2], type="l", lwd=2, ylim=hilo,
        col="dark slate blue",
        xlab= xlab, ylab = ylab,
        main=paste(main))
-  points(-width:width, inference[,"Mean"])
+  points(-width:width, inference[,2])
   lines(-width:width, inference[,"2.5%"], lwd=1, lty=2, col="dark slate blue")
   lines(-width:width, inference[,"97.5%"], lwd=1, lty=2, col="dark slate blue")
   abline(h=0,v=0)
@@ -79,18 +78,33 @@ inference.wilcox <- function(es.w, to.plot = TRUE, xlab = "Event time",
                       ylab = "Cumulative returns of response series",
                       main = "Event study plot"
                       ){
-  wx.res <- apply(es.w,1,function(x)
-                  res <- wilcox.exact(x, alternative = "two.sided",
-                                      conf.int = TRUE,
-                                      conf.level = 0.95)["conf.int"])
-  list <- unlist(wx.res, recursive = FALSE)
-  CI <- do.call(rbind, list)
-  Mean <- apply(es.w,1,mean,na.rm=TRUE)
-  result <- cbind(CI[,1], Mean, CI[,2])
-  colnames(result) <- c("2.5%","Mean","97.5%")
-  rownames(result) <- rownames(Mean)
+  ## Wilcoxon sign test
+  wilcox.sign.test <- function(x, prob){
+    n <- length(x)
+    m <- n * (n + 1) / 2
+    k <- 1:(m / 2)
+    conf.lev <- 1 - 2 * psignrank(k, n)
+    no <- round(conf.lev[conf.lev>=prob], 4)
+    no.f <- length(no)
+    w <- outer(x, x, "+") / 2
+    w <- w[lower.tri(w, diag = TRUE)]
+    w <- sort(w)
+    CI <- c(w[no.f + 1], w[m - no.f])
+    prob.val <- 1 - 2 * psignrank(no.f, n)
+    return(CI)
+  }
+  ## Extracting confidence interval 
+  CI <- t(apply(es.w,1,function(x)
+                res <- wilcox.sign.test(x, prob=0.975)))
+  Median <- apply(es.w,1,median,na.rm=TRUE)
+  result <- cbind(CI[,1], Median, CI[,2])
+  colnames(result) <- c("2.5%","Median","97.5%")
+  rownames(result) <- rownames(Median)
   if(to.plot == TRUE){
     plotInference(inference = result, xlab, ylab, main)
   }
-  return(result)
+  return(result)  
 }
+
+
+

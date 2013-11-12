@@ -181,9 +181,22 @@ head(mm.result[,1:3])
 
 @
 
-To provide flexibility to users, a general multivariate framework to estimate idiosyncratic returns, the augmented market model, is also available. In this case, we would like to purge any currency returns from the outcome return of interest, and the \textit{a-priori} expectation is that the variance of the residual is reduced in this process. In this case, the \texttt{AMM} model requires a time-series of the exchange rate along with firm returns and market returns. This is done by loading the \textit{inr} data, which is the INR-USD exchange rate for the same period. The complete data set consisting of stock returns, market returns, and exchange rate is first created.
+To provide flexibility to users, a general multivariate framework to
+estimate idiosyncratic returns, the augmented market model, is also
+available. In this case, we would like to purge any currency returns
+from the outcome return of interest, and the \textit{a-priori}
+expectation is that the variance of the residual is reduced in this
+process. In this case, the \texttt{AMM} model requires a time-series
+of the exchange rate along with firm returns and market returns. This
+is done by loading the \textit{inr} data, which is the INR-USD
+exchange rate for the same period. The complete data set consisting of
+stock returns, market returns, and exchange rate is first created. 
 
-Inputs into the \texttt{AMM} model also include \texttt{firm.returns} and \texttt{market.returns}. Currency returns can be specified using \texttt{others}. In a general case, this proves to be a multivariate specification with the flexibility to run auxiliary regressions to specify the regression appropriately. 
+Inputs into the \texttt{AMM} model also include \texttt{firm.returns}
+and \texttt{market.returns}. Currency returns can be specified using
+\texttt{others}. In a general case, this proves to be a multivariate
+specification with the flexibility to run auxiliary regressions to
+specify the regression appropriately.  
 
 % AMM model
 <<>>= 
@@ -337,5 +350,6 @@ zoo
 
 % \newpage
 \bibliographystyle{jss} \bibliography{es}
+
 
 \end{document}

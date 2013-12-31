@@ -91,11 +91,13 @@ Firm returns can be calculated using the following functions:
   
 \item \texttt{marketResidual}: estimation of market model to obtain idiosyncratic firm returns, controlling for the market returns. 
   
-\item \texttt{AMM}: estimation of the augmented market model which provides user the capability to run a multivariate market model with orthogonalisation and obtain idiosyncratic returns. 
+\item \texttt{AMM}: estimation of the augmented market model which provides user the capability to run market models with orthogonalisation and obtain idiosyncratic returns. 
 
 \end{itemize}
  
-The function \texttt{AMM} is a generic function that allows users to run an augmented market model and undertake the analysis of the market model in a multivariate setting and obtain idiosyncratic returns. Often times, there is a need for an auxilliary regression that purges the effect of the explanatory variables on one another. This function allows for the estimation of such a residual for a single firm using the function \texttt{onefirmAMM}. Advanced users may also want to look at \texttt{manyfirmsAMM}. 
+The function \texttt{AMM} is a generic function that allows users to
+run an augmented market model and undertake the analysis of the market
+model in a regression setting and obtain idiosyncratic returns. Often times, there is a need for an auxilliary regression that purges the effect of the explanatory variables on one another. This function allows for the estimation of such a residual for a single firm using the function \texttt{onefirmAMM}. Advanced users may also want to look at \texttt{manyfirmsAMM}. 
 
 The output from all these models are also time series objects of class ``zoo'' or ``xts''. This becomes the input for the remaining steps in the event study analysis, of which the first step is to convert a timeseries object into the event-time frame.
 
@@ -161,27 +163,32 @@ head(SplitDates)
 
 \subsection{Calculating idiosyncratic returns}
 
-Calculating returns, though straightforward, can be done in a variety of different ways. The function \texttt{excessReturn} calculates the excess returns while \texttt{marketResidual} calculates the market model. The two inputs are \texttt{firm.returns} and \texttt{market.returns}. The results are stored in \texttt{er.result} and \texttt{mm.result} respectively. These are the standard idiosyncratic return estimation that is possible with this package. 
+Calculating returns, though straightforward, can be done in a variety
+of different ways. The function \texttt{excessReturn} calculates the
+excess returns while \texttt{marketResidual} calculates the market
+model. The two inputs are \texttt{firm.returns} and
+\texttt{market.returns}. The results are stored in \texttt{er.result}
+and \texttt{mm.result} respectively. These are the standard
+idiosyncratic return estimation that is possible with this package.
 
-<<>>= # Excess return 
-er.result <- excessReturn(firm.returns = StockPriceReturns, market.returns = nifty.index) 
+<<>>= # Excess return er.result <- excessReturn(firm.returns =
+StockPriceReturns, market.returns = nifty.index)
 
 er.result <- er.result[rowSums(is.na(er.result))!=NCOL(er.result),]
 head(er.result[,1:3])
 
-@ 
+@
 
-<<>>= 
-# Extracting market residual 
-mm.result <- marketResidual(firm.returns = StockPriceReturns, market.returns =
-nifty.index) 
+<<>>= # Extracting market residual mm.result <-
+marketResidual(firm.returns = StockPriceReturns, market.returns =
+nifty.index)
 
 mm.result <- mm.result[rowSums(is.na(mm.result))!=NCOL(mm.result),]
 head(mm.result[,1:3])
 
 @
 
-To provide flexibility to users, a general multivariate framework to
+To provide flexibility to users, a general regression framework to
 estimate idiosyncratic returns, the augmented market model, is also
 available. In this case, we would like to purge any currency returns
 from the outcome return of interest, and the \textit{a-priori}
@@ -190,30 +197,25 @@ process. In this case, the \texttt{AMM} model requires a time-series
 of the exchange rate along with firm returns and market returns. This
 is done by loading the \textit{inr} data, which is the INR-USD
 exchange rate for the same period. The complete data set consisting of
-stock returns, market returns, and exchange rate is first created. 
+stock returns, market returns, and exchange rate is first created.
 
 Inputs into the \texttt{AMM} model also include \texttt{firm.returns}
 and \texttt{market.returns}. Currency returns can be specified using
-\texttt{others}. In a general case, this proves to be a multivariate
-specification with the flexibility to run auxiliary regressions to
-specify the regression appropriately.  
+\texttt{others}. In a general case, this proves to be a specification
+with the flexibility to run auxiliary regressions to specify the
+regression appropriately.
 
 % AMM model
-<<>>= 
-# Create RHS before running AMM() 
-data(inr) 
-inrusd <- diff(log(inr))*100 
-all.data <- merge(StockPriceReturns,nifty.index,inrusd,all=TRUE)
-StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("nifty.index",
-"inr"))] 
-nifty.index <- all.data$nifty.index 
-inrusd <- all.data$inr
+<<>>= # Create RHS before running AMM() data(inr) inrusd <-
+diff(log(inr))*100 all.data <-
+merge(StockPriceReturns,nifty.index,inrusd,all=TRUE) StockPriceReturns
+<- all.data[,-which(colnames(all.data)%in%c("nifty.index",
+"inr"))] nifty.index <- all.data$nifty.index inrusd <- all.data$inr
 
-## AMM output ##
-amm.residual <- AMM(firm.returns=StockPriceReturns[,1:3],
-                    verbose=FALSE, market.returns=nifty.index,
-                    others=inrusd, switch.to.innov=TRUE, 
-                    market.returns.purge=TRUE, nlags=1)
+## AMM output ## amm.residual <-
+AMM(firm.returns=StockPriceReturns[,1:3], verbose=FALSE,
+market.returns=nifty.index, others=inrusd, switch.to.innov=TRUE,
+market.returns.purge=TRUE, nlags=1)
 
 @
 
@@ -290,7 +292,7 @@ result <- inference.wilcox(es.w=es.cs, to.plot=TRUE)
   \label{fig:two}
 \end{figure}
 
-\subsection{General eventstudy function}
+\subsection{General eventstudy wrapper}
 
 While the general framework to perform an eventstudy analysis has been explained with an example in detail, the package also has a wrapper that makes use of all functions explained above to generate the end result for analysis. While this is a quick mechanism to study events that fit this style of analysis, we encourage users to make use of the core functionalities to extend and use this package in ways the wrapper does not capture. Several examples of this wrapper \texttt{eventstudy}, is provided below for convenience:
 
@@ -339,12 +341,6 @@ zoo
 (\href{http://cran.r-project.org/web/packages/boot/index.html}{Ripley
   2013}).  R itself as well as these packages can be obtained from
 \href{http://CRAN.R-project.org/}{CRAN}.
-
-
-
-
-%\section{Acknowledgments}
-
 
 
 

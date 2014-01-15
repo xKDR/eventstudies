@@ -1,0 +1,173 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{graphicx}
+\usepackage{a4wide}
+\usepackage[colorlinks,linkcolor=blue,citecolor=red]{hyperref}
+\usepackage{natbib}
+\usepackage{float}
+\usepackage{tikz}
+\usepackage{parskip}
+\usepackage{amsmath}
+\title{Augmented Market Models}
+\author{Ajay Shah \and Vikram Bahure \and Chirag Anand}
+\begin{document}
+%\VignetteIndexEntry{eventstudies: Extreme events functionality}
+% \VignetteDepends{}
+% \VignetteKeywords{extreme event analysis}
+% \VignettePackage{eventstudies}
+\maketitle
+
+\begin{abstract}
+The document demonstrates the application of Augmented market model
+(AMM) from the paper \citet{patnaik2010amm} to extract currency
+exposure and AMM residuals from the model. 
+\end{abstract}
+
+\SweaveOpts{engine=R,pdf=TRUE}
+\section{Introduction}
+  
+Augmented market models (AMM) extends the classical market model \citep{sharpe1964capm, lintner1965capm} to introduce additional right hand side variables like currency returns or interest rates to understand the effect of macro variations in addition to market movements on stock returns. The package provides functionality to estimate augmented market models as well as produce augmented market model residuals (AMM abnormal returns) stripped of market and macro variations to run event studies. The function set was originally written and applied in \citet{patnaik2010amm}. \citet{adler1984exposure} and \citet{jorion1990exchange} are the first papers to use augmented market models to study currency exposure. The standard currency exposure AMM is as follows  
+
+\begin{equation}
+ r_j = \alpha_j + \beta_{1j} r_{M1} + \beta_{2j} r_{M2} + \epsilon 
+\end{equation} 
+
+In the original usage of augmented market models, Currency exposure is
+expressed as the regression coefficient on currency returns (M2). The
+model uses firm stock price as the information set of firm positions
+and it relates firm returns $r_j$ to market index movements $r_{M1}$
+and currency fluctuations $r_{M2}$. The coefficient $\beta_{2j}$
+measures the sensitivity of the valuation of firm $j$ to changes in
+the exchange rate. This is a  widely used technique with multiple
+variations including asymmetric exposures. 
+
+The AMM implementation in the package has some key innovations as compared to the original implementation of currency exposure AMM's by \citet{adler1984exposure} and \citet{jorion1990exchange}.
+\begin{equation}
+ r_{jt} = \alpha + \beta_1 r_{M1,t}
+ + \sum_{i=0}^{k} a_i e_{t-i} + \epsilon_t 
+\end{equation}
+
+\begin{enumerate}
+\item Exchange rate series is re-expressed as a series of innovations with an AIC selected AR process. Under this specification, an innovation $e_t$ on the currency market has an impact on the stock price at time $t$ and the following $k$ time periods.  Under the above model, currency exposure is embedded in the vector of $a_i$ coefficients; it is no longer a simple scalar $\beta_2$ as was the case under the standard model
+\item Heteroscedasticity in $r_{M1}$ \& $r_{M2}$ : This is resolved by
+  using a HAC estimator 
+\item Decomposition of market exposure from firm exposure: Market exposure issue solved by orthogonalising the market index  time-series by first estimating a regression model explaining $r_{M1}$  as a function of past and present currency innovations, and extracting the residual from this regression. These residuals represent uncontaminated market returns
+\end{enumerate}
+
+In the section below, we explain the estimation of currency exposure,
+AMM residuals and performing event study analysis. In section \ref{sec:ce}, we
+replicate the methodology used in \citet{patnaik2010amm} using the
+package. In section \ref{sec:es}, we take the AMM methodology a step ahead to
+extract residuals from AMM methodology which we use the to
+perform traditional event study analysis. 
+% Need to talk more about generalisation used for variables other than currency
+
+
+\section{Currency exposure}\label{sec:ce}
+The package has functions which enable the user to extract the
+coefficients of currency exposure for firms using the AMM methodology
+employed in \citet{patnaik2010amm}. 
+\subsection{Constructing data set}
+We need to construct usable data set, before estimating currency
+exposure on firm returns using this package. There are two steps to be
+followed constructing regressors and regressands, to perform OLS as
+shown in the \citet{patnaik2010amm}. 
+\subsubsection{Regressors \& Regressands}
+Regressors in the AMM equation are market returns and currency
+returns, while regressands is firm returns. All the variables should
+have balanced panel if not then merge the time series variable to get
+one. \textit{y3c3} is an time series object with market returns as
+\textit{NIFTY} and currency returns as \textit{INRUSD}. If
+currency exposure is to be estimated for different periods separately
+then argument \textit{dates} will be helpful or else \textit{NULL}
+will be provided to perform for full period.
+
+The function \textit{makeX} considers that 
+there is impact of currency on market returns and with the argument
+\textit{market.returns.purge}, we orthogonalise the market returns to currency
+returns before using AMM model. 
+
+<<>>=
+# Create RHS before running onefirmAMM()
+library(eventstudies)
+data("y3c3")
+NIFTY <- y3c3$NIFTY_INDEX
+INRUSD <- y3c3$INRUSD
+Company_A <- y3c3$Company_A
+regressors <- makeX(NIFTY, others=INRUSD,
+                    switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1,
+                    dates=as.Date(c("2005-01-15","2006-01-07","2007-01-06",
+                      "2008-01-05","2009-01-03")), verbose=FALSE)
+@ 
+\subsubsection{Getting currency exposure}
+The output of {makeX} function is used in \textit{onefirmAMM} and
+\textit{AMM} function to get currency exposure of the firms and AMM
+residuals respectively. In the example below, we demonstrate the use
+of \textit{onefirmAMM} function to estimate currency exposure for
+firms.   
+% MakeX and onefirmAMM
+<<>>=
+# Run AMM for one firm across different periods
+  deprintize<-function(f){
+    return(function(...) {capture.output(w<-f(...));return(w);});
+  }
+firm.exposure <- deprintize(onefirmAMM)(firm.returns=Company_A,
+                                        X=regressors,
+                                        nlags=1,
+                                        verbose=TRUE,
+                                        dates= as.Date(c("2005-01-15",
+                                          "2006-01-07","2007-01-06",
+                                          "2008-01-05","2009-01-03")))
+str(firm.exposure)
+@
+
+
+
+\section{AMM residuals}\label{sec:es}
+Here, in this section we show how to get augmented market residuals
+using \textit{eventstudies} package. The
+\textit{AMM} function is a wrapper to get AMM residuals directly, and
+\textit{eventstudy} function is a wrapper to perform event study
+analysis for different specification as discussed in
+\textit{eventstudies} vignette. The \textit{AMM} function performs
+similar step as above currency exposure code-base but is
+generalised to accept one firm or many firms.
+
+\subsection{Construction of data-set}
+The \textit{AMM} function requires a balanced panel of firm returns, market
+returns and currency returns (for this example). The balanced panel
+should be a time series object. As we can see below, we create
+\textit{all.data} by merging \textit{inrusd} (currency returns) and
+\textit{nifty.index} (market returns).  
+<<>>= 
+# Create RHS before running AMM() 
+data(StockPriceReturns)
+data(SplitDates)
+data(nifty.index)
+data(inr) 
+inrusd <- diff(log(inr))*100 
+all.data <- merge(StockPriceReturns,nifty.index,inrusd,all=TRUE)
+StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("nifty.index",
+"inr"))] 
+nifty.index <- all.data$nifty.index 
+inrusd <- all.data$inr
+@
+
+Inputs into the \texttt{AMM} model also include \texttt{firm.returns}
+and \texttt{market.returns}. Currency returns can be specified using
+\texttt{others}. Once these inputs are provided we can extract AMM
+residuals using following command.
+ 
+<<>>=
+# AMM output
+amm.residual <- AMM(firm.returns=StockPriceReturns[,1:3],
+                    verbose=FALSE, market.returns=nifty.index,
+                    others=inrusd, switch.to.innov=TRUE, 
+                    market.returns.purge=TRUE, nlags=1)
+@
+
+ We can also perform event study analysis, directly on AMM residuals
+ using \textit{eventstudy} function. which is presented in
+ \textit{eventstudies} vignette.
+ 
+\bibliographystyle{jss} \bibliography{amm}
+\end{document}

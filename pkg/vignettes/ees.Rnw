@@ -123,7 +123,8 @@ the lower tail of S\&P 500.
 The overall dataset looks as follows:
 
 <<>>== 
-head(output$lower.tail$data) str(output$lower.tail$data) 
+head(output$lower.tail$data) 
+str(output$lower.tail$data) 
 @
 
 \subsection{Distribution of clustered and unclustered events}
@@ -210,9 +211,7 @@ where data is centered on event date (``0'') and the graph shows 4
 days before and after the event.
 
 <<>>= 
-eesPlot(z=eesData, response.series.name="nifty",
-event.series.name="sp500", titlestring="S&P500", ylab="(Cum.) change
-in NIFTY", prob.value=5, width=5) 
+eesPlot(z=eesData, response.series.name="nifty", event.series.name="sp500", titlestring="S&P500", ylab="(Cum.) change in NIFTY", prob.value=5, width=5) 
 @
 
 \begin{figure}[t]
@@ -221,11 +220,11 @@ in NIFTY", prob.value=5, width=5)
     \setkeys{Gin}{width=1\linewidth}
     \setkeys{Gin}{height=0.8\linewidth} 
 <<fig=TRUE,echo=FALSE>>= 
-     res <- deprintize(eesPlot)(z=eesData, response.series.name="nifty",
-                                event.series.name="sp500",
-                                titlestring="S&P500", 
-                                ylab="(Cum.) change in NIFTY", 
-                                prob.value=5, width=5) 
+res <- deprintize(eesPlot)(z=eesData, response.series.name="nifty",
+                           event.series.name="sp500",
+                           titlestring="S&P500", 
+                           ylab="(Cum.) change in NIFTY", 
+                           prob.value=5, width=5) 
 @
   \end{center}
   \label{fig:one}

@@ -171,18 +171,15 @@ model. The two inputs are \texttt{firm.returns} and
 and \texttt{mm.result} respectively. These are the standard
 idiosyncratic return estimation that is possible with this package.
 
-<<>>= # Excess return er.result <- excessReturn(firm.returns =
-StockPriceReturns, market.returns = nifty.index)
-
+<<>>= # Excess return 
+er.result <- excessReturn(firm.returns = StockPriceReturns, market.returns = nifty.index)
 er.result <- er.result[rowSums(is.na(er.result))!=NCOL(er.result),]
 head(er.result[,1:3])
 
 @
 
-<<>>= # Extracting market residual mm.result <-
-marketResidual(firm.returns = StockPriceReturns, market.returns =
-nifty.index)
-
+<<>>= # Extracting market residual
+mm.result <- marketResidual(firm.returns = StockPriceReturns, market.returns = nifty.index)
 mm.result <- mm.result[rowSums(is.na(mm.result))!=NCOL(mm.result),]
 head(mm.result[,1:3])
 
@@ -206,16 +203,16 @@ with the flexibility to run auxiliary regressions to specify the
 regression appropriately.
 
 % AMM model
-<<>>= # Create RHS before running AMM() data(inr) inrusd <-
-diff(log(inr))*100 all.data <-
-merge(StockPriceReturns,nifty.index,inrusd,all=TRUE) StockPriceReturns
-<- all.data[,-which(colnames(all.data)%in%c("nifty.index",
-"inr"))] nifty.index <- all.data$nifty.index inrusd <- all.data$inr
+<<>>= # Create RHS before running AMM() 
+data(inr) 
+inrusd <- diff(log(inr))*100 
+all.data <- merge(StockPriceReturns,nifty.index,inrusd,all=TRUE) 
+StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("nifty.index", "inr"))] 
+nifty.index <- all.data$nifty.index 
+inrusd <- all.data$inr
 
-## AMM output ## amm.residual <-
-AMM(firm.returns=StockPriceReturns[,1:3], verbose=FALSE,
-market.returns=nifty.index, others=inrusd, switch.to.innov=TRUE,
-market.returns.purge=TRUE, nlags=1)
+## AMM output ## 
+amm.residual <- AMM(firm.returns=StockPriceReturns[,1:3], verbose=FALSE, market.returns=nifty.index, others=inrusd, switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
 
 @
 
@@ -225,7 +222,7 @@ The conversion from physical time into event time combines the two objects we ha
 
 <<>>= 
 es <- phys2eventtime(z=StockPriceReturns, events=SplitDates,
-width=10) 
+                     width=10) 
 str(es) 
 es$outcomes 
 es.w <- window(es$z.e, start=-10,end=10) 

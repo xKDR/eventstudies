@@ -20,6 +20,12 @@ phys2eventtime <- function(z, events, width=10) {
   # If this can't be done, then send back NULL with an error code.
   ## takes the event list as an argument and uses already existing
   ## time-series variable z
+
+                                        # check the dimensions of "z""
+  if (is.null(ncol(z))) {
+    stop(paste(deparse("z"), "should be a zoo series with at least one column."))
+  }
+
   timeshift <- function(x) {
     firm.present <- match(x[1], colnames(z), nomatch = -1) != -1
     if (!firm.present) {

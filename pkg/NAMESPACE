@@ -2,8 +2,14 @@ export(eventstudy, inference.bootstrap, inference.wilcox, phys2eventtime,
        remap.cumsum, remap.cumprod, remap.event.reindex, ees, eesPlot)
 export(marketResidual,
        excessReturn)
-export(AMM,
-       onefirmAMM,
-       manyfirmsAMM,
-       firmExposures,
-       makeX)
+export(manyfirmsAMM, lmAMM, makeX)
+
+
+S3method(summary, amm)
+S3method(summary, es)
+
+S3method(print, amm)
+S3method(print, es)
+
+S3method(plot, amm)
+S3method(plot, es)

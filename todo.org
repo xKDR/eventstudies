@@ -4,7 +4,7 @@ List of things need to be done.
   - should work with data.frames, zoo, xts
   - create a generic "eventstudies" class
   - DESIGN!!!
-
+    
 * phys2eventtime
   - more testing: all output is unitmissing
   - parallelise (provide an argument to the user)
@@ -12,14 +12,14 @@ List of things need to be done.
   > stopifnot(sum(outcomes=="success") == NCOL(z.e))
     - if data is missing within the width around the event date, we
       simply discard that particular observation from the dataset! 
-
+      
 * AMM()
   - vectorise it
   - parallelise it
   - don't ask the user for amm.type in the eventstudies() function
   - separate vignette
   - Rewriting? # XXX
-
+    
 * Vignette
   - improvements in AMM()
   - missing entries in .bib

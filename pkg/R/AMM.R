@@ -184,7 +184,7 @@ function(regressand,regressors,
 
   exposures <- matrix(NA,nrow=nfirms,ncol=nperiods*ncol(regressors))
   rownames(exposures) <- colnames(regressand)
-  tmp <- NULL
+  tmp <- NULL 
   for(i in 1:length(periodnames)){
     for(j in 1:ncol(regressors)){
       tmp <-  c(tmp, paste(colnames(regressors)[j],

@@ -1,23 +1,21 @@
-\name{firmExposures}
-\alias{firmExposures}
+\name{lmAMM}
+\alias{lmAMM}
 
-\title{A function that estimates exposure for a single firm in a
-single period}
+\title{Augmented market model (AMM) estimation}
 
-\description{This function typically utilises an firm.returns vector
-  and an X matrix of explanatory variables obtained 
-  using the makeX function. This would compute the exposure
-  for all columns in X.
+\description{This function relates firm returns to the regressors using the linear model (market index movements, currency fluctuations etc.).
+It computes firm exposure for all the regressors in columns of X and subsequently estimates AMM residuals by purging out variation
+from regressand.
 }
 
 \usage{
-firmExposures(firm.returns, X, nlags = NA, verbose = FALSE)
+lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
 }
 
 \arguments{
-  \item{firm.returns}{A vector of data for one firm}
+  \item{firm.returns}{A time series object of firm returns for AMM estimation}
 
-  \item{X}{A matrix of explanatory variables obtained from
+  \item{X}{A time series of explanatory variables obtained from
     the makeX function. The first variable is always the
     stock market index. Other variables could be
     such as currency or bond returns, or other variables as
@@ -46,27 +44,25 @@ of the exposures estimated for the firm firm.returns.}
 
 \item{nlags}{Specifies the lag length provided by the user}
 
-\item{lm.res}{The model estimates used in the analysis are stored here.}
-
 }
 
 \author{Ajay Shah, Vimal Balasubramaniam}
 
 \seealso{
-\code{\link{manyfirmsAMM}}
+\code{\link{manyfirmsAMM}, \link{makeX}}
 }
 
 \examples{
-# firmExposures
-data("firmExposuresData")
-firm.returns  <- firmExposuresData$Company_A
-market.returns <- firmExposuresData$NIFTY_INDEX
-rM2 <- firmExposuresData$usdinr
-rM3 <- firmExposuresData$baa
-X <- makeX(market.returns, others=rM2,
+# lmAMM
+data("lmAMMData")
+firm.returns <- lmAMMData[,c("Infosys")]
+market.returns <- lmAMMData[,"index.nifty"]
+currency.returns <- lmAMMData[,"currency.inrusd"]
+## Creating regressors for AMM estimation using makeX function
+X <- makeX(market.returns, others=currency.returns,
            switch.to.innov=FALSE, market.returns.purge=FALSE, verbose=FALSE)
-a <- firmExposures(firm.returns, X, nlags=0, verbose=FALSE)
+a <- lmAMM(firm.returns, X, nlags=0, verbose=FALSE)
 print(a)
 }
 
-\keyword{firmExposures}
+\keyword{lmAMM}

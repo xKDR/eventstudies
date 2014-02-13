@@ -64,7 +64,7 @@ subperiod.lmAMM <- function(firm.returns,X,nlags=1,verbose=FALSE,dates=NULL,resi
 ########################
 # Many firms AMM
 ########################
-subperiodmanyfirms.lmAMM <-
+manyfirmssubperiod.lmAMM <-
 function(regressand,regressors,
                           lags,dates=NULL, periodnames=NULL,verbose=FALSE){
   require("doMC")

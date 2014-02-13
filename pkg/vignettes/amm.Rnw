@@ -138,16 +138,12 @@ should be a time series object. As we can see below, we create
 \textit{nifty.index} (market returns).  
 <<>>= 
 # Create RHS before running AMM() 
-data(StockPriceReturns)
-data(SplitDates)
-data(nifty.index)
-data(inr) 
-inrusd <- diff(log(inr))*100 
-all.data <- merge(StockPriceReturns,nifty.index,inrusd,all=TRUE)
-StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("nifty.index",
-"inr"))] 
-nifty.index <- all.data$nifty.index 
-inrusd <- all.data$inr
+data("lmAMMData")
+firm.returns <- lmAMMData[,"Infosys"]
+market.returns <- lmAMMData[,"index.nifty"]
+currency.returns <- lmAMMData[,"currency.inrusd"]
+regressors <- makeX(market.returns, others=currency.returns,
+           switch.to.innov=FALSE, market.returns.purge=FALSE, verbose=FALSE)
 @
 
 Inputs into the \texttt{AMM} model also include \texttt{firm.returns}
@@ -157,10 +153,8 @@ residuals using following command.
  
 <<>>=
 # AMM output
-amm.residual <- AMM(firm.returns=StockPriceReturns[,1:3],
-                    verbose=FALSE, market.returns=nifty.index,
-                    others=inrusd, switch.to.innov=TRUE, 
-                    market.returns.purge=TRUE, nlags=1)
+res.amm <- lmAMM(firm.returns=firm.returns, X=regressors,
+                 verbose=FALSE, nlags=1)
 @
 
  We can also perform event study analysis, directly on AMM residuals

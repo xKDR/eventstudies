@@ -27,6 +27,7 @@ List of things need to be done.
   - citation for Corrado (2011) seems misplaced in the beginning. It
     seems as though we are replicating his work on stock-splits, which
     isn't the case
+  - change the naming lmAMM and there is no more AMM wrapper  
 
 * man pages
   - modify ess.Rd: put reference to Patnaik, Shah, and Singh (2013)

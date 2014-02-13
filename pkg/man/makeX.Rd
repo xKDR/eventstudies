@@ -65,8 +65,8 @@ makeX(market.returns, others, switch.to.innov = rep(TRUE, NCOL(others)), market.
 # makeX
 data("lmAMMData")
 market.returns <- lmAMMData$index.nifty
-rM2 <- lmAMMData$currency.inrusd
-X <- makeX(market.returns, others=rM2,
+currency.returns <- lmAMMData$currency.inrusd
+X <- makeX(market.returns, others=currency.returns,
            switch.to.innov=FALSE, market.returns.purge=FALSE, verbose=FALSE)
 }
 

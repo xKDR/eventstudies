@@ -203,17 +203,37 @@ with the flexibility to run auxiliary regressions to specify the
 regression appropriately.
 
 % AMM model
-<<>>= # Create RHS before running AMM() 
+<<>>= # Create RHS before running lmAMM() 
 data(inr) 
-inrusd <- diff(log(inr))*100 
+inrusd <- diff(log(inr))*100
 all.data <- merge(StockPriceReturns,nifty.index,inrusd,all=TRUE) 
 StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("nifty.index", "inr"))] 
 nifty.index <- all.data$nifty.index 
 inrusd <- all.data$inr
 
-## AMM output ## 
-amm.residual <- AMM(firm.returns=StockPriceReturns[,1:3], verbose=FALSE, market.returns=nifty.index, others=inrusd, switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
+###################
+## AMM residuals ##
+###################
+## Getting Regressors
+regressors <- makeX(market.returns=nifty.index, others=inrusd, 
+                    market.returns.purge=TRUE, nlags=1)
+## AMM residual to time series
+timeseriesAMM <- function(firm.returns,X,verbose=FALSE,nlags=1){
+  tmp <- resid(lmAMM(firm.returns,X,nlags))
+  tmp.res <- zoo(tmp,as.Date(names(tmp)))
+}
+## One firm
+amm.result <- timeseriesAMM(firm.returns=StockPriceReturns[,1], 
+                            X=regressors, verbose=FALSE, nlags=1)
 
+## More than one firm
+                                        # Extracting and merging
+tmp.resid <- sapply(colnames(StockPriceReturns)[1:3],function(y)
+                    timeseriesAMM(firm.returns=StockPriceReturns[,y],
+                                  X=regressors,
+                                  verbose=FALSE,
+                                  nlags=1))
+amm.resid <- do.call("merge",tmp.resid)
 @
 
 \subsection{Conversion to event-time frame}

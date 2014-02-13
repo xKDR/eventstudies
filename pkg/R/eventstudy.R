@@ -24,8 +24,25 @@ eventstudy <- function(firm.returns = NULL,
 ### Run models
   ## AMM
   if (type == "AMM") {
-    tmp.outputModel <- AMM(firm.returns = firm.returns, ...)
-    outputModel <- zoo(coredata(tmp.outputModel),index(tmp.outputModel))
+    ## AMM residual to time series
+    timeseriesAMM <- function(firm.returns,X,verbose=FALSE,nlags=1){
+      tmp <- resid(lmAMM(firm.returns,X,nlags))
+      tmp.res <- zoo(tmp,as.Date(names(tmp)))
+    }    
+    if(NCOL(firm.returns)==1){
+      ## One firm
+      outputModel <- timeseriesAMM(firm.returns=StockPriceReturns[,1], 
+                                   X=regressors, verbose=FALSE, nlags=1)
+    } else {
+      ## More than one firm
+                                        # Extracting and merging
+      tmp.resid <- sapply(colnames(StockPriceReturns)[1:3],function(y)
+                          timeseriesAMM(firm.returns=StockPriceReturns[,y],
+                                        X=regressors,
+                                        verbose=FALSE,
+                                        nlags=1))
+      outputModel <- do.call("merge",tmp.resid)
+    }    
   }
 
   ## marketResidual
@@ -82,6 +99,27 @@ eventstudy <- function(firm.returns = NULL,
     ## Providing event frame as default output
     result <- es.w
   }
-    
-  return(list(result, es$outcomes))
+    final.result <- list(eventstudy.output=result,
+                         outcomes=as.character(es$outcomes),
+                         inference=inference.strategy, nlags=nlags)
+  class(final.result) <- "es"
+  return(final.result)
+}
+
+#########################
+## Functions for class es
+#########################
+print.es <- function(){
+
+
+}
+
+summary.es <- function(){
+
+
+}
+
+plot.es <- function(){
+
+
 }

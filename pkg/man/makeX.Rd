@@ -1,7 +1,7 @@
 \name{makeX}
 \alias{makeX}
 \title{A function to prepare explanatory variables for computation
-of Augmented Market Models
+of Augmented Market Models used in lmAMM function
 }
 
 \description{
@@ -63,11 +63,9 @@ makeX(market.returns, others, switch.to.innov = rep(TRUE, NCOL(others)), market.
 
 \examples{
 # makeX
-data("firmExposuresData")
-firm.returns  <- firmExposuresData$Company_A
-market.returns <- firmExposuresData$NIFTY_INDEX
-rM2 <- firmExposuresData$usdinr
-rM3 <- firmExposuresData$baa
+data("lmAMMData")
+market.returns <- lmAMMData$index.nifty
+rM2 <- lmAMMData$currency.inrusd
 X <- makeX(market.returns, others=rM2,
            switch.to.innov=FALSE, market.returns.purge=FALSE, verbose=FALSE)
 }

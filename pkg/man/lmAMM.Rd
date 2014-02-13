@@ -55,7 +55,7 @@ of the exposures estimated for the firm firm.returns.}
 \examples{
 # lmAMM
 data("lmAMMData")
-firm.returns <- lmAMMData[,c("Infosys")]
+firm.returns <- lmAMMData[,"Infosys"]
 market.returns <- lmAMMData[,"index.nifty"]
 currency.returns <- lmAMMData[,"currency.inrusd"]
 ## Creating regressors for AMM estimation using makeX function

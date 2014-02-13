@@ -1,9 +1,70 @@
-
+###############
+## One firm AMM
+###############
+## This function takes care of the structural break dates introduced by calculating exposure for sub periods differently
+## This function is used when date are provided in the function
+subperiod.lmAMM <- function(firm.returns,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
+  ## Creating empty frames
+  if(is.null(dates)){
+    dates.no <- c(start(firm.returns),end(firm.returns))
+  } else{
+    dates.no <- dates
+  }
+  exposures <- data.frame(matrix(NA,ncol=ncol(X),nrow=(length(dates.no)-1)))
+  colnames(exposures) <- colnames(X)
+  sds <- exposures
+  periodnames <- NULL
+  
+  ## Getting firm exposure, amm residuals
+  if(is.null(dates)){
+   res <- lmAMM(firm.returns,X,verbose=verbose,nlags=nlags)
+   if(is.null(res)!=TRUE){
+     exposures <- res$exposure
+     sds <- res$s.exposure
+     m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
+     if(residual==TRUE){
+       m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
+     }
+     rval <- list(exposures=exposures,sds=sds,residuals=m.residuals)
+   } else {
+     rval <- NULL
+   }
+ }else{
+   tmp <- window(firm.returns,start=dates[1],end=dates[1+1])
+   rhs <- window(X,start=dates[1],end=dates[1+1])
+   res <- lmAMM(firm.returns=tmp,
+                        X=rhs,
+                        verbose=verbose,
+                        nlags=nlags)
+   exposures[1,] <- res$exposure
+   periodnames <- c(periodnames,paste(dates[1],dates[1+1],sep=" TO "))
+   sds[1,] <- res$s.exposure
+   m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
+   colnames(m.residuals) <- paste(dates[1],"to",dates[1+1],sep=".")
+   for(i in 2:(length(dates)-1)){
+     tmp <- window(firm.returns,start=dates[i],end=dates[i+1])
+     rhs <- window(X,start=dates[i],end=dates[i+1])
+     res <- lmAMM(firm.returns=tmp,
+                          X=rhs,
+                          verbose=verbose,
+                          nlags=nlags)
+     exposures[i,] <- res$exposure
+     periodnames <- c(periodnames,paste(dates[i],dates[i+1],sep=" TO "))
+     sds[i,] <- res$s.exposure
+     period.resid <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
+     colnames(period.resid) <- paste(dates[i],"to",dates[i+1],sep=".")
+     m.residuals <- merge(m.residuals, period.resid, all=TRUE)
+   }
+   rownames(exposures) <- rownames(sds) <- periodnames
+   rval <- list(exposures=exposures,sds=sds,residuals=m.residuals)
+ } 
+  return(rval)
+}
 
 ########################
 # Many firms AMM
 ########################
-manyfirmsAMM <-
+subperiodmanyfirms.lmAMM <-
 function(regressand,regressors,
                           lags,dates=NULL, periodnames=NULL,verbose=FALSE){
   require("doMC")

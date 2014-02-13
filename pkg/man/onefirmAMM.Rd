@@ -1,5 +1,5 @@
-\name{onefirmAMM}
-\alias{onefirmAMM}
+\name{subperiod.lmAMM}
+\alias{subperiod.lmAMM}
 
 \title{A function that estimates exposure for a single firm over multiple periods}
 
@@ -10,7 +10,7 @@
 }
 
 \usage{
-onefirmAMM(firm.returns, X, nlags = 1, verbose = FALSE, dates = NULL, residual = TRUE)
+subperiod.lmAMM(firm.returns, X, nlags = 1, verbose = FALSE, dates = NULL, residual = TRUE)
 }
 
 \arguments{
@@ -27,7 +27,7 @@ onefirmAMM(firm.returns, X, nlags = 1, verbose = FALSE, dates = NULL, residual =
   \item{verbose}{Default is FALSE. When set to TRUE, the function
     prints detailed results of using the function. 
   }
-  \item{dates}{Default is NULL. If no dates are mentioned, onefirmAMM does
+  \item{dates}{Default is NULL. If no dates are mentioned, subperiod.lmAMM does
   what firmExposures() would do, i.e., estimate exposures for the full time period.
   }
   \item{residual}{Returns AMM Residuals if TRUE, AMM exposure
@@ -43,23 +43,20 @@ onefirmAMM(firm.returns, X, nlags = 1, verbose = FALSE, dates = NULL, residual =
 \code{\link{manyfirmsAMM}}}
 
 \examples{ 
-# Create RHS before running onefirmAMM()
-data("y3c3")
-NIFTY_INDEX <- y3c3$NIFTY_INDEX
-INRUSD <- y3c3$INRUSD
-Company_A <- y3c3$Company_A
-rhs.dat <- makeX(NIFTY_INDEX, others=INRUSD,
-           switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1,
-           dates=as.Date(c("2005-01-15","2006-01-07","2007-01-06",
-                       "2008-01-05","2009-01-03")), verbose=FALSE)
-
+# Create RHS before running subperiod.lmAMM()
+data("lmAMMData")
+firm.returns <- lmAMMData$Infosys
+market.returns <- lmAMMData$index.nifty
+currency.returns <- lmAMMData$currency.inrusd
+regressors <- makeX(market.returns, others=currency.returns,
+              switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1,
+              dates=as.Date(c("2012-02-01","2013-01-01","2014-01-31")), verbose=FALSE)
 # Run AMM for one firm across different periods
-onefirmAMM(firm.returns=Company_A,
-            X=rhs.dat,
-            nlags=1,
-            verbose=TRUE,
-            dates= as.Date(c("2005-01-15","2006-01-07","2007-01-06",
-                       "2008-01-05","2009-01-03")))
+res <- subperiod.lmAMM(firm.returns,
+		 X=regressors,
+                 nlags=1,
+            	 verbose=TRUE,
+            	 dates= as.Date(c("2012-02-01","2013-01-01","2014-01-31")))
 }
 
-\keyword{onefirmAMM}
+\keyword{subperiod.lmAMM}

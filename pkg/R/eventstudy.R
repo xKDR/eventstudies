@@ -7,10 +7,6 @@ eventstudy <- function(firm.returns = NULL,
                        remap = "cumsum",
                        inference = TRUE,
                        inference.strategy = "bootstrap",
-                       to.plot = TRUE,
-                       xlab = "Event time",
-                       ylab = "Cumulative returns of response series",
-                       main = "Event study plot",
                        ...) {
                                         # type = "marketResidual", "excessReturn", "AMM", "None"
   if (type == "None" && !is.null(firm.returns)) {
@@ -87,21 +83,21 @@ eventstudy <- function(firm.returns = NULL,
   if(inference == TRUE){
     ## Bootstrap
     if(inference.strategy == "bootstrap"){
-      result <- inference.bootstrap(es.w = es.w, to.plot = to.plot, xlab = xlab,
-                                    ylab = ylab, main = main)
+      result <- inference.bootstrap(es.w = es.w, to.plot = FALSE)
     }
     ## Wilcoxon
     if(inference.strategy == "wilcoxon"){
-      result <- inference.wilcox(es.w = es.w, to.plot = to.plot, xlab = xlab,
-                                 ylab = ylab, main = main)
+      result <- inference.wilcox(es.w = es.w, to.plot = FALSE)
     }
   } else {
     ## Providing event frame as default output
     result <- es.w
   }
+  if(to.remap==TRUE){remapping <- remap} else {remapping <- "None"}
     final.result <- list(eventstudy.output=result,
                          outcomes=as.character(es$outcomes),
-                         inference=inference.strategy, nlags=nlags)
+                         inference=inference.strategy,
+                         width=width, remap=remapping)
   class(final.result) <- "es"
   return(final.result)
 }
@@ -109,17 +105,33 @@ eventstudy <- function(firm.returns = NULL,
 #########################
 ## Functions for class es
 #########################
-print.es <- function(){
-
-
+print.es <- function(es.object){
+  cat("The", es.object$inference, "inference output for CI and",
+      colnames(es.object$eventstudy.output)[2], "response:", "\n")
+  es.object$eventstudy.output
 }
 
-summary.es <- function(){
-
-
+summary.es <- function(es.object){
+  cat("Event study", colnames(es.object$eventstudy.output)[2], "response with",
+      es.object$inference, "inference for CI:\n")
+  print(es.object$eventstudy.output)
+  cat("\n","Event outcome has",length(which(es.object$outcomes=="success")),
+      "successful outcomes out of", length(es.object$outcomes),"events:","\n")
+  es.object$outcomes
 }
 
-plot.es <- function(){
-
-
+plot.es <- function(es.object, xlab="Event time",
+                    ylab="", main="", col.es="dark slate blue"){
+  big <- max(abs(es.object$eventstudy.output))
+  hilo <- c(-big,big)
+  width <- (nrow(es.object$eventstudy.output)-1)/2
+  plot(-width:width, es.object$eventstudy.output[,2], type="l", lwd=2, ylim=hilo,
+       col=col.es,xlab= xlab, ylab = ylab,
+       main=paste(main))
+  points(-width:width, es.object$eventstudy.output[,2])
+  lines(-width:width, es.object$eventstudy.output[,"2.5%"],
+        lwd=1, lty=2, col=col.es)
+  lines(-width:width, es.object$eventstudy.output[,"97.5%"],
+        lwd=1, lty=2, col=col.es)
+  abline(h=0,v=0)
 }

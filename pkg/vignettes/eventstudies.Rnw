@@ -317,34 +317,31 @@ While the general framework to perform an eventstudy analysis has been explained
 ## Event study without adjustment 
 es.na <- eventstudy(firm.returns = StockPriceReturns, eventList =
                     SplitDates, width = 10, to.remap = TRUE, 
-                    remap = "cumsum", 
-                    to.plot = TRUE, inference = TRUE, 
+                    remap = "cumsum", inference = TRUE, 
                     inference.strategy = "wilcoxon", type = "None")
                     
 
 ## Event study using market residual and bootstrap 
 es.mm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
                     width = 10, to.remap = TRUE, remap = "cumsum", 
-                    to.plot = FALSE, inference = TRUE, 
-                    inference.strategy = "bootstrap", 
+                    inference = TRUE, inference.strategy = "bootstrap", 
                     type = "marketResidual", market.returns = nifty.index) 
-es.mm
 
 ## Event study using excess return and bootstrap 
 es.er <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
                     width = 10, to.remap = TRUE, remap = "cumsum", 
-                    to.plot = FALSE, inference = TRUE, 
-                    inference.strategy = "bootstrap", type = "excessReturn", 
-                    market.returns = nifty.index)
+                    inference = TRUE, inference.strategy = "bootstrap",
+                    type = "excessReturn", market.returns = nifty.index)
 
 ## Event study using augmented market model (AMM) and bootstrap
 es.amm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
                      width = 10, to.remap = TRUE, remap = "cumsum", 
-                     to.plot = FALSE, inference = TRUE, 
-                     inference.strategy = "bootstrap", 
+                     inference = TRUE, inference.strategy = "bootstrap", 
                      type = "AMM", market.returns = nifty.index, 
                      others=inrusd, verbose=FALSE, 
                      switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
+print(es.na)
+summary(es.na)
 
 @
 

@@ -93,7 +93,7 @@ eventstudy <- function(firm.returns = NULL,
     ## Providing event frame as default output
     result <- es.w
   }
-  if(to.remap==TRUE){remapping <- remap} else {remapping <- "None"}
+  if(to.remap==TRUE){remapping <- remap} else {remapping <- "none"}
     final.result <- list(eventstudy.output=result,
                          outcomes=as.character(es$outcomes),
                          inference=inference.strategy,
@@ -108,7 +108,7 @@ eventstudy <- function(firm.returns = NULL,
 print.es <- function(es.object){
   cat("The", es.object$inference, "inference output for CI and",
       colnames(es.object$eventstudy.output)[2], "response:", "\n")
-  es.object$eventstudy.output
+  return(es.object$eventstudy.output)
 }
 
 summary.es <- function(es.object){

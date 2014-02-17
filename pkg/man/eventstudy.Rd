@@ -1,9 +1,9 @@
 \name{eventstudy}
 \alias{eventstudy}
 
-\title{A wrapper that performs eventstudies using different methods}
+\title{Event study analysis}
 
-\description{This function undertakes an eventstudy based on the inference methodology chosen by the user.}
+\description{This function computes event study inference using different inference strategies for various market models}
 
 \usage{
 eventstudy(firm.returns = NULL,
@@ -15,10 +15,7 @@ eventstudy(firm.returns = NULL,
            remap = "cumsum",
            inference = TRUE,
            inference.strategy = "bootstrap",
-           to.plot = TRUE,
-           xlab = "Event time",
-           ylab = "Cumulative returns of response series",
-           main = "Event study plot", ...)
+           ...)
 }
 
 \arguments{
@@ -31,22 +28,26 @@ eventstudy(firm.returns = NULL,
   \item{is.levels}{If the data is in returns format then is.levels is FALSE else TRUE}
   \item{inference}{This argument is used to compute confidence interval for the estimator}
   \item{inference.strategy}{If inference is TRUE then this argument gives an option to select different inference strategy to compute confidence intervals. Default to bootstrap.}
-  \item{to.plot}{This argument will generate an eventstudy plot of the inference estimated. If to.plot is equal to TRUE then function would generate the plot else it would not. }
-  \item{xlab}{If to.plot is TRUE then the plot generated will take this X label}
-  \item{ylab}{If to.plot is TRUE then the plot generated will take this Y label}	
-  \item{main}{If to.plot is TRUE then the plot generated will take this as main title}
   \item{...}{Accepts specific arguments for the model.}
 }
 
 \details{If type = "AMM", then the default output is "residual".
   }
 
-\value{ Output is mean estimate  of abnormal returns and confidence interval using particular inference strategy
+\value{ 
+  A list with class attribute \sQuote{\code{es}} holding the
+  following elements:\cr
+
+  \item{eventstudy.output}{Output provides mean/median estimate with confidence interval}
+  \item{outcomes}{A vector has outcome of each event date. It provides 4 outcomes, 'success', 'wrongspan', 'wdatamissing' and 'unitmissing'. 'success' shows the successful use of event date, 'wdatamissing' appears when width data is missing around the event, if event date falls outside the range of physical date then it returns 'wrongspan' and 'unitmissing' when the unit (firm name) is missing in the event list.}
+  \item{inference}{Provides information about which inference strategy is utilised to estimate confidence intervals}
+  \item{width}{Window width for event study output }
+  \item{remap}{It shows which remapping technique used, for eg. 'cumsum' for cumulative sum, 'cumprod' for cumulative product, 'reindex' for reindexing the series and 'none' for no transformation.}
 }
 
 \author{Vikram Bahure}
 
-\seealso{ \code{\link{AMM}},
+\seealso{ \code{\link{lmAMM}},
 \code{\link{marketResidual}},	
 \code{\link{excessReturn}},
 \code{\link{phys2eventtime}},
@@ -64,7 +65,7 @@ eventstudy(firm.returns = NULL,
 ## data("SplitDates")
 
 ## Event study without adjustment
-## es <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, width = 10,type = "None", to.remap = TRUE, remap = "cumsum", to.plot = FALSE,inference = TRUE, inference.strategy = "bootstrap")
+es <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, width = 10,type = "None", to.remap = TRUE, remap = "cumsum",inference = TRUE, inference.strategy = "bootstrap")
 
 }
 

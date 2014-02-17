@@ -60,9 +60,9 @@ eventstudy(firm.returns = NULL,
 
 \examples{ 
 ## Performing event study
-## library(eventstudies)
-## data("StockPriceReturns")
-## data("SplitDates")
+library(eventstudies)
+data("StockPriceReturns")
+data("SplitDates")
 
 ## Event study without adjustment
 es <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, width = 10,type = "None", to.remap = TRUE, remap = "cumsum",inference = TRUE, inference.strategy = "bootstrap")

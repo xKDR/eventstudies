@@ -227,12 +227,12 @@ inrusd <- all.data$inr
 regressors <- makeX(market.returns=nifty.index, others=inrusd, 
                     market.returns.purge=TRUE, nlags=1)
 ## AMM residual to time series
-timeseriesAMM <- function(firm.returns,X,verbose=FALSE,nlags=1){
+timeseries.lmAMM <- function(firm.returns,X,verbose=FALSE,nlags=1){
   tmp <- resid(lmAMM(firm.returns,X,nlags))
   tmp.res <- zoo(tmp,as.Date(names(tmp)))
 }
 ## One firm
-amm.result <- timeseriesAMM(firm.returns=StockPriceReturns[,1], 
+amm.result <- timeseries.lmAMM(firm.returns=StockPriceReturns[,1], 
                             X=regressors, verbose=FALSE, nlags=1)
 
 ## More than one firm

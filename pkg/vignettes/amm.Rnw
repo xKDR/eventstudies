@@ -62,21 +62,24 @@ perform traditional event study analysis.
 % Need to talk more about generalisation used for variables other than currency
 
 
-\section{Currency exposure}\label{sec:ce}
-The package has functions which enable the user to extract the
-coefficients of currency exposure for firms using the AMM methodology
-employed in \citet{patnaik2010amm}. 
+\section{Software approach}\label{sec:ce}
+The package has functions which enable the user to compute linear
+model AMM output, along with currency exposure, using the AMM
+methodology employed in \citet{patnaik2010amm}. In the subsections
+below we describe construction of data-set to input in \texttt{lmAMM}
+function and further computing AMM output and currency exposure.
+
 \subsection{Constructing data set}
-We need to construct usable data set, before estimating currency
-exposure on firm returns using this package. There are two steps to be
-followed constructing regressors and regressands, to perform OLS as
-shown in the \citet{patnaik2010amm}. 
+We need to construct usable data set, before performing AMM analysis
+on firm returns using this package. There are two steps to be 
+followed constructing \texttt{X} (regressors) and firm returns
+(regressands), to perform OLS as shown in the \citet{patnaik2010amm}. 
 \subsubsection{Regressors \& Regressands}
 Regressors in the AMM equation are market returns and currency
 returns, while regressands is firm returns. All the variables should
 have balanced panel if not then merge the time series variable to get
-one. \textit{y3c3} is an time series object with market returns as
-\textit{NIFTY} and currency returns as \textit{INRUSD}. If
+one. \textit{lmAMMData} is an time series object with market returns as
+\textit{Nifty} and currency returns as \textit{INR/USD}. If
 currency exposure is to be estimated for different periods separately
 then argument \textit{dates} will be helpful or else \textit{NULL}
 will be provided to perform for full period.
@@ -92,17 +95,64 @@ library(eventstudies)
 data("lmAMMData")
 nifty <- lmAMMData$index.nifty
 inrusd <- lmAMMData$currency.inrusd
-firm.returns <- lmAMMData$Infosys
+regressand <- lmAMMData[,c("Infosys","TCS")]
 regressors <- makeX(nifty, others=inrusd,
                     switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1,
-                    dates=as.Date(c("2012-02-01","2013-01-01","2014-01-31")), verbose=FALSE)
+                    dates=as.Date(c("2012-02-01","2013-01-01","2014-01-20")), verbose=FALSE)
 @ 
-\subsubsection{Getting currency exposure}
-The output of {makeX} function is used in \textit{subperiod.lmAMM} and
-\textit{AMM} function to get currency exposure of the firms and AMM
+
+\subsection{Augmented market model}
+Augmented market model output with a class of \textit{amm} is
+generated using the function \texttt{lmAMM}. This function takes firm
+returns (regressand) and regressor as input. Output of \texttt{lmAMM}
+function is a list object with linear model output of AMM,
+currency exposure, standard deviation and significance of the
+exposure. 
+<<>>=
+## AMM residual to time series
+timeseries.lmAMM <- function(firm.returns,X,verbose=FALSE,nlags=1){
+  tmp <- resid(lmAMM(firm.returns,X,nlags))
+  tmp.res <- zoo(tmp,as.Date(names(tmp)))
+}
+## One firm
+amm.output.one <- lmAMM(regressand[,1],X,nlags=1)
+amm.resid.one <- timeseries.lmAMM(firm.returns=regressand[,1], 
+                                  X=regressors, verbose=FALSE, nlags=1)
+summary(amm.output.one)
+
+## More than one firm
+                                        # Extracting and merging
+tmp.resid <- sapply(colnames(regressand)[1:2],function(y)
+                    timeseriesAMM(firm.returns=regressand[,y],
+                                  X=regressors,
+                                  verbose=FALSE,
+                                  nlags=1))
+amm.resid <- zoo(tmp.resid,as.Date(rownames(tmp.resid)))
+@ 
+
+All the basic functionality are available for object with class
+\textit{amm}. \texttt{print},\texttt{summary} and \texttt{plot}
+commands can be used to do preliminary analysis. The plot
+\ref{fig:amm} compares the AMM residuals with abnormal firm returns.
+\begin{figure}[t]
+  \begin{center}
+    \label{fig:amm}
+    \caption{Augment market model}
+    \setkeys{Gin}{width=0.8\linewidth}
+    \setkeys{Gin}{height=0.8\linewidth} 
+<<fig=TRUE,echo=FALSE>>=
+plot(amm.output.one)
+@
+  \end{center}
+  \label{fig:one}
+\end{figure}
+
+\subsection{Getting currency exposure}
+The output of \texttt{makeX} function is used in \textit{subperiod.lmAMM} and
+\textit{lmAMM} function to get currency exposure of the firms and AMM
 residuals respectively. In the example below, we demonstrate the use
 of \textit{subperiod.lmAMM} function to estimate currency exposure for
-firms.   
+firms.
 % MakeX and subperiod.lmAMM
 <<>>=
 # Run AMM for one firm across different periods
@@ -116,45 +166,6 @@ firm.exposure <- deprintize(subperiod.lmAMM)(firm.returns=firm.returns,
                                              dates= as.Date(c("2012-02-01",
                                                "2013-01-01","2014-01-31")))
 str(firm.exposure)
-@
-
-
-
-\section{AMM residuals}\label{sec:es}
-Here, in this section we show how to get augmented market residuals
-using \textit{eventstudies} package. The
-\textit{AMM} function is a wrapper to get AMM residuals directly, and
-\textit{eventstudy} function is a wrapper to perform event study
-analysis for different specification as discussed in
-\textit{eventstudies} vignette. The \textit{AMM} function performs
-similar step as above currency exposure code-base but is
-generalised to accept one firm or many firms.
-
-\subsection{Construction of data-set}
-The \textit{AMM} function requires a balanced panel of firm returns, market
-returns and currency returns (for this example). The balanced panel
-should be a time series object. As we can see below, we create
-\textit{all.data} by merging \textit{inrusd} (currency returns) and
-\textit{nifty.index} (market returns).  
-<<>>= 
-# Create RHS before running AMM() 
-data("lmAMMData")
-firm.returns <- lmAMMData[,"Infosys"]
-market.returns <- lmAMMData[,"index.nifty"]
-currency.returns <- lmAMMData[,"currency.inrusd"]
-regressors <- makeX(market.returns, others=currency.returns,
-           switch.to.innov=FALSE, market.returns.purge=FALSE, verbose=FALSE)
-@
-
-Inputs into the \texttt{AMM} model also include \texttt{firm.returns}
-and \texttt{market.returns}. Currency returns can be specified using
-\texttt{others}. Once these inputs are provided we can extract AMM
-residuals using following command.
- 
-<<>>=
-# AMM output
-res.amm <- lmAMM(firm.returns=firm.returns, X=regressors,
-                 verbose=FALSE, nlags=1)
 @
 
  We can also perform event study analysis, directly on AMM residuals

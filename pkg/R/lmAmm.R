@@ -65,12 +65,12 @@ subperiod.lmAMM <- function(firm.returns,X,nlags=1,verbose=FALSE,dates=NULL,resi
 # Many firms AMM
 ########################
 manyfirmssubperiod.lmAMM <-
-function(regressand,regressors,
+function(firm.returns,X,
                           lags,dates=NULL, periodnames=NULL,verbose=FALSE){
   require("doMC")
   registerDoMC()
   if(is.null(dates)){
-    dates=c(start(regressors),end(regressors))
+    dates=c(start(X),end(X))
     periodnames="Full"
   }
   nperiods <- length(periodnames)
@@ -78,16 +78,17 @@ function(regressand,regressors,
     cat("Mistake in length of dates versus length of periods.\n")
     return(NULL)
   }
-  nfirms <- ncol(regressand)
+  nfirms <- ncol(firm.returns)
 
   # Let's get "exposure' and 'sds'. Setting up structures:-
 
-  exposures <- matrix(NA,nrow=nfirms,ncol=nperiods*ncol(regressors))
-  rownames(exposures) <- colnames(regressand)
+  exposures <- matrix(NA,nrow=nfirms,ncol=nperiods*ncol(X))
+  exposures <- as.data.frame(exposures)
+  rownames(exposures) <- colnames(firm.returns)
   tmp <- NULL 
   for(i in 1:length(periodnames)){
-    for(j in 1:ncol(regressors)){
-      tmp <-  c(tmp, paste(colnames(regressors)[j],
+    for(j in 1:NCOL(X)){
+      tmp <-  c(tmp, paste(colnames(X)[j],
                            periodnames[i],sep="."))
     }
   }
@@ -96,14 +97,14 @@ function(regressand,regressors,
   colnames(sds) <- paste("sd",colnames(exposures),sep=".")
 
   # Setup a list structure for an OLS that failed
-  empty <- list(exposures=rep(NA,ncol(regressors)),
-                s.exposures=rep(NA,ncol(regressors)))
+  empty <- list(exposures=rep(NA,ncol(X)),
+                s.exposures=rep(NA,ncol(X)))
   
-  for(i in 1:ncol(regressand)){
-    cat("Doing",colnames(regressand)[i],"\n")
-    if (verbose) {cat ("Doing", colnames(regressand)[i], "\n")}
-    firm.returns <- regressand[,i]
-    dataset <- cbind(firm.returns, regressors)   # This is the full time-series
+  for(i in 1:NCOL(firm.returns)){
+    cat("AMM estimation for",colnames(firm.returns)[i],"\n")
+    if (verbose) {cat ("AMM estimation for", colnames(firm.returns)[i], "\n")}
+    stock.return <- firm.returns[,i]
+    dataset <- cbind(stock.return, X)   # This is the full time-series
     this.exp <- this.sds <- NULL
     for(j in 1:nperiods){              # now we chop it up 
       t1 <- dates[j]
@@ -114,8 +115,8 @@ function(regressand,regressors,
       this.exp <- c(this.exp, fe$exposures)
       this.sds <- c(this.sds, fe$s.exposures)
     }
-    exposures[colnames(regressand)[i],] <- this.exp
-    sds[colnames(regressand)[i],] <- this.sds
+    exposures[colnames(firm.returns)[i],] <- this.exp
+    sds[colnames(firm.returns)[i],] <- this.sds
   }
   list(exposures=exposures, sds=sds, sig=exposures/sds)
 }

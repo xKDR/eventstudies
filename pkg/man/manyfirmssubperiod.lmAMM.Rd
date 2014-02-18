@@ -9,14 +9,14 @@ periods}
   matrix of data obtained from \code{makeX}, and a matrix of LHS variables}
 
 \usage{
-manyfirmssubperiod.lmAMM(regressand, regressors, lags, dates = NULL, periodnames = NULL, verbose = FALSE)
+manyfirmssubperiod.lmAMM(firm.returns, X, lags, dates = NULL, periodnames = NULL, verbose = FALSE)
 }
 
 \arguments{
-  \item{regressand}{A zoo matrix of all firms for which AMM is to
+  \item{firm.returns}{A zoo matrix of all firms for which AMM is to
   be computed}
 
-  \item{regressors}{A zoo matrix containing at least two
+  \item{X}{A zoo matrix containing at least two
   regressors generally obtained after applying the makeX function }
 
   \item{lags}{ Specifies the number of lags to be used in the
@@ -37,22 +37,22 @@ manyfirmssubperiod.lmAMM(regressand, regressors, lags, dates = NULL, periodnames
 \author{Ajay Shah, Vimal Balasubramaniam}
 
 \seealso{
-\code{\link{onefirmAMM}}
+\code{\link{lmAMM}}
 }
 
 \examples{
 # Running manyfirmssubperiod.lmAMM() involves as many steps as working with onefirmAMM. 
 data("lmAMMData")
-regressand <- lmAMMData[,c("Infosys","TCS")]
+firm.returns <- lmAMMData[,c("Infosys","TCS")]
 market.returns <- lmAMMData[,"index.nifty"]
 currency.returns <- lmAMMData[,"currency.inrusd"]
-## Creating regressors for AMM estimation using makeX function
-regressors <- makeX(market.returns, others=currency.returns, nlags=1,
+## Creating X for AMM estimation using makeX function
+X <- makeX(market.returns, others=currency.returns, nlags=1,
               switch.to.innov=FALSE, market.returns.purge=FALSE, verbose=FALSE,
-	      dates=as.Date(c("2012-02-01","2013-01-01","2014-01-31")))
+	      dates=as.Date(c("2012-02-01","2013-01-01","2014-01-20")))
 ## Estimating exposure
-res <- manyfirmssubperiod.lmAMM(regressand,regressors,lags=1,
-                     dates=as.Date(c("2012-02-01","2013-01-01","2014-01-31")),
+res <- manyfirmssubperiod.lmAMM(firm.returns,X,lags=1,
+                     dates=as.Date(c("2012-02-01","2013-01-01","2014-01-20")),
 		     periodnames=c("P1","P2"),
                      verbose=FALSE)
 print(res)

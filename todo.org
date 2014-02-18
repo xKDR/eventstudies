@@ -32,5 +32,5 @@ List of things need to be done.
 * man pages
   - modify ess.Rd: put reference to Patnaik, Shah, and Singh (2013)
 
-* es-match
-  - synthetic returns
+* Testing
+  - manual calculation of numbers in the tests

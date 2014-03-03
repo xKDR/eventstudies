@@ -57,7 +57,7 @@ eventstudy(firm.returns = NULL,
 
   \item{is.levels}{
     \sQuote{logical}, indicating the format of the data. Set it to
-    \sQuote{FALSE} if the data is in returns format else \sQuote{TRUE}.
+    \sQuote{FALSE} if the data is in returns format, else \sQuote{TRUE}.
   }
 
   \item{inference}{
@@ -81,28 +81,54 @@ eventstudy(firm.returns = NULL,
   \dQuote{residual}.
 }
 
-\value{ 
-  A list with class attribute \sQuote{\code{es}} holding the
-  following elements:\cr
+\value{
+  A list with class attribute \dQuote{es} holding the
+  following elements:
 
-  \item{eventstudy.output}{Output provides mean/median estimate with confidence interval}
-  \item{outcomes}{A vector has outcome of each event date. It provides 4 outcomes, 'success', 'wrongspan', 'wdatamissing' and 'unitmissing'. 'success' shows the successful use of event date, 'wdatamissing' appears when width data is missing around the event, if event date falls outside the range of physical date then it returns 'wrongspan' and 'unitmissing' when the unit (firm name) is missing in the event list.}
-  \item{inference}{Provides information about which inference strategy is utilised to estimate confidence intervals}
-  \item{width}{Window width for event study output }
-  \item{remap}{It shows which remapping technique used, for eg. 'cumsum' for cumulative sum, 'cumprod' for cumulative product, 'reindex' for reindexing the series and 'none' for no transformation.}
+  \item{eventstudy.output}{
+    a \sQuote{matrix} containing mean/median estimate with confidence
+    interval.
+  }
+
+  \item{outcomes}{
+    a \sQuote{character} vector having outcome of each event
+    date. Provides four outcomes: \cr
+    \dQuote{success}: shows the successful use of event date. \cr
+    \dQuote{wdatamissing}: appears when width data is missing around
+    the event. \cr
+    \dQuote{wrongspan}: if event date falls outside the range of physical
+    date. \cr
+    \dQuote{unimissing}: when the unit (firm name) is missing in the event
+    list.
+  }
+
+  \item{inference}{
+    a \sQuote{character} providing information about which inference
+    strategy was utilised to estimate the confidence intervals.
+  }
+
+  \item{width}{
+    a \sQuote{numeric} specifying the window width for event study output.
+  }
+
+  \item{remap}{
+    a \sQuote{character} specifying the remapping technique
+    used. Options are mentioned in \dQuote{remap} argument description.
+  }
+
 }
 
 \author{Vikram Bahure}
 
 \seealso{ \code{\link{lmAMM}},
-\code{\link{marketResidual}},	
-\code{\link{excessReturn}},
-\code{\link{phys2eventtime}},
-\code{\link{inference.bootstrap}},
-\code{\link{inference.wilcox}},
-\code{\link{remap.cumsum}},
-\code{\link{remap.cumprod}},
-\code{\link{remap.event.reindex}},
+  \code{\link{marketResidual}},	
+  \code{\link{excessReturn}},
+  \code{\link{phys2eventtime}},
+  \code{\link{inference.bootstrap}},
+  \code{\link{inference.wilcox}},
+  \code{\link{remap.cumsum}},
+  \code{\link{remap.cumprod}},
+  \code{\link{remap.event.reindex}},
 }
 
 \examples{ 
@@ -112,8 +138,14 @@ data("StockPriceReturns")
 data("SplitDates")
 
 ## Event study without adjustment
-es <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, width = 10,type = "None", to.remap = TRUE, remap = "cumsum",inference = TRUE, inference.strategy = "bootstrap")
-
+es <- eventstudy(firm.returns = StockPriceReturns,
+                 eventList = SplitDates,
+                 width = 10,
+                 type = "None",
+                 to.remap = TRUE,
+                 remap = "cumsum",
+                 inference = TRUE,
+                 inference.strategy = "bootstrap")
 }
 
 \keyword{eventstudy}

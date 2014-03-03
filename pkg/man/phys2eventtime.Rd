@@ -39,12 +39,12 @@ phys2eventtime(z, events, width = 10)
 
   Currently, this function requires \dQuote{z} to have at least one
   \emph{column}. It relies on colnames of the object for the series
-  names, and match it with the \dQuote{events} object. One can use
-  \emph{drop = FALSE} with \sQuote{[} to achieve a single-column object.
+  names, and matches it with the \dQuote{events} object. One can use
+  \code{drop = FALSE} with \sQuote{[} to achieve a single-column object.
 }
 
 \value{
-  Returns a \sQuote{list} of:
+  Returns a \sQuote{list} of two elements:
   \item{z.e}{a zoo object indexed with event time.}
 
   %% FIXME: list all the options here instead of writing them inside

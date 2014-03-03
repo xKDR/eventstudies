@@ -3,7 +3,7 @@
 
 \title{Event study analysis}
 
-\description{This function computes event study inference using different inference strategies for various market models}
+\description{Function to compute event study inference using different inference strategies for various market models.}
 
 \usage{
 eventstudy(firm.returns = NULL,
@@ -19,20 +19,67 @@ eventstudy(firm.returns = NULL,
 }
 
 \arguments{
-  \item{firm.returns}{Data on which event study is to be performed}
-  \item{eventList}{A data frame with event dates. It has two columns 'outcome.unit' and 'event.when'. The first column 'outcome.unit' consists of column names of the event stock and 'event.when' is the respective event date}
-  \item{width}{It studies the performance of observations before and after the event}
-  \item{type}{This argument gives an option to use different market model adjustment like "marketResidual", "excessReturn", "AMM" and "None"}
-  \item{to.remap}{If TRUE then remap the event frame is done}
-  \item{remap}{This argument is used when to.remap is TRUE to estimate cumulative sum (cumsum), cumulative product (cumprod) or reindex the event frame}
-  \item{is.levels}{If the data is in returns format then is.levels is FALSE else TRUE}
-  \item{inference}{This argument is used to compute confidence interval for the estimator}
-  \item{inference.strategy}{If inference is TRUE then this argument gives an option to select different inference strategy to compute confidence intervals. Default to bootstrap.}
-  \item{...}{Accepts specific arguments for the model.}
+  \item{firm.returns}{
+    data on which event study is to be performed.
+  }
+
+  \item{eventList}{
+    \sQuote{data.frame} of two columns containing event
+    dates. \dQuote{outcome.unit} consists of column names of the event
+    stock, and \dQuote{event.when} is the respective event date.
+  }
+
+  \item{width}{                        % FIXME: needs better description
+    \sQuote{integer} of length 1, it studies the performance of observations before and
+    after the event
+  }
+
+  \item{type}{
+    a scalar of type \sQuote{character}, specifying the market
+    model adjustment. Currently supported options are:
+    \dQuote{marketResidual}, \dQuote{excessReturn}, \dQuote{AMM} and
+    \dQuote{None}. Defaults to \dQuote{marketResidual}. See \sQuote{Details}.
+  }
+
+  \item{to.remap}{       
+    \sQuote{logical}, indicating if remap of the event frame should be
+    done.
+  }
+
+  \item{remap}{                         % FIXME: list all the possible
+                                        % options properly. Needs better
+                                        % explanation of the purpose of
+                                        % the argument
+    \sQuote{character}, this argument is used when \dQuote{to.remap} is
+    \sQuote{TRUE} to estimate cumulative sum (cumsum), cumulative
+    product (cumprod) or reindex the event frame.
+  }
+
+  \item{is.levels}{
+    \sQuote{logical}, indicating the format of the data. Set it to
+    \sQuote{FALSE} if the data is in returns format else \sQuote{TRUE}.
+  }
+
+  \item{inference}{
+    \sQuote{logical}, specifying whether to compute confidence interval
+    for the estimator.
+  }
+
+  \item{inference.strategy}{      % FIXME: list all the possible options
+    a \sQuote{character} scalar specifying the inference strategy to
+    compute confidence intervals. Is used only if \dQuote{inference} is
+    \sQuote{TRUE}. Defaults to \dQuote{bootstrap}.
+  }
+
+  \item{...}{
+    further arguments to pass to the model.
+  }
 }
 
-\details{If type = "AMM", then the default output is "residual".
-  }
+\details{
+  When using \dQuote{AMM} adjustement, the default output is
+  \dQuote{residual}.
+}
 
 \value{ 
   A list with class attribute \sQuote{\code{es}} holding the

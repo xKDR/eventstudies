@@ -52,7 +52,7 @@ phys2eventtime(z, events, width = 10)
   \item{outcomes}{a \sQuote{character} vector containing the
     status of each \dQuote{outcome.unit}.
   }
-
+}
 
 \examples{
 data(StockPriceReturns)

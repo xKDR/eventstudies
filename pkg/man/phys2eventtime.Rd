@@ -2,39 +2,62 @@
 \alias{phys2eventtime}
 
 \title{
-Converts physical dates to event dates.
+  Function to convert physical dates to event dates.
 }
 
-\description{
-Given a zoo time-series and event dates, it converts the physical dates to event dates. The event date becomes zero and all other dates shift accordingly.
-}
+\description{ Given a zoo time-series and event dates, it converts the
+  physical dates to event dates. The event date becomes zero and all
+  other dates shift accordingly.  }
 
 \usage{
 phys2eventtime(z, events, width = 10)
 }
 
 \arguments{
-  \item{z}{Time series data for which event frame is to be generated.}
+  \item{z}{an object of class \pkg{zoo} containing time series data for
+    which the event frame is to be generated. See \sQuote{Details}.}
 
-  \item{events}{It is a data frame with two columns: outcome.unit and event.when. outcome.unit
-  has column name of which response is to measured on the event date,
-  while event.when has the event date. See details.}
+  %% FIXME: should remove this description from eventstudy.Rd, and point
+  %% it here?
+  \item{events}{
+    \sQuote{data.frame} of two columns containing event
+    dates. \dQuote{outcome.unit} consists of column names of the event
+    stock, and \dQuote{event.when} is the respective event date. See
+    \sQuote{Details}.
+  }
 
-  \item{width}{Width corresponds to the number of days on each side of the event date.For a given width, if there is any NA in the event window then the last observation is carried forward.}
+  \item{width}{an \sQuote{integer} specifying the number of days on each
+  side of the event date. For a given width, if there is any \sQuote{NA}
+  in the event window, then the last observation is carried forward.}
 
 }
 
-\details{ If an event date is not found, the function takes the previous
-  value of date in index(z) as the event date.  }
+\details{
+  The function is used to convert physical dates to event
+  dates. If an event date is not found, the function takes the previous
+  value of date in \code{index(z)} as the event date.
 
-\value{Output is in a list format. A zoo object indexed with event time and a vector which describes the status of each unit in the original data.
+  Currently, this function requires \dQuote{z} to have at least one
+  \emph{column}. It relies on colnames of the object for the series
+  names, and match it with the \dQuote{events} object. One can use
+  \emph{drop = FALSE} with \sQuote{[} to achieve a single-column object.
 }
+
+\value{
+  Returns a \sQuote{list} of:
+  \item{z.e}{a zoo object indexed with event time.}
+
+  %% FIXME: list all the options here instead of writing them inside
+  %% eventstudy.Rd?
+  \item{outcomes}{a \sQuote{character} vector containing the
+    status of each \dQuote{outcome.unit}.
+  }
 
 
 \examples{
 data(StockPriceReturns)
 data(SplitDates)
-phys2eventtime(z=StockPriceReturns, events=SplitDates,width=5)	
+phys2eventtime(z = StockPriceReturns, events = SplitDates,width = 5)
 }
 
 \keyword{ phys2eventime }

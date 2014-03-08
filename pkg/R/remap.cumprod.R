@@ -6,6 +6,7 @@
 # is.returns is false                         in this case is.pc is ignored!
 #    values are like 1.01 for 1%
 remap.cumprod <- function(z, is.pc=TRUE, is.returns=TRUE, base=100) {
+  z <- firstValueZero(z)
   for (i in 1:NCOL(z)) {
     tmp <- z[,i]
     if (is.returns) {
@@ -22,4 +23,13 @@ remap.cumprod <- function(z, is.pc=TRUE, is.returns=TRUE, base=100) {
     }
   }
   z
+}
+
+firstValueZero <- function(x){
+  if(NCOL(x)==1){
+    x[1] <- 0
+  } else {
+    x[1,] <- 0
+  }
+  return(x)
 }

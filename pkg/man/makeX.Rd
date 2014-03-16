@@ -54,7 +54,6 @@ makeX(market.returns,
 %% FIXME: Provide a reason why there shouldn't be NAs.
 \section{Warning}{The input data should not contain \sQuote{NA}s. Please
   use \sQuote{na.omit} before feeding data into this function.}
-}
 
 \value{This function generates a user specified matrix of explanatory
   variables that will be further used in running Augmented market

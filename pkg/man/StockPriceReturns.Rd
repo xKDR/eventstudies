@@ -6,8 +6,10 @@
 
 \title{An example dataset of stock price returns to perform eventstudy analysis.}
 
-\description{Daily stock price returns for the index constituents of the Bombay Stock Exchange Index (SENSEX) and the National Stock Exchange of India Index (NIFTY), NIFTY index, and the Rupee-Dollar exchange rate returns.}
-
+% FIXME: Remove NAs in the dataset?
+\description{This data set contains stock price returns of 30 major
+  stocks on the National Stock Exchange (NSE) of India for a period of 23
+  years.}
 
 \usage{data(StockPriceReturns)}
 

@@ -1,7 +1,7 @@
 \name{inference.bootstrap}
 \alias{inference.bootstrap}
 
-\title{Function to do bootstrap inference for the event study.}
+\title{Function to do bootstrap inference for event study analysis.}
 
 \description{
   This function does bootstrap inference to generate distribution of

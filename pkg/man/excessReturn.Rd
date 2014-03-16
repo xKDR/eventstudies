@@ -3,15 +3,18 @@
 
 \title{A function that estimates excess return}
 
-\description{ This function estimates excess return. If the the firm return is rj and market return is market.returns then output will be firm.returns less market.returns.
-}
+\description{ This function estimates excess returns. If the firm return
+  is \dQuote{firm.returns} and market return is \dQuote{market.returns},
+  then output will be \dQuote{firm.returns} less
+  \dQuote{market.returns}.  }
 
 \usage{excessReturn(firm.returns, market.returns)}
 
 \arguments{
-  \item{firm.returns}{Firm returns of which excess return from market is to be calculated}
-  \item{market.returns}{Market index returns}
-
+  \item{firm.returns}{a \pkg{zoo} timeseries with firm returns from
+    which excess returns from market are to be calculated.}
+  \item{market.returns}{a \pkg{zoo} object containing market index
+    returns.}
 }
 \value{Excess market return}
 
@@ -22,7 +25,6 @@ data(StockPriceReturns)
 data(nifty.index)
 er.result <- excessReturn(firm.returns = StockPriceReturns,
 			  market.returns = nifty.index)
-
 }
 
 \keyword{excessReturn}

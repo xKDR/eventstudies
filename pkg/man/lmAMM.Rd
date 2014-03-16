@@ -57,13 +57,19 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
 \examples{
 # lmAMM
 data("lmAMMData")
+
 firm.returns <- lmAMMData[,"Infosys"]
 market.returns <- lmAMMData[,"index.nifty"]
 currency.returns <- lmAMMData[,"currency.inrusd"]
+
 ## Creating regressors for AMM estimation using makeX function
-X <- makeX(market.returns, others=currency.returns,
-           switch.to.innov=FALSE, market.returns.purge=FALSE, verbose=FALSE)
-a <- lmAMM(firm.returns, X, nlags=0, verbose=FALSE)
+X <- makeX(market.returns,
+          others = currency.returns,
+          switch.to.innov = FALSE,
+          market.returns.purge = FALSE,
+          verbose = FALSE)
+
+a <- lmAMM(firm.returns, X, nlags = 0, verbose = FALSE)
 print(a)
 }
 

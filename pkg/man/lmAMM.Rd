@@ -3,47 +3,49 @@
 
 \title{Augmented market model (AMM) estimation}
 
-\description{This function relates firm returns to the regressors using the linear model (market index movements, currency fluctuations etc.).
-It computes firm exposure for all the regressors in columns of X and subsequently estimates AMM residuals by purging out variation
-from regressand.
-}
+\description{This function relates firm returns to the regressors using
+  the linear model (market index movements, currency fluctuations etc.).
+  It computes firm exposure for all the regressors in columns of X and
+  subsequently estimates AMM residuals by purging out variation from
+  the regressand.}
 
 \usage{
 lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
 }
 
 \arguments{
-  \item{firm.returns}{A time series object of firm returns for AMM estimation}
 
-  \item{X}{A time series of explanatory variables obtained from
-    the makeX function. The first variable is always the
-    stock market index. Other variables could be
-    such as currency or bond returns, or other variables as
-  desired by the user. 
-  }
+  \item{firm.returns}{a \pkg{zoo} time series object of firm returns for
+    AMM estimation.}
 
-  \item{nlags}{Number of lags of explanatory variables. When unspecified
-    the best lag using the AIC is used.
-  }
+  \item{X}{a time series of explanatory variables obtained from the
+    makeX function. The first variable is always the stock market
+    index. Other variables could be such as currency or bond returns, or
+    other variables as desired by the user.}
 
-  \item{verbose}{Default is FALSE. When set to TRUE, the function
-    prints detailed results while running this function. 
-  }
-}
+  \item{nlags}{an \sQuote{integer} with the number of lags of
+    explanatory variables. When unspecified, the best lag using the AIC
+    is used.}
+
+  \item{verbose}{a \sQuote{logical}. Print function details. When set to
+    \sQuote{TRUE}, the function prints detailed results while
+    running. Default is \sQuote{FALSE}.}  }
 
 
-\value{ The function returns the exposures, HAC adjusted standard
-  errors, the number of lags used, and the residuals from the fitted
-  model.
+\value{The function returns a \sQuote{list} containing exposures, HAC
+  adjusted standard errors, number of lags used, and residuals from the
+  fitted model.
 
-\item{exposures}{This contains the exposure estimates for the firm
-j}
+  \item{exposures}{a \sQuote{numeric} containing exposure estimates for
+    the firm j.}
 
-\item{s.exposures}{This contains the HAC adjusted standard error
-of the exposures estimated for the firm firm.returns.}
+  %% FIXME: "for the firm firm.returns" doesn't make sense. Is it "for
+  %% the firm with returns 'firm.returns'?
+  \item{s.exposures}{a \sQuote{numeric} containing the HAC adjusted
+    standard error of the exposures estimated for the firm
+    firm.returns.}
 
-\item{nlags}{Specifies the lag length provided by the user}
-
+  \item{nlags}{shows the lag length provided by user.}
 }
 
 \author{Ajay Shah, Vimal Balasubramaniam}

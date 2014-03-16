@@ -4,7 +4,13 @@ List of things need to be done.
   - should work with data.frames, zoo, xts
   - create a generic "eventstudies" class
   - DESIGN!!!
-    
+  - Change the main package description to:
+    "eventstudies: An R package for researchers and users of event
+    studies"
+    - on Rforge
+    - inside the package
+    - CRAN
+
 * phys2eventtime
   - more testing: all output is unitmissing
   - parallelise (provide an argument to the user)
@@ -34,3 +40,4 @@ List of things need to be done.
 
 * Testing
   - manual calculation of numbers in the tests
+  - revert old tests?

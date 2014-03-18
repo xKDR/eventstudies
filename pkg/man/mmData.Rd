@@ -2,11 +2,13 @@
 \alias{mmData}
 
 
-\title{Data for testing the market model and examples therein}
+\title{Data for testing the market model and use with examples.}
 
-\description{This is a zoo data that is used for testing purposes}
+\description{This data is only used for testing.}
 
 \usage{data(mmData)}
+
+\format{\pkg{zoo}}
 
 \author{Vikram Bahure}
 

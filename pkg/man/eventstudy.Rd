@@ -3,7 +3,7 @@
 
 \title{Event study analysis}
 
-\description{Function to compute event study inference using different inference strategies for various market models.}
+\description{Function to perform event study analysis and compute confidence intervals}
 
 \usage{
 eventstudy(firm.returns = NULL,
@@ -30,20 +30,18 @@ eventstudy(firm.returns = NULL,
   }
 
   \item{width}{                        % FIXME: needs better description
-    \sQuote{integer} of length 1, it studies the performance of observations before and
-    after the event
+    \sQuote{integer} of length 1, which creates an event window to study the impact (pre and post event) on the variable
   }
 
   \item{type}{
     a scalar of type \sQuote{character}, specifying the market
     model adjustment. Currently supported options are:
-    \dQuote{marketResidual}, \dQuote{excessReturn}, \dQuote{AMM} and
+    \dQuote{marketResidual}, \dQuote{excessReturn}, \dQuote{lmAMM} and
     \dQuote{None}. Defaults to \dQuote{marketResidual}. See \sQuote{Details}.
   }
 
   \item{to.remap}{       
-    \sQuote{logical}, indicating if remap of the event frame should be
-    done.
+    \sQuote{logical}, indicating whether to convert event-window returns into cumulative sum, cumulative product or re-index 
   }
 
   \item{remap}{                         % FIXME: list all the possible
@@ -51,8 +49,8 @@ eventstudy(firm.returns = NULL,
                                         % explanation of the purpose of
                                         % the argument
     \sQuote{character}, this argument is used when \dQuote{to.remap} is
-    \sQuote{TRUE} to estimate cumulative sum (cumsum), cumulative
-    product (cumprod) or reindex the event frame.
+    \sQuote{TRUE}, which estimates cumulative sum (cumsum), cumulative
+    product (cumprod) or reindex the event frame. Currently supported options are \dQuote{cumsum}, \dQuote{cumprod}, \dQuote{reindex}. Defaults to \dQuote{cumsum}.
   }
 
   \item{is.levels}{
@@ -68,7 +66,7 @@ eventstudy(firm.returns = NULL,
   \item{inference.strategy}{      % FIXME: list all the possible options
     a \sQuote{character} scalar specifying the inference strategy to
     compute confidence intervals. Is used only if \dQuote{inference} is
-    \sQuote{TRUE}. Defaults to \dQuote{bootstrap}.
+    \sQuote{TRUE}. Currently supported options are \dQuote{bootstrap}, \dQuote{wilcox}.Defaults to \dQuote{bootstrap}.
   }
 
   \item{...}{

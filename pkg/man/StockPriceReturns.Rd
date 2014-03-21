@@ -4,7 +4,7 @@
 
 \alias{StockPriceReturns}
 
-\title{An example dataset of stock price returns to perform eventstudy analysis.}
+\title{An example dataset of stock price returns to perform event study analysis.}
 
 % FIXME: Remove NAs in the dataset? If we do complete.cases then all rows will be removed
 \description{This data set contains stock price returns of 30 major

@@ -115,7 +115,7 @@ timeseries.lmAMM <- function(firm.returns,X,verbose=FALSE,nlags=1){
   tmp.res <- zoo(tmp,as.Date(names(tmp)))
 }
 ## One firm
-amm.output.one <- lmAMM(regressand[,1],X,nlags=1)
+amm.output.one <- lmAMM(regressand[,1],X=regressors,nlags=1)
 amm.resid.one <- timeseries.lmAMM(firm.returns=regressand[,1], 
                                   X=regressors, verbose=FALSE, nlags=1)
 summary(amm.output.one)
@@ -123,7 +123,7 @@ summary(amm.output.one)
 ## More than one firm
                                         # Extracting and merging
 tmp.resid <- sapply(colnames(regressand)[1:2],function(y)
-                    timeseriesAMM(firm.returns=regressand[,y],
+                    timeseries.lmAMM(firm.returns=regressand[,y],
                                   X=regressors,
                                   verbose=FALSE,
                                   nlags=1))
@@ -159,7 +159,7 @@ firms.
   deprintize<-function(f){
     return(function(...) {capture.output(w<-f(...));return(w);});
   }
-firm.exposure <- deprintize(subperiod.lmAMM)(firm.returns=firm.returns,
+firm.exposure <- deprintize(subperiod.lmAMM)(firm.returns=regressand[,1],
                                              X=regressors,
                                              nlags=1,
                                              verbose=TRUE,

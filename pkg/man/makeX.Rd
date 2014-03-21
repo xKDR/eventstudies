@@ -20,12 +20,13 @@ makeX(market.returns,
 
 \arguments{
   %% FIXME: our example contains univariate time-series object. Can it
-  %% accept multiple columns as input?
+  %% accept multiple columns as input? Here we are only supposed to use one column
   \item{market.returns}{a \pkg{zoo} timeseries object. This is generally
     fixed to the stock market index. The first column vector of this
     matrix contains this variable.  }
 
   %% FIXME: same as market.returns: can it contain more than one variable?
+  %% This variable is supported to take more than one variables.
   \item{others}{A zoo matrix with other regressors of interest in the
     AMM. This could be currency, bond returns, foreign flows, or any
     other variable.}
@@ -34,14 +35,10 @@ makeX(market.returns,
     each column in \dQuote{others}. Whether to switch the column from
     raw values to AR residuals.}
 
-  %% FIXME: Second part of the sentence (i.e.) is somewhat unclear.
-  \item{market.returns.purge}{Whether to purge the effects
-    \dQuote{others} from \dQuote{market.returns} (i.e., is it replaced by
-    residuals of a model explaining market.returns using all these
-   'others').}
+  \item{market.returns.purge}{a \sQuote{logical} element, indicating whether to purge the effects of \dQuote{others} from \dQuote{market.returns}. }
 
  \item{nlags}{The number of lag terms present in this model explaining
-   market.returns using all these \dQuote{others}.}
+   \dQuote{market.returns} using all these \dQuote{others}.}
 
  \item{dates}{Specified break dates as \sQuote{Date} object (either from
    structural breaks in exchange rate regimes) so that all these steps
@@ -51,9 +48,8 @@ makeX(market.returns,
    \sQuote{FALSE}}.
 }
 
-%% FIXME: Provide a reason why there shouldn't be NAs.
-\section{Warning}{The input data should not contain \sQuote{NA}s. Please
-  use \sQuote{na.omit} before feeding data into this function.}
+\section{Warning}{The input data should not contain \sQuote{NA}s as required by \dQuote{lm} function to compute linear estimates. Please use \sQuote{na.omit} before feeding data into this function.}
+  
 
 \value{This function generates a user specified matrix of explanatory
   variables that will be further used in running Augmented market

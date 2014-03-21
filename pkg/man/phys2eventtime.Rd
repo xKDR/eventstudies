@@ -18,7 +18,7 @@ phys2eventtime(z, events, width = 10)
     which the event frame is to be generated. See \sQuote{Details}.}
 
   %% FIXME: should remove this description from eventstudy.Rd, and point
-  %% it here?
+  %% it here? eventstudy is a general function, it will need all args description?
   \item{events}{
     \sQuote{data.frame} of two columns containing event
     dates. \dQuote{outcome.unit} consists of column names of the event
@@ -47,11 +47,17 @@ phys2eventtime(z, events, width = 10)
   Returns a \sQuote{list} of two elements:
   \item{z.e}{a zoo object indexed with event time.}
 
-  %% FIXME: list all the options here instead of writing them inside
-  %% eventstudy.Rd?
-  \item{outcomes}{a \sQuote{character} vector containing the
-    status of each \dQuote{outcome.unit}.
-  }
+  \item{outcomes}{
+    a \sQuote{character} vector having outcome of each event
+    date. Provides four outcomes: \cr
+    \dQuote{success}: shows the successful use of event date. \cr
+    \dQuote{wdatamissing}: appears when width data is missing around
+    the event. \cr
+    \dQuote{wrongspan}: if event date falls outside the range of physical
+    date. \cr
+    \dQuote{unimissing}: when the unit (firm name) is missing in the event
+    list.
+    }
 }
 
 \examples{

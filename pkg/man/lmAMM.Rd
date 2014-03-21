@@ -39,11 +39,9 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
   \item{exposures}{a \sQuote{numeric} containing exposure estimates for
     the firm j.}
 
-  %% FIXME: "for the firm firm.returns" doesn't make sense. Is it "for
-  %% the firm with returns 'firm.returns'?
   \item{s.exposures}{a \sQuote{numeric} containing the HAC adjusted
     standard error of the exposures estimated for the firm
-    firm.returns.}
+    with returns \sQuote{firm.returns}.}
 
   \item{nlags}{shows the lag length provided by user.}
 }

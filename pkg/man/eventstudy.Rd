@@ -44,13 +44,13 @@ eventstudy(firm.returns = NULL,
     \sQuote{logical}, indicating whether to convert event-window returns into cumulative sum, cumulative product or re-index 
   }
 
-  \item{remap}{                         % FIXME: list all the possible
-                                        % options properly. Needs better
-                                        % explanation of the purpose of
-                                        % the argument
+  \item{remap}{
     \sQuote{character}, this argument is used when \dQuote{to.remap} is
-    \sQuote{TRUE}, which estimates cumulative sum (cumsum), cumulative
-    product (cumprod) or reindex the event frame. Currently supported options are \dQuote{cumsum}, \dQuote{cumprod}, \dQuote{reindex}. Defaults to \dQuote{cumsum}.
+    \sQuote{TRUE}. Provides four options: \cr
+    \dQuote{cumsum}: Cumulative sum \cr
+    \dQuote{cumprod}: Cumulative product, buy-hold-abnormal-return (BHAR) \cr
+    \dQuote{reindex}: re-indexing the event window. \cr
+    Defaults to \dQuote{cumsum}.
   }
 
   \item{is.levels}{

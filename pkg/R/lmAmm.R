@@ -331,28 +331,30 @@ makeX <- function(market.returns, others,
 ############################################
 ## Summary, print and plot functions for AMM
 ############################################
-summary.amm <- function(amm) {
+summary.amm <- function(object, ...) {
   cat("\n", "Summary statistics of exposure: \n")
-  sstats <- cbind(amm$exposure, amm$s.exposure,
-                  amm$exposure/amm$s.exposure)
+  sstats <- cbind(object$exposure, object$s.exposure,
+                  object$exposure/object$s.exposure)
   colnames(sstats) <- c("Exposure", "Std.Err", "t statistic")  
-  rownames(sstats) <- names(amm$exposures)
+  rownames(sstats) <- names(object$exposures)
   print(sstats)
-  cat("\n","Linear model AMM  results: ","\n"); class(amm) <- "lm"; print(summary(amm))
+  cat("\n","Linear model AMM  results: ","\n");
+  class(object) <- "lm";
+  print.default(summary.default(object))
 }
 
-print.amm <- function(amm){
+print.amm <- function(x, ...){
   cat("\n")
-  print(amm$call)
+  print(x$call)
   cat("\n","Coefficients:","\n")
-  print(amm$coef)
+  print(x$coef)
   cat("\n","Exposures:","\n")
-  print(amm$exposures)
+  print.default(x$exposures)
 }
 
-plot.amm <- function(amm){
-  tmp.x <- zoo(as.numeric(resid(amm)), as.Date(names(resid(amm))))
-  tmp.f <- zoo(amm$model$firm.returns, index(tmp.x))
+plot.amm <- function(x, ...){
+  tmp.x <- zoo(as.numeric(resid(x)), as.Date(names(resid(x))))
+  tmp.f <- zoo(x$model$firm.returns, index(tmp.x))
   tmp <- merge(tmp.x,tmp.f)
   colnames(tmp) <- c("amm.residuals","firm.returns")
   plot(tmp, screen=1, lty=1:2, lwd=2, col=c("indian red", "navy blue"),ylab="",

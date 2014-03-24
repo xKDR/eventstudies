@@ -105,33 +105,33 @@ eventstudy <- function(firm.returns = NULL,
 #########################
 ## Functions for class es
 #########################
-print.es <- function(es.object){
-  cat("The", es.object$inference, "inference output for CI and",
-      colnames(es.object$eventstudy.output)[2], "response:", "\n")
-  return(es.object$eventstudy.output)
+print.es <- function(x, ...){
+  cat("The", x$inference, "inference output for CI and",
+      colnames(x$eventstudy.output)[2], "response:", "\n")
+  return(x$eventstudy.output)
 }
 
-summary.es <- function(es.object){
-  cat("Event study", colnames(es.object$eventstudy.output)[2], "response with",
-      es.object$inference, "inference for CI:\n")
-  print(es.object$eventstudy.output)
-  cat("\n","Event outcome has",length(which(es.object$outcomes=="success")),
-      "successful outcomes out of", length(es.object$outcomes),"events:","\n")
-  es.object$outcomes
+summary.es <- function(object, ...){
+  cat("Event study", colnames(object$eventstudy.output)[2], "response with",
+      object$inference, "inference for CI:\n")
+  print(object$eventstudy.output)
+  cat("\n","Event outcome has",length(which(object$outcomes=="success")),
+      "successful outcomes out of", length(object$outcomes),"events:","\n")
+  object$outcomes
 }
 
-plot.es <- function(es.object, xlab="Event time",
+plot.es <- function(x, xlab="Event time",
                     ylab="", main="", col.es="dark slate blue"){
-  big <- max(abs(es.object$eventstudy.output))
+  big <- max(abs(x$eventstudy.output))
   hilo <- c(-big,big)
-  width <- (nrow(es.object$eventstudy.output)-1)/2
-  plot(-width:width, es.object$eventstudy.output[,2], type="l", lwd=2, ylim=hilo,
+  width <- (nrow(x$eventstudy.output)-1)/2
+  plot(-width:width, x$eventstudy.output[,2], type="l", lwd=2, ylim=hilo,
        col=col.es,xlab= xlab, ylab = ylab,
        main=paste(main))
-  points(-width:width, es.object$eventstudy.output[,2])
-  lines(-width:width, es.object$eventstudy.output[,"2.5%"],
+  points(-width:width, x$eventstudy.output[,2])
+  lines(-width:width, x$eventstudy.output[,"2.5%"],
         lwd=1, lty=2, col=col.es)
-  lines(-width:width, es.object$eventstudy.output[,"97.5%"],
+  lines(-width:width, x$eventstudy.output[,"97.5%"],
         lwd=1, lty=2, col=col.es)
   abline(h=0,v=0)
 }

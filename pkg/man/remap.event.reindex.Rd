@@ -22,7 +22,10 @@ phys2eventtime
 \examples{
 data(StockPriceReturns)
 data(SplitDates)
-es.results <- phys2eventtime(z=StockPriceReturns, events=SplitDates,width=5)
-es.w <- window(es.results$z.e, start=-5, end=+5)
+
+es.results <- phys2eventtime(z = StockPriceReturns,
+                             events = SplitDates,
+                             width = 5)
+es.w <- window(es.results$z.e, start = -5, end = +5)
 eventtime <- remap.event.reindex(es.w)
 }

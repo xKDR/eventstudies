@@ -29,9 +29,8 @@ eventstudy(firm.returns = NULL,
     stock, and \dQuote{event.when} is the respective event date.
   }
 
-  \item{width}{                        % FIXME: needs better description
-    integer of length 1, which creates an event window to study the impact (pre and post event) on the variable.
-  }
+  \item{width}{integer of length 1, which creates an event window to
+    study the impact (pre and post event) on the variable.}
 
   \item{type}{
     a scalar of type \sQuote{character} specifying the market
@@ -40,17 +39,18 @@ eventstudy(firm.returns = NULL,
     \dQuote{None}. Defaults to \dQuote{marketResidual}. See \sQuote{Details}.
   }
 
-  \item{to.remap}{
-    \sQuote{logical}, indicating whether to convert event-window returns into cumulative sum, cumulative product, or re-index.
-  }
+  \item{to.remap}{\sQuote{logical}, indicating whether to convert
+    event-window returns into cumulative sum, cumulative product, or
+    re-index.}
 
   \item{remap}{
     \sQuote{character}, this argument is used when \dQuote{to.remap} is
-    \sQuote{TRUE}. Takes three values:
-    \item{cumsum}{Cumulative sum}
-    \item{cumprod}{Cumulative product, buy-hold-abnormal-return (BHAR).}
-    \item{reindex}{Re-indexing the event window.}
-    Defaults to \dQuote{cumsum}.
+    \sQuote{TRUE}. Takes three values (defaults to \dQuote{cumsum}):
+    \itemize{
+      \item{cumsum: cumulative sum.}
+      \item{cumprod: cumulative product, buy-hold-abnormal-return (BHAR).}
+      \item{reindex: re-indexing the event window.}
+    }
   }
 
   \item{is.levels}{
@@ -63,11 +63,10 @@ eventstudy(firm.returns = NULL,
     for the estimator.
   }
 
-  \item{inference.strategy}{      % FIXME: list all the possible options
-    a \sQuote{character} scalar specifying the inference strategy to
-    compute confidence intervals. Is used only if \dQuote{inference} is
-    \sQuote{TRUE}. Currently supported options are \dQuote{bootstrap}, \dQuote{wilcox}.Defaults to \dQuote{bootstrap}.
-  }
+  \item{inference.strategy}{a \sQuote{character} scalar specifying the
+    inference strategy to compute confidence intervals. Is used only if
+    \dQuote{inference} is \sQuote{TRUE}. Currently supported options are
+    \dQuote{bootstrap} and \dQuote{wilcox}. Defaults to \dQuote{bootstrap}.}
 
   \item{...}{
     further arguments to pass to the model.
@@ -88,16 +87,13 @@ eventstudy(firm.returns = NULL,
     interval.
   }
 
-  \item{outcomes}{
-    a \sQuote{character} vector having outcome of each event
-    date. Provides four outcomes: \cr
-    \dQuote{success}: shows the successful use of event date. \cr
-    \dQuote{wdatamissing}: appears when width data is missing around
-    the event. \cr
-    \dQuote{wrongspan}: if event date falls outside the range of physical
-    date. \cr
-    \dQuote{unimissing}: when the unit (firm name) is missing in the event
-    list.
+  \item{outcomes}{a character vector having outcome of each event date:}
+
+  \itemize{
+    \item{success: shows the successful use of event date.}
+    \item{wdatamissing: appears when width data is missing around the event.}
+    \item{wrongspan: if event date falls outside the range of physical date.}
+    \item{unitmissing: when the unit (firm name) is missing in the event list.}
   }
 
   \item{inference}{

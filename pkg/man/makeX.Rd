@@ -25,9 +25,7 @@ makeX(market.returns,
     fixed to the stock market index. The first column vector of this
     matrix contains this variable.  }
 
-  %% FIXME: same as market.returns: can it contain more than one variable?
-  %% This variable is supported to take more than one variables.
-  \item{others}{A zoo matrix with other regressors of interest in the
+  \item{others}{a \pkg{zoo} matrix with other regressors of interest in the
     AMM. This could be currency, bond returns, foreign flows, or any
     other variable.}
 
@@ -35,7 +33,9 @@ makeX(market.returns,
     each column in \dQuote{others}. Whether to switch the column from
     raw values to AR residuals.}
 
-  \item{market.returns.purge}{a \sQuote{logical} element, indicating whether to purge the effects of \dQuote{others} from \dQuote{market.returns}. }
+  \item{market.returns.purge}{a \sQuote{logical} element, indicating
+  whether to purge the effects of \dQuote{others} from
+  \dQuote{market.returns}.}
 
  \item{nlags}{The number of lag terms present in this model explaining
    \dQuote{market.returns} using all these \dQuote{others}.}
@@ -45,10 +45,12 @@ makeX(market.returns,
    are constructed within each sub-period divided by the dates.}
 
  \item{verbose}{Whether detailed output is required. Default is
-   \sQuote{FALSE}}.
+   \sQuote{FALSE}.}
 }
 
-\section{Warning}{The input data should not contain \sQuote{NA}s as required by \dQuote{lm} function to compute linear estimates. Please use \sQuote{na.omit} before feeding data into this function.}
+\section{Warning}{The input data should not contain \sQuote{NA}s, as is
+  required by the \dQuote{lm} function to compute linear estimates. Please use
+  \sQuote{na.omit} before feeding data into this function.}
   
 
 \value{This function generates a user specified matrix of explanatory

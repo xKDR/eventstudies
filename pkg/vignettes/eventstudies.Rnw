@@ -294,7 +294,7 @@ es.na.btsp <- eventstudy(firm.returns = StockPriceReturns,
                     eventList = SplitDates, width = 10, to.remap = TRUE,
                     remap = "cumsum", inference = TRUE, 
                     inference.strategy = "bootstrap", type = "None")       
-plot.es(es.na.btsp)
+plot(es.na.btsp)
 @
   \end{center}
   \label{fig:one}

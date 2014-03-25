@@ -9,6 +9,7 @@ eventstudy <- function(firm.returns = NULL,
                        inference.strategy = "bootstrap",
                        ...) {
                                         # type = "marketResidual", "excessReturn", "AMM", "None"
+  extra.var <- unlist(...)
   if (type == "None" && !is.null(firm.returns)) {
     outputModel <- firm.returns
   }
@@ -16,7 +17,7 @@ eventstudy <- function(firm.returns = NULL,
   if (is.levels == TRUE) {
     firm.returns <- diff(log(firm.returns)) * 100
   }
-
+  
 ### Run models
   ## AMM
   if (type == "AMM") {
@@ -26,18 +27,21 @@ eventstudy <- function(firm.returns = NULL,
       tmp.res <- zoo(tmp,as.Date(names(tmp)))
     }
     ## Estimating AMM regressors
-    regressors <- makeX(market.returns, others, 
-                        market.returns.purge, nlags,
-                        switch.to.innov)
+    regressors <- makeX(market.returns=extra.var$market.returns,
+                        others = extra.var$others, 
+                        market.returns.purge=extra.var$market.returns.purge,
+                        nlags=extra.var$nlags,
+                        switch.to.innov=extra.var$switch.to.innov)
     if(NCOL(firm.returns)==1){
       ## One firm
-      outputModel <- timeseriesAMM(firm.returns=StockPriceReturns[,1], 
-                                   X=regressors, verbose=FALSE, nlags=1)
+      outputModel <- timeseriesAMM(firm.returns,X=regressors,
+                                   verbose=FALSE, nlags=1)
+                                   
     } else {
       ## More than one firm
                                         # Extracting and merging
-      tmp.resid <- sapply(colnames(StockPriceReturns)[1:3],function(y)
-                          timeseriesAMM(firm.returns=StockPriceReturns[,y],
+      tmp.resid <- sapply(colnames(firm.returns),function(y)
+                          timeseriesAMM(firm.returns[,y],
                                         X=regressors,
                                         verbose=FALSE,
                                         nlags=1))

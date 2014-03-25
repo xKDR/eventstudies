@@ -169,6 +169,12 @@ As required by the package, the event date (the dates on which stock splits occu
 <<>>= 
 data(SplitDates) 
 head(SplitDates) 
+data(inr) 
+inrusd <- diff(log(inr))*100
+all.data <- merge(StockPriceReturns,nifty.index,inrusd,all=TRUE) 
+StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("nifty.index", "inr"))] 
+nifty.index <- all.data$nifty.index 
+inrusd <- all.data$inr
 @
 
 \subsection{Calculating idiosyncratic returns}
@@ -213,13 +219,6 @@ firm returns to compute augmented market model residuals.
 
 % AMM model
 <<>>= # Create RHS before running lmAMM() 
-data(inr) 
-inrusd <- diff(log(inr))*100
-all.data <- merge(StockPriceReturns,nifty.index,inrusd,all=TRUE) 
-StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("nifty.index", "inr"))] 
-nifty.index <- all.data$nifty.index 
-inrusd <- all.data$inr
-
 ###################
 ## AMM residuals ##
 ###################
@@ -238,7 +237,7 @@ amm.result <- timeseries.lmAMM(firm.returns=StockPriceReturns[,1],
 ## More than one firm
                                         # Extracting and merging
 tmp.resid <- sapply(colnames(StockPriceReturns)[1:3],function(y)
-                    timeseriesAMM(firm.returns=StockPriceReturns[,y],
+                    timeseries.lmAMM(firm.returns=StockPriceReturns[,y],
                                   X=regressors,
                                   verbose=FALSE,
                                   nlags=1))
@@ -280,7 +279,7 @@ We hold an event time object that contains several cross-sectional observations 
 \textit{inference.bootstrap} performs the bootstrap to generate distribution of $\overline{CR}$. The bootstrap generates confidence interval at 2.5 percent and 97.5 percent for the estimate.
 
 <<>>= 
-result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE) 
+result <- inference.bootstrap(es.w=es.cs, to.plot=FALSE) 
 print(result)
 @
 
@@ -291,7 +290,11 @@ print(result)
     \setkeys{Gin}{width=0.8\linewidth}
     \setkeys{Gin}{height=0.8\linewidth} 
 <<fig=TRUE,echo=FALSE>>=
-result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE) 
+es.na.btsp <- eventstudy(firm.returns = StockPriceReturns, 
+                    eventList = SplitDates, width = 10, to.remap = TRUE,
+                    remap = "cumsum", inference = TRUE, 
+                    inference.strategy = "bootstrap", type = "None")       
+plot.es(es.na.btsp)
 @
   \end{center}
   \label{fig:one}
@@ -301,8 +304,8 @@ result <- inference.bootstrap(es.w=es.cs, to.plot=TRUE)
 Another non-parametric inference available and is used widely with event study analysis is the Wilcoxon signed rank test. This package provides a wrapper that uses the function \texttt{wilcox.test} in \texttt{stats}. 
 
 <<>>= 
-result <- inference.wilcox(es.w=es.cs, to.plot=TRUE) 
-result
+result <- inference.wilcox(es.w=es.cs, to.plot=FALSE) 
+print(result)
 @
 
 \begin{figure}[t]
@@ -312,7 +315,11 @@ result
     \setkeys{Gin}{width=0.8\linewidth}
     \setkeys{Gin}{height=0.8\linewidth} 
 <<fig=TRUE,echo=FALSE>>=
-result <- inference.wilcox(es.w=es.cs, to.plot=TRUE) 
+es.na.wcx <- eventstudy(firm.returns = StockPriceReturns, 
+                    eventList = SplitDates, width = 10, to.remap = TRUE,
+                    remap = "cumsum", inference = TRUE, 
+                    inference.strategy = "wilcox", type = "None")
+plot(es.na.wcx)
 @
   \end{center}
   \label{fig:two}

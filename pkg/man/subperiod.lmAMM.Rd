@@ -48,8 +48,8 @@ subperiod.lmAMM(firm.returns,
 
 \author{Vimal Balasubramaniam}
 
-\seealso{ \code{\link{firmExposures}},
-\code{\link{manyfirmsAMM}}}
+\seealso{ \code{\link{lmAMM}},
+\code{\link{manyfirmssubperiod.lmAMM}}}
 
 \examples{ 
 data("lmAMMData")

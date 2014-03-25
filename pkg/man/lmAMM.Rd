@@ -49,7 +49,7 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
 \author{Ajay Shah, Vimal Balasubramaniam}
 
 \seealso{
-\code{\link{manyfirmsAMM}, \link{makeX}}
+\code{\link{makeX}}
 }
 
 \examples{

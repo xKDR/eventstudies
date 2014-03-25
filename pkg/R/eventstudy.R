@@ -24,7 +24,11 @@ eventstudy <- function(firm.returns = NULL,
     timeseriesAMM <- function(firm.returns,X,verbose=FALSE,nlags=1){
       tmp <- resid(lmAMM(firm.returns,X,nlags))
       tmp.res <- zoo(tmp,as.Date(names(tmp)))
-    }    
+    }
+    ## Estimating AMM regressors
+    regressors <- makeX(market.returns, others, 
+                        market.returns.purge, nlags,
+                        switch.to.innov)
     if(NCOL(firm.returns)==1){
       ## One firm
       outputModel <- timeseriesAMM(firm.returns=StockPriceReturns[,1], 

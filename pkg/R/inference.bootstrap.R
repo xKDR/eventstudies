@@ -32,16 +32,16 @@ inference.change.boot <- function(es.w, t1, t2, operator="ratio", conf=.95) {
 # Plotting inference
 plot.inference <- function(inference, xlab="Event time",
                     ylab="", main="", col.es="dark slate blue"){
-  big <- max(abs(es.object$eventstudy.output))
+  big <- max(abs(inference$eventstudy.output))
   hilo <- c(-big,big)
-  width <- (nrow(es.object$eventstudy.output)-1)/2
-  plot(-width:width, es.object$eventstudy.output[,2], type="l", lwd=2, ylim=hilo,
+  width <- (nrow(inference$eventstudy.output)-1)/2
+  plot(-width:width, inference$eventstudy.output[,2], type="l", lwd=2, ylim=hilo,
        col=col.es,xlab= xlab, ylab = ylab,
        main=paste(main))
-  points(-width:width, es.object$eventstudy.output[,2])
-  lines(-width:width, es.object$eventstudy.output[,"2.5%"],
+  points(-width:width, inference$eventstudy.output[,2])
+  lines(-width:width, inference$eventstudy.output[,"2.5%"],
         lwd=1, lty=2, col=col.es)
-  lines(-width:width, es.object$eventstudy.output[,"97.5%"],
+  lines(-width:width, inference$eventstudy.output[,"97.5%"],
         lwd=1, lty=2, col=col.es)
   abline(h=0,v=0)
 }
@@ -68,7 +68,7 @@ inference.bootstrap <- function(es.w, to.plot=TRUE,
   rownames(results) <- rownames(es.w)
   colnames(results) <- c("2.5%","Mean","97.5%")
   if(to.plot==TRUE){
-    plot.es(inference=results, xlab, ylab, main)
+    plot.inference(inference=results, xlab, ylab, main)
   }
   return(results)
 }

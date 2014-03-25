@@ -30,7 +30,7 @@ inference.change.boot <- function(es.w, t1, t2, operator="ratio", conf=.95) {
 }
 
 # Plotting inference
-plot.es <- function(es.object, xlab="Event time",
+plot.inference <- function(inference, xlab="Event time",
                     ylab="", main="", col.es="dark slate blue"){
   big <- max(abs(es.object$eventstudy.output))
   hilo <- c(-big,big)
@@ -103,7 +103,7 @@ inference.wilcox <- function(es.w, to.plot = TRUE, xlab = "Event time",
   colnames(result) <- c("2.5%","Median","97.5%")
   rownames(result) <- rownames(Median)
   if(to.plot == TRUE){
-    plot.es(inference = result, xlab, ylab, main)
+    plot.inference(inference = result, xlab, ylab, main)
   }
   return(result)  
 }

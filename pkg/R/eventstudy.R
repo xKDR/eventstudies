@@ -9,7 +9,8 @@ eventstudy <- function(firm.returns = NULL,
                        inference.strategy = "bootstrap",
                        ...) {
                                         # type = "marketResidual", "excessReturn", "AMM", "None"
-  extra.var <- unlist(...)
+  extra.var <- list(...)
+
   if (type == "None" && !is.null(firm.returns)) {
     outputModel <- firm.returns
   }
@@ -20,34 +21,40 @@ eventstudy <- function(firm.returns = NULL,
   
 ### Run models
   ## AMM
-  if (type == "AMM") {
+  if (type == "lmAMM") {
     ## AMM residual to time series
-    timeseriesAMM <- function(firm.returns,X,verbose=FALSE,nlags=1){
-      tmp <- resid(lmAMM(firm.returns,X,nlags))
-      tmp.res <- zoo(tmp,as.Date(names(tmp)))
+    timeseriesAMM <- function(firm.returns, X, verbose = FALSE, nlags = 1) {
+      tmp <- resid(lmAMM(firm.returns = firm.returns,
+                         X = X,
+                         nlags = nlags,
+                         verbose = FALSE))
+      tmp.res <- zoo(x = tmp, order.by = as.Date(names(tmp)))
     }
     ## Estimating AMM regressors
-    regressors <- makeX(market.returns=extra.var$market.returns,
-                        others = extra.var$others, 
-                        market.returns.purge=extra.var$market.returns.purge,
-                        nlags=extra.var$nlags,
-                        switch.to.innov=extra.var$switch.to.innov)
+    regressors <- makeX(market.returns = extra.var$market.returns,
+                        others = extra.var$others,
+                        switch.to.innov = extra.var$switch.to.innov,
+                        market.returns.purge = extra.var$market.returns.purge,
+                        nlags = extra.var$nlags)
     if(NCOL(firm.returns)==1){
       ## One firm
-      outputModel <- timeseriesAMM(firm.returns,X=regressors,
-                                   verbose=FALSE, nlags=1)
-                                   
+      outputModel <- timeseriesAMM(firm.returns = firm.returns,
+                                   X = regressors,
+                                   verbose = FALSE,
+                                   nlags = 1)
     } else {
       ## More than one firm
                                         # Extracting and merging
-      tmp.resid <- sapply(colnames(firm.returns),function(y)
-                          timeseriesAMM(firm.returns[,y],
-                                        X=regressors,
-                                        verbose=FALSE,
-                                        nlags=1))
+      tmp.resid <- sapply(colnames(firm.returns), function(y)
+                          {
+                            timeseriesAMM(firm.returns = firm.returns[,y],
+                                          X = regressors,
+                                          verbose = FALSE,
+                                          nlags = 1)
+                          })
       outputModel <- do.call("merge",tmp.resid)
-    }    
-  }
+    }
+  } ## end AMM
 
   ## marketResidual
   if (type == "marketResidual") {

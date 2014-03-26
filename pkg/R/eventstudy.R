@@ -129,17 +129,17 @@ summary.es <- function(object, ...){
 }
 
 plot.es <- function(x, xlab="Event time",
-                    ylab="", main="", col.es="dark slate blue"){
+                    ylab="", main="", col="dark slate blue"){
   big <- max(abs(x$eventstudy.output))
   hilo <- c(-big,big)
   width <- (nrow(x$eventstudy.output)-1)/2
   plot(-width:width, x$eventstudy.output[,2], type="l", lwd=2, ylim=hilo,
-       col=col.es,xlab= xlab, ylab = ylab,
+       col=col,xlab= xlab, ylab = ylab,
        main=paste(main))
   points(-width:width, x$eventstudy.output[,2])
   lines(-width:width, x$eventstudy.output[,"2.5%"],
-        lwd=1, lty=2, col=col.es)
+        lwd=1, lty=2, col=col)
   lines(-width:width, x$eventstudy.output[,"97.5%"],
-        lwd=1, lty=2, col=col.es)
+        lwd=1, lty=2, col=col)
   abline(h=0,v=0)
 }

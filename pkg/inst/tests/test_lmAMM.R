@@ -1,74 +1,67 @@
-context("AMM")
+context("lmAMM")
 
-test_that("test.AMM", {
-  load(system.file("data", "lmAMMData.rda", package = "eventstudies"))
+test_that("test.lmAMM", {
+  load("test_firmExposuresData.rda")
 
-  firm.returns  <- lmAMMData$Infosys
-  market.returns <- lmAMMData$index.nifty
-  inrusd <- lmAMMData$currency.inrusd
-  rM3 <- lmAMMData$call.money.rate
+  firm.returns  <- firmExposuresData$Company_A
+  market.returns <- firmExposuresData$NIFTY_INDEX
+  inrusd <- firmExposuresData$usdinr
+  rM3 <- firmExposuresData$baa
 
-  cat("\nDoing Testcase P2\n")
+  cat("\nDoing Testcase P2")
   X <- makeX(market.returns, others=inrusd,
              switch.to.innov=FALSE, market.returns.purge=FALSE, verbose=FALSE)
   a <- lmAMM(firm.returns, X, nlags=0, verbose=FALSE)
   expect_that(c(a$exposures, a$s.exposures),
-              equals(structure(c(0.7064442,0.3585404,
-                                 0.0966792,0.1062146),
-                               .Names = c("market.returns", "z",
-                                 "market.returns", "z")), tolerance=1e-1))
+              equals(structure(c(0.716160223601197,-0.673093436292401,
+                                 0.152101606133946,1.02143820457251),
+                               .Names = c("market.returns", "z", "market.returns", "z")), tolerance=1e-1))
 
-  cat("\nDoing Testcase P3\n")
+  cat("\nDoing Testcase P3")
   X <- makeX(market.returns, others=inrusd,
              switch.to.innov=TRUE, market.returns.purge=FALSE, verbose=FALSE)
   a <- lmAMM(firm.returns, X, nlags=0, verbose=FALSE)
   expect_that(c(a$exposures, a$s.exposures),
-              equals(structure(c(0.67706599, 0.27939607,
-                                 0.09719514, 0.10192811),
-                               .Names = c("market.returns", "z",
-                                 "market.returns", "z")), tolerance=1e-1))
+              equals(structure(c(0.716160223601197,-0.673093436292401,
+                                 0.152100337597009,1.02146106755333),
+                               .Names = c("market.returns", "z", "market.returns", "z")), tolerance=1e-1))
   
-  cat("\nDoing Testcase P4\n")
+  cat("\nDoing Testcase P4")
   a <- lmAMM(firm.returns, X, nlags=1, verbose=FALSE)
   expect_that(c(a$exposures, a$s.exposures),
-              equals(structure(c(0.68343189, 0.61069556,
-                                 0.09794233, 0.12353826),
-                               .Names = c("market.returns","z",
-                                 "market.returns", "z")),tolerance=1e-1))
+              equals(structure(c( 0.736264286484902, -1.450805,
+                                 0.177929844631439, 1.646730),
+                               .Names = c("market.returns","z", "market.returns", "z")),tolerance=1e-1))
 
   
-  cat("\nDoing Testcase P5\n")
+  cat("\nDoing Testcase P5")
   X <- makeX(market.returns, others=inrusd,
              switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1, verbose=FALSE)
   a <- lmAMM(firm.returns, X, nlags=1, verbose=FALSE)
   expect_that(c(a$exposures, a$s.exposures),
-              equals(structure(c(0.68343189, 0.06813816,
-                                 0.09844400, 0.11950216),
-                               .Names = c("market.returns", "z",
-                                 "market.returns", "z")),tolerance=1e-1))
+              equals(structure(c(0.7365566,-2.340171,
+                                 0.1653025, 1.1436666),
+                               .Names = c("market.returns", "z", "market.returns", "z")),tolerance=1e-1))
   
-  cat("\nDoing Testcase P6\n")
+  cat("\nDoing Testcase P6")
   X <- makeX(market.returns, others=cbind(inrusd, rM3),
              switch.to.innov=c(FALSE, FALSE), market.returns.purge=FALSE, verbose=FALSE)
   a <- lmAMM(firm.returns, X, nlags=0, verbose=FALSE)
   expect_that(c(a$exposures, a$s.exposures),
-              equals(structure(c(0.70726513, 0.35942623, -77.52744495,
-                                 0.09602279,   0.10668916, 259.10845540),
-                               .Names = c("market.returns", "inrusd", "rM3",
-                                 "market.returns", "inrusd", "rM3")),
-                     tolerance=1e-1))
+              equals(structure(c(0.7230599,-0.7642377,
+                                 0.207374104922771,0.173380799334299,
+                                 1.01806122963342,0.467821650129292),
+                               .Names = c("market.returns", "inrusd", "rM3", "market.returns", "inrusd", "rM3")),tolerance=1e-1))
 
-  cat("\nDoing Testcase P7\n")
+  cat("\nDoing Testcase P7")
   X <- makeX(market.returns, others=cbind(inrusd, rM3),
              switch.to.innov=c(TRUE, TRUE), market.returns.purge=TRUE, nlags=1, verbose=FALSE)
   a <- lmAMM(firm.returns, X, nlags=1, verbose=FALSE)
   
   expect_that(c(a$exposures, a$s.exposures),
-              equals(structure(c(6.922458e-01, 6.542345e-02, 1.169788e+03,
-                                 1.038158e-01, 1.214853e-01, 5.786265e+02),
-                               .Names = c("market.returns", "inrusd", "rM3",
-                                 "market.returns", "inrusd", "rM3")),
-                     tolerance=1e-1))
+              equals(structure(c(0.7482719,-1.9468851,-0.4802211,
+                                 0.1740678,1.2455112,0.6146619),
+                               .Names = c("market.returns", "inrusd", "rM3", "market.returns", "inrusd", "rM3")),tolerance=1e-1))
 
 ################################################################################
                                         #                                                                              #
@@ -77,42 +70,57 @@ test_that("test.AMM", {
 ################################################################################
 
 
-  cat("\nDoing Testcases P8\n")
-  load(system.file("data", "lmAMMData.rda", package = "eventstudies"))
+  cat("\nDoing Testcases P8")
+  load("test_y3c3.rda")
 
-  nifty <- lmAMMData$index.nifty
-  inrusd <- lmAMMData$currency.inrusd
-  infosys <- lmAMMData$Infosys
-  tcs <- lmAMMData$TCS
-  
-  regressors <- makeX(nifty, others=inrusd,
+  NIFTY_INDEX <- y3c3$NIFTY_INDEX
+  INRUSD <- y3c3$INRUSD
+  Company_A <- y3c3$Company_A
+  Company_B <- y3c3$Company_B
+  Company_C <- y3c3$Company_C
+
+  regressors <- makeX(NIFTY_INDEX, others=INRUSD,
                       switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1,
-                      dates=as.Date(c("2012-02-01","2013-01-01","2014-01-20")),
-                      verbose=FALSE)
+                      dates=as.Date(c("2005-01-15","2006-01-07","2007-01-06",
+                        "2008-01-05","2009-01-03")), verbose=FALSE)
 
-  regressand <- cbind(infosys,tcs)
+  regressand <- cbind(Company_A,Company_B,Company_C)
 
   res <- manyfirmssubperiod.lmAMM(regressand,regressors,lags=1,
-                      dates=as.Date(c("2012-02-01","2013-01-01","2014-01-20")),
-                      periodnames=c("P1","P2"),
-                      verbose=FALSE)
+                       dates=as.Date(c("2005-01-15","2006-01-07","2007-01-06",
+                         "2008-01-05","2009-01-03")),periodnames=c("P1","P2","P3","P4"),
+                       verbose=FALSE)
 
-  match.res <- structure(list(exposures.market.returns.P1=c(0.8446433,0.6875982),
-                              exposures.z.P1 = c(-0.05351359,0.36151838),
-                              exposures.market.returns.P2=c(0.5865497,0.5822848),
-                              exposures.z.P2 = c(0.1375913,-0.0993528),
-                              
-                              sds.market.returns.P1=c(0.1267067,0.1298345),
-                              sds.z.P1 = c(0.1810424, 0.2865279),
-                              sds.market.returns.P2=c(0.1353948,0.1111106),
-                              sds.z.P2 = c(0.1644340,0.2235453),
-
-                              sig.market.returns.P1=c(6.666130,5.295958),
-                              sig.z.P1 = c(-0.295586,1.261721),
-                              sig.market.returns.P2=c(4.332144,5.240588),
-                              sig.z.P2 = c(0.8367568,-0.4444415)),
-                         row.names=c("infosys","tcs"),class="data.frame")
-  
   expect_that(as.data.frame(res),
-              equals(match.res,check.attributes=FALSE,tolerance=1e-1))
+
+              equals(structure(list(market.returns.P1 = c(0.756294904326272, 0.359467326140834,0.914021428042946),
+                                    z.P1 = c(-2.23264294525560, -1.05654919420689,0.296635483126946),
+                                    market.returns.P2 = c(1.02094561445355, 0.988758963378838,0.879236409569888),
+                                    z.P2 = c(-4.72831391695047, -2.0508684999854,-1.02215809586573),
+                                    market.returns.P3 = c(1.20585808099744, 0.676388278572118,0.530718379431386),
+                                    z.P3 = c(-1.32677083522489, -2.74055730512260, -1.50032216697694),
+                                    market.returns.P4 = c(1.11331096371784, 0.437117737120777,0.663182186702262),
+                                    z.P4 = c(-2.05336868436562, -1.60350865767951,-0.466253391408585),
+                                    market.returns.P1 = c(0.143617135793294, 0.263130891045529,0.154272220123111),
+                                    z.P1 = c(1.20226371286803, 1.22122136357895,1.02442932195400),
+                                    market.returns.P2 = c(0.203037609116444, 0.123122376136099,0.121880488983820),
+                                    z.P2 = c(1.118400430819, 0.798694545623495,1.29755067543957),
+                                    market.returns.P3 = c(0.230304109532112, 0.289262660515515,0.164866239494693),
+                                    z.P3 = c(1.17618117392934, 0.795008683829453,0.650736332270758),
+                                    market.returns.P4 = c(0.231338818884745, 0.213858364836974,0.207154237634752),
+                                    z.P4 = c(0.771450066857429, 0.415931231130697,0.696448914066602),
+                                    market.returns.P1 = c(5.26604920888266, 1.36611602200152,5.9247311493511),
+                                    z.P1 = c(-1.85703263049467, -0.865157804896683,0.289561687438957),
+                                    market.returns.P2 = c(5.02835715460001, 8.0307007906172,7.21392256382075),
+                                    z.P2 = c(-4.2277468665565, -2.56777576762391,-0.787759673062059),
+                                    market.returns.P3 = c(5.23593818385294, 2.33831866638673,3.21908464133114),
+                                    z.P3 = c(-1.12803270842405, -3.44720423923131,-2.30557614900882),
+                                    market.returns.P4 = c(4.81246929972659, 2.04395903547657,3.20139329165723),
+                                    z.P4 = c(-2.66170005367969, -3.85522542589652,-0.669472493949494)),
+                               .Names = c("market.returns.P1", "z.P1", "market.returns.P2","z.P2", "market.returns.P3", "z.P3",
+                                 "market.returns.P4", "z.P4", "market.returns.P1", "z.P1","market.returns.P2", "z.P2", "market.returns.P3", "z.P3",
+                                 "market.returns.P4", "z.P4", "market.returns.P1", "z.P1", "market.returns.P2", "z.P2", "market.returns.P3",
+                                 "z.P3", "market.returns.P4", "z.P4"),
+                               row.names = c("Company_A","Company_B", "Company_C"), class = "data.frame"),
+                     check.attributes=FALSE))
 })

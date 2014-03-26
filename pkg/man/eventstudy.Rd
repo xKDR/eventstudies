@@ -74,7 +74,7 @@ eventstudy(firm.returns = NULL,
 }
 
 \details{
-  When using \dQuote{AMM} adjustement, the default output is
+  When using \dQuote{lmAMM} adjustement, the default output is
   \dQuote{residual}.
 }
 

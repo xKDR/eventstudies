@@ -246,14 +246,14 @@ amm.resid <- do.call("merge",tmp.resid)
 
 \subsection{Conversion to event-time frame}
 
-The conversion from physical time into event time combines the two objects we have constructed till now: \textit{SplitDates} and \textit{StockPriceReturns}. These two objects are input matrices for the function \texttt{phys2eventtime}. With the specification of ``width=10'' in the function, we require phys2eventtime to define a successfull unit entry (an event) in the result as one where there is no missing data for 10 days before and after the event. This is marked as ``success'' in the resulting list object. With data missing, the unit is flagged ``wdatamissing''. In case the event falls outside of the range of physical time provided in the input data, the unit entry will be flagged ``wrongspan'' and if the unit in \textit{SplitDates} is missing in \textit{StockPriceReturns}, we identify these entries as ``unitmissing''. This allows the user to identify successful entries in the sample for an analysis based on event time. In this example, we make use of successful entries in the data and the output object is stored as \textit{es.w}: 
+The conversion from physical time into event time combines the two objects we have constructed till now: \textit{SplitDates} and \textit{StockPriceReturns}. These two objects are input matrices for the function \texttt{phys2eventtime}. With the specification of ``width=5'' in the function, we require phys2eventtime to define a successfull unit entry (an event) in the result as one where there is no missing data for 5 days before and after the event. This is marked as ``success'' in the resulting list object. With data missing, the unit is flagged ``wdatamissing''. In case the event falls outside of the range of physical time provided in the input data, the unit entry will be flagged ``wrongspan'' and if the unit in \textit{SplitDates} is missing in \textit{StockPriceReturns}, we identify these entries as ``unitmissing''. This allows the user to identify successful entries in the sample for an analysis based on event time. In this example, we make use of successful entries in the data and the output object is stored as \textit{es.w}: 
 
 <<>>= 
 es <- phys2eventtime(z=StockPriceReturns, events=SplitDates,
-                     width=10) 
+                     width=5) 
 str(es) 
 es$outcomes 
-es.w <- window(es$z.e, start=-10,end=10) 
+es.w <- window(es$z.e, start=-5,end=5) 
 colnames(es.w) <- SplitDates[which(es$outcomes=="success"),1] 
 SplitDates[1,]
 StockPriceReturns[SplitDates[1,2],SplitDates[1,1]] 
@@ -353,7 +353,7 @@ es.er <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates,
 es.amm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
                      width = 10, to.remap = TRUE, remap = "cumsum", 
                      inference = TRUE, inference.strategy = "bootstrap", 
-                     type = "AMM", market.returns = nifty.index, 
+                     type = "lmAMM", market.returns = nifty.index, 
                      others=inrusd, verbose=FALSE, 
                      switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
 print(es.na)

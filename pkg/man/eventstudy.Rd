@@ -82,7 +82,8 @@ The function needs firm returns as input and provides argument \sQuote{type} to 
   following elements:
 
   \item{eventstudy.output}{
-	a object with inference and confidence interval outcome
+	a \sQuote{matrix} containing mean/median estimate with confidence
+-    interval
   }
 
   \item{outcomes}{a character vector having outcome of each event date:}

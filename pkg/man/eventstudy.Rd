@@ -3,7 +3,7 @@
 
 \title{Event study analysis}
 
-\description{Function to perform event study analysis and compute confidence intervals}
+\description{This function performs event study analysis and further computes confidence interval}
 
 \usage{
 eventstudy(firm.returns = NULL,
@@ -73,9 +73,8 @@ eventstudy(firm.returns = NULL,
   }
 }
 
-\details{
-  When using \dQuote{lmAMM} adjustement, the default output is
-  \dQuote{residual}.
+\details{This function performs event study analysis using basic functions from the package. 
+The function needs firm returns as input and provides argument \sQuote{type} to generate abnormal returns, if required. If \sQuote{type} is \sQuote{market.residuals} then it will generate abnormal returns using a market model. It also provides option to estimate returns using augmented market model (AMM) which purges out market returns and \sQuote{others} i.e. currency in our case (\sQuote{type} as \sQuote{lmAMM}). The function computes confidence interval using either bootstrap or wilcoxon technique. The output of this function has class \sQuote{es}.
 }
 
 \value{
@@ -83,8 +82,7 @@ eventstudy(firm.returns = NULL,
   following elements:
 
   \item{eventstudy.output}{
-    a \sQuote{matrix} containing mean/median estimate with confidence
-    interval.
+	a object with inference and confidence interval outcome
   }
 
   \item{outcomes}{a character vector having outcome of each event date:}

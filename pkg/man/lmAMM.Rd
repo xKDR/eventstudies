@@ -5,7 +5,7 @@
 
 \description{This function relates firm returns to the regressors using
   the linear model (market index movements, currency fluctuations etc.).
-  It computes firm exposure for all the regressors in columns of X and
+  It computes firm exposure for all the regressors in columns of \sQuote{X} and
   subsequently estimates AMM residuals by purging out variation from
   the regressand.}
 
@@ -19,7 +19,7 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
     AMM estimation.}
 
   \item{X}{a time series of explanatory variables obtained from the
-    makeX function. The first variable is always the stock market
+    \sQuote{makeX} function. The first variable is always the stock market
     index. Other variables could be such as currency or bond returns, or
     other variables as desired by the user.}
 

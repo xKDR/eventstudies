@@ -67,8 +67,6 @@ subperiod.lmAMM <- function(firm.returns,X,nlags=1,verbose=FALSE,dates=NULL,resi
 manyfirmssubperiod.lmAMM <-
 function(firm.returns,X,
                           lags,dates=NULL, periodnames=NULL,verbose=FALSE){
-  require("doMC")
-  registerDoMC()
   if(is.null(dates)){
     dates=c(start(X),end(X))
     periodnames="Full"

@@ -11,7 +11,8 @@
 \author{Vikram Bahure \and Vimal Balasubramaniam \and Ajay Shah}
 \begin{document}
 % \VignetteIndexEntry{eventstudies: Extreme events functionality}
-% \VignetteDepends{} \VignetteKeywords{extreme event analysis}
+% \VignetteDepends{}
+% \VignetteKeywords{extreme event analysis}
 % \VignettePackage{eventstudies}
 \maketitle
 

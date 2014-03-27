@@ -2,7 +2,7 @@ Package: eventstudies
 Type: Package
 Title: Event study analysis
 Version: 1.1
-Author: Ajay Shah, Chirag Anand, Vikram Bahure
+Author: Chirag Anand, Vikram Bahure, Vimal Balasubramaniam, Ajay Shah,
 Maintainer: Vikram Bahure <economics.vikram@gmail.com>
 Depends: R (>= 2.12.0), zoo, xts, boot, testthat, sandwich
 Description: Event study methodology in finance and economics; along with augmented market models (AMMs)

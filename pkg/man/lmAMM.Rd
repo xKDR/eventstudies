@@ -32,9 +32,16 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
     running. Default is \sQuote{FALSE}.}  }
 
 
-\value{The function returns a \sQuote{list} containing exposures, HAC
-  adjusted standard errors, number of lags used, and residuals from the
-  fitted model.
+\value{The function returns an object of \sQuote{class} \dQuote{amm}.
+
+  The functions \sQuote{summary} and \sQuote{print} are provided to
+  print a summary of results and print the command, coefficients, and
+  exposures of the analysis. The function \sQuote{plot} is provided to
+  plot the model residuals and firm returns on the same graph.
+
+  An object of class \dQuote{amm} is a \sQuote{list} containing
+  the result of \code{stats::lm} function along with the following
+  components:
 
   \item{exposures}{a \sQuote{numeric} containing exposure estimates for
     the firm j.}
@@ -49,11 +56,11 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
 \author{Ajay Shah, Vimal Balasubramaniam}
 
 \seealso{
-\code{\link{makeX}}
+  \code{\link{makeX}} for preparing explanatory variables for
+  computation of Augmented Market Models used in this function.
 }
 
 \examples{
-# lmAMM
 data("lmAMMData")
 
 firm.returns <- lmAMMData[,"Infosys"]

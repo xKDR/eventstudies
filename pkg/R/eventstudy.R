@@ -69,21 +69,30 @@ eventstudy <- function(firm.returns,
   
 ### Converting index outputModel to Date
   index(outputModel) <- as.Date(index(outputModel))
-  ## Stop if there is only one firm: phys2eventtime breaks down
-  if(NCOL(outputModel)==1){stop("Event study does not work for one firm/column")}
     
 ### Convert to event frame
   es <- phys2eventtime(z=outputModel, events=eventList, width=width)
-  es.w <- window(es$z.e, start = -width, end = width)
-  ## Adding column names to event output
-  cn.names <- eventList[which(es$outcomes=="success"),1]
+
+  if (is.null(es$z.e) || length(es$z.e) == 0) {
+    es.w <- NULL
+    cn.names <- character(length = 0)
+  } else {
+    es.w <- window(es$z.e, start = -width, end = width)
+                                        # Adding column names to event output
+    cn.names <- eventList[which(es$outcomes=="success"),1]
+  }
+
   if(length(cn.names)==1){
     cat("Event date exists only for",cn.names,"\n")
     inference <- FALSE
     cat("No inference strategy for one column","\n")
+  } else if (length(cn.names) == 0) {
+    ## skip everything
+    to.remap = FALSE
+    inference = FALSE
   } else {
     colnames(es.w) <- cn.names
-  }
+  } 
   
 ### Remapping event frame
   if (to.remap == TRUE) {
@@ -124,7 +133,7 @@ eventstudy <- function(firm.returns,
 print.es <- function(x, ...){
   cat("The", x$inference, "inference output for CI and",
       colnames(x$eventstudy.output)[2], "response:", "\n")
-  return(x$eventstudy.output)
+  print.default(x$eventstudy.output)
 }
 
 summary.es <- function(object, ...){

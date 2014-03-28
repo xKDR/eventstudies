@@ -47,6 +47,11 @@ phys2eventtime <- function(z, events, width=10) {
   rownums <- grep("outcome", names(answer))
   outcomes <- as.character(do.call("c", answer[rownums]))
   z.e <- do.call("cbind", answer[rownums[which(answer[rownums] == "success")] - 1])
+
+  if (length(z.e) == 0) {               # no point of going forward
+    return(list(z.e = z.e, outcomes = factor(outcomes)))
+  }
+
   colnames(z.e) <- which(outcomes == "success")
 
   ## Now worry about whether there's information within the event window

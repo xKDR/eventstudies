@@ -1,12 +1,13 @@
 \name{makeX}
 \alias{makeX}
 
-\title{A function to prepare explanatory variables for computation of
-  Augmented Market Models used in lmAMM function.}
+\title{Prepare explanatory variables for computation of Augmented Market
+  Models}
 
-\description{This function creates a matrix of explanatory variables in
-  the form specified by the user for further estimation of Augmented
-  market models.}
+\description{\sQuote{makeX} is used to prepare explanatory variables for
+  computation of Augmented Market Models. It can be used to create a
+  matrix of explanatory variables in the form specified by the user for
+  estimation of AMM.}
 
 \usage{
 makeX(market.returns,
@@ -19,33 +20,39 @@ makeX(market.returns,
 }
 
 \arguments{
-  %% FIXME: our example contains univariate time-series object. Can it
-  %% accept multiple columns as input? Here we are only supposed to use one column
-  \item{market.returns}{a \pkg{zoo} timeseries object. This is generally
-    fixed to the stock market index. The first column vector of this
-    matrix contains this variable.  }
+
+  \item{market.returns}{a univariate timeseries object of \sQuote{class}
+    \pkg{zoo}. It is generally fixed to the stock market index.}
 
   \item{others}{a \pkg{zoo} matrix with other regressors of interest in the
     AMM. This could be currency, bond returns, foreign flows, or any
     other variable.}
 
   \item{switch.to.innov}{a \sQuote{logical} vector with an element for
-    each column in \dQuote{others}. Whether to switch the column from
-    raw values to AR residuals.}
+    each column in \dQuote{others} specifying whether to switch the
+    column from raw values to AR residuals. Default is \sQuote{TRUE} for
+    all the columns.}
 
-  \item{market.returns.purge}{a \sQuote{logical} element, indicating
+  \item{market.returns.purge}{a \sQuote{logical} indicating
   whether to purge the effects of \dQuote{others} from
   \dQuote{market.returns}.}
 
  \item{nlags}{The number of lag terms present in this model explaining
    \dQuote{market.returns} using all these \dQuote{others}.}
 
- \item{dates}{Specified break dates as \sQuote{Date} object (either from
-   structural breaks in exchange rate regimes) so that all these steps
-   are constructed within each sub-period divided by the dates.}
+ \item{dates}{Specified break dates as \sQuote{Date} object.}
 
  \item{verbose}{Whether detailed output is required. Default is
    \sQuote{FALSE}.}
+}
+
+\details{
+
+  %% FIXME
+  \dQuote{dates} can be used to specify sub-periods for estimating
+  exposure of \dQuote{others}. The variables are constructed for each
+  sub-period separately. If no dates are provided, start date and end
+  date of the \dQuote{market.returns} series are taken.
 }
 
 \section{Warning}{The input data should not contain \sQuote{NA}s, as is

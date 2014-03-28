@@ -1,0 +1,12 @@
+
+bibentry(bibtype = "Manual",
+         title = “{eventstudies}: An R package for researchers and users of event studie
+s",
+         author = c(person(“Chirag”, “Anand”),
+                    person(“Vimal”, "Balasubramaniam”),
+                    person(“Vikram”, “Bahure”),
+                    person(“Ajay”, "Shah”),
+                    person("R Core Team")),
+	 organisation = “NIPFP, Macro/Finance group”,
+         year = 2014,
+         url = "http://CRAN.R-project.org/package=eventstudies”)

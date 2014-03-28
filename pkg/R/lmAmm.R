@@ -195,7 +195,7 @@ lmAMM <- function(firm.returns, X, nlags=NA, verbose=FALSE) {
 
 
 ###########################
-# Maintaing NAs in AR model
+# Maintaining NAs in AR model
 ###########################
 ARinnovations <- function(x) {
   stopifnot(NCOL(x) == 1)

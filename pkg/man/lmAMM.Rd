@@ -42,6 +42,10 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
 
   If \dQuote{nlags} is \sQuote{NA} (default), then the function tries to
   find the best lag structure using the AIC.
+
+  \sQuote{lmAMM} calls the \code{stats::lm} to do the
+  OLS. \sQuote{print} function on an object of \sQuote{class}
+  \dQuote{amm} can be used to see the call (formula) to \code{lm}.
 }
 
 \value{The function returns an object of \sQuote{class} \dQuote{amm}.

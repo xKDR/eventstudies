@@ -84,8 +84,10 @@ eventstudy <- function(firm.returns,
 
   if(length(cn.names)==1){
     cat("Event date exists only for",cn.names,"\n")
-    inference <- FALSE
-    cat("No inference strategy for one column","\n")
+    if (inference == TRUE) {
+      warning("No inference strategy for one column","\n")
+      inference <- FALSE
+    }
   } else if (length(cn.names) == 0) {
     ## skip everything
     to.remap = FALSE

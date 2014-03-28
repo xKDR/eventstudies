@@ -46,13 +46,8 @@ makeX(market.returns,
    \sQuote{FALSE}.}
 }
 
-\details{
+\details{ Augmented market model (AMM) purges out the variation of market returns and variable of interest as specified in \sQuote{others}, from the dependent variable. This function creates the regressors for the AMM model using market returns and \sQuote{others}. 
 
-  %% FIXME
-  \dQuote{dates} can be used to specify sub-periods for estimating
-  exposure of \dQuote{others}. The variables are constructed for each
-  sub-period separately. If no dates are provided, start date and end
-  date of the \dQuote{market.returns} series are taken.
 }
 
 \section{Warning}{The input data should not contain \sQuote{NA}s, as is

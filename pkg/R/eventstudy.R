@@ -1,4 +1,4 @@
-eventstudy <- function(firm.returns = NULL,
+eventstudy <- function(firm.returns,
                        eventList,
                        width = 10,
                        is.levels =  FALSE,
@@ -9,6 +9,7 @@ eventstudy <- function(firm.returns = NULL,
                        inference.strategy = "bootstrap",
                        ...) {
                                         # type = "marketResidual", "excessReturn", "AMM", "None"
+  ## arguments to the model
   extra.var <- list(...)
 
   if (type == "None" && !is.null(firm.returns)) {

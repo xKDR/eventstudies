@@ -48,20 +48,15 @@ eventstudy(firm.returns,
     re-index.}
 
   \item{remap}{
-    \sQuote{character}, this argument is used when \dQuote{to.remap} is
-    \sQuote{TRUE}. Takes three values (defaults to \dQuote{cumsum}):
-    \itemize{
-      \item{cumsum: cumulative sum.}
-      \item{cumprod: cumulative product, buy-hold-abnormal-return (BHAR).}
-      \item{reindex: re-indexing the event window.}
-    }
+    \sQuote{character}, conversion function for remapping event-window
+    returns. Used when \dQuote{to.remap} is \sQuote{TRUE}.
   }
 
   \item{is.levels}{
     \sQuote{logical}, indicating the format of the data. Set it to
     \sQuote{FALSE} if the data is in returns format, else \sQuote{TRUE}.
   }
-
+  %% FIXME: do you compute confidence interval or use it for computing?
   \item{inference}{
     \sQuote{logical}, specifying whether to compute confidence interval
     for the estimator.
@@ -86,30 +81,31 @@ eventstudy(firm.returns,
 
   \dQuote{type} currently supports:
   \itemize{
-    \item{\dQuote{marketResidual}: uses \code{\link{marketResidual}()} to
+    \item{\dQuote{marketResidual}: uses \code{\link{marketResidual}} to
       extract market returns from firms return using a linear model.}
 
-    \item{\dQuote{excessReturn}: uses \code{\link{excessReturn}()} to
+    \item{\dQuote{excessReturn}: uses \code{\link{excessReturn}} to
       subtract market return from firm return.}
 
-    \item{\dQuote{lmAMM}: uses \code{\link{lmAMM}()} to perform
+    \item{\dQuote{lmAMM}: uses \code{\link{lmAMM}} to perform
       Augmented Market Model estimation.}
 
     \item{\dQuote{None}: don't use any model.}
   }
 
-    
-  The function needs firm returns as input and provides
-  argument \sQuote{type} to generate abnormal returns, if required. If
-  \sQuote{type} is \sQuote{market.residuals} then it will generate
-  abnormal returns using a market model. It also provides option to
-  estimate returns using augmented market model (AMM) which purges out
-  market returns and \sQuote{others} i.e. currency in our case
-  (\sQuote{type} as \sQuote{lmAMM}). The function computes confidence
-  interval using either bootstrap or wilcoxon technique. The output of
-  this function has class \sQuote{es}.
+  \dQuote{remap} can take three values:
+  \itemize{
+    \item{\dQuote{cumsum}: cumulative sum, uses \code{\link{remap.cumsum}}. [Default]}
+    \item{\dQuote{cumprod}: cumulative product, buy-hold-abnormal-return (BHAR),
+      uses \code{\link{remap.cumprod}}.}
+    \item{\dQuote{reindex}: re-indexes the event window by using
+      \code{\link{remap.event.reindex}}.}
+  }
 
-
+  For computing confidence intervals, the function can either use
+  bootstrap or Wilcoxon signed-rank test. See
+  \code{\link{inference.bootstrap}} and \code{\link{inference.wilcox}}
+  for more details.
 }
 
 \value{

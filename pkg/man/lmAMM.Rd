@@ -3,11 +3,10 @@
 
 \title{Augmented market model (AMM) estimation}
 
-\description{This function relates firm returns to the regressors using
-  the linear model (market index movements, currency fluctuations etc.).
-  It computes firm exposure for all the regressors in columns of \sQuote{X} and
-  subsequently estimates AMM residuals by purging out variation from
-  the regressand.}
+\description{\sQuote{lmAMM} is used to estimate augmented market
+  model. It can be used to estimate AMM and calculate augmented market
+  model residuals (AMM abnormal returns) stripped of market and macro
+  variations.}
 
 \usage{
 lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
@@ -19,25 +18,39 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
     AMM estimation.}
 
   \item{X}{a time series of explanatory variables obtained from the
-    \sQuote{makeX} function. The first variable is always the stock market
-    index. Other variables could be such as currency or bond returns, or
-    other variables as desired by the user.}
+    \sQuote{makeX} function. See \sQuote{Details}.}
 
   \item{nlags}{an \sQuote{integer} with the number of lags of
-    explanatory variables. When unspecified, the best lag using the AIC
-    is used.}
+    explanatory variables.}
 
-  \item{verbose}{a \sQuote{logical}. Print function details. When set to
-    \sQuote{TRUE}, the function prints detailed results while
-    running. Default is \sQuote{FALSE}.}  }
+  \item{verbose}{\sQuote{logical}. Print function details. If
+    \sQuote{TRUE}, print detailed results while running. Default is
+    \sQuote{FALSE}.}
 
+}
+
+\details{
+  The function relates firm returns to the regressors (market
+  index movements, currency fluctuations etc.) using the linear model
+  \sQuote{lm}.  It computes firm exposure for all the regressors in
+  columns of \dQuote{X} and subsequently estimates AMM residuals by
+  purging out variation from the regressand.
+
+  The first variable of \dQuote{X} is always the stock market
+  index. Other variables could be currency or bond returns, or other
+  variables as desired by the user.
+
+  If \dQuote{nlags} is \sQuote{NA} (default), then the function tries to
+  find the best lag structure using the AIC.
+}
 
 \value{The function returns an object of \sQuote{class} \dQuote{amm}.
 
   The functions \sQuote{summary} and \sQuote{print} are provided to
-  print a summary of results and print the command, coefficients, and
-  exposures of the analysis. The function \sQuote{plot} is provided to
-  plot the model residuals and firm returns on the same graph.
+  print a summary of results and print the \sQuote{lm} command,
+  coefficients, and exposures of the analysis. The function
+  \sQuote{plot} is provided to plot the model residuals and firm
+  returns.
 
   An object of class \dQuote{amm} is a \sQuote{list} containing
   the result of \code{stats::lm} function along with the following

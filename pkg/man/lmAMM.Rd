@@ -36,9 +36,10 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
   columns of \dQuote{X} and subsequently estimates AMM residuals by
   purging out variation from the regressand.
 
-  The first variable of \dQuote{X} is always the stock market
-  index. Other variables could be currency or bond returns, or other
-  variables as desired by the user.
+  Function \sQuote{makeX} is used to prepare the explanatory variables
+  (\dQuote{X}) used in the estimation of AMM. The first variable of
+  \dQuote{X} is always the stock market index. Other variables could be
+  currency or bond returns, or other variables as desired by the user.
 
   If \dQuote{nlags} is \sQuote{NA} (default), then the function tries to
   find the best lag structure using the AIC.

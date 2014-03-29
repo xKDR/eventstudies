@@ -1,4 +1,4 @@
-# Upon input
+# Upon input   
 #   z is a zoo object containing input data. E.g. this could be all the 
 #     prices of a bunch of stocks. The column name is the unit name.
 #   events is a data.frame containing 2 columns. The first column
@@ -10,20 +10,17 @@
 #   wdatamissing: too many NAs within the crucial event window.
 #   success : all is well.
 # A vector of these outcomes is returned.
-phys2eventtime <- function(z, events, width=10) {
-  # Just in case events$outcome.unit has been sent in as a factor --
-  events$outcome.unit <- as.character(events$outcome.unit)
-  if(is.factor(events$event.when)) stop("Sorry you provided a factor as an index")
-  # Given a zoo time-series z, and an event date "event.when",
-  # try to shift this vector into event time, where the event date
-  # becomes 0 and all other dates shift correspondingly.
-  # If this can't be done, then send back NULL with an error code.
-  ## takes the event list as an argument and uses already existing
-  ## time-series variable z
 
-                                        # check the dimensions of "z""
+phys2eventtime <- function(z, events, width=10) {
+  ## Ensuring class of event matrix
+  events$outcome.unit <- as.character(events$outcome.unit)
+  if(is.factor(events$event.when)) {
+    stop("The column 'event.when' cannot be a factor. Cannot proceed with data manipulation.")
+  }
+
+  ## z: physical time matrix. Check dimensions of "z"
   if (is.null(ncol(z))) {
-    stop(paste(deparse("z"), "should be a zoo series with at least one column."))
+    stop(paste(deparse("z"), "should be of class zoo/xts with at least one column."))
   }
 
   timeshift <- function(x) {
@@ -31,9 +28,7 @@ phys2eventtime <- function(z, events, width=10) {
     if (!firm.present) {
       return(list(result=NULL, outcome="unitmissing"))
     }
-                                        # take the previous date if
-                                        # the exact event date is not
-                                        # found
+    ## Take previous date if exact data is not found.
     location <- findInterval(as.Date(x[2]), index(z[, x[1]]))
     if ((location <= 1) | (location >= length(index(z)))) {
       return(list(result=NULL, outcome="wrongspan"))
@@ -48,14 +43,15 @@ phys2eventtime <- function(z, events, width=10) {
   outcomes <- as.character(do.call("c", answer[rownums]))
   z.e <- do.call("cbind", answer[rownums[which(answer[rownums] == "success")] - 1])
 
-  if (length(z.e) == 0) {               # no point of going forward
-    return(list(z.e = z.e, outcomes = factor(outcomes)))
+  ## If no successful outcome, return NULL to z.e. 
+  if (length(z.e) == 0) {               
+    return(list(z.e = NULL, outcomes = factor(outcomes)))
   }
 
   colnames(z.e) <- which(outcomes == "success")
 
-  ## Now worry about whether there's information within the event window
-  ## (This entire cleaning+checking can be switched off by specifying width=0)
+  ## Information verification within 'width'
+  ##   :: Will not be executed with width = 0
   badcolumns <- NULL
   if (width > 0) {
     for (i in 1:ncol(z.e)) {
@@ -72,7 +68,7 @@ phys2eventtime <- function(z, events, width=10) {
       z.e <- z.e[, -badcolumns]
     }
   }
-  # Check that we're okay
+  ## Double check
   stopifnot(sum(outcomes=="success") == NCOL(z.e))
   list(z.e=z.e, outcomes=factor(outcomes))
 }

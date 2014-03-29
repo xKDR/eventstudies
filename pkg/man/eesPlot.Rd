@@ -7,9 +7,7 @@ Plotting clustered and unclustered extreme events retuns.
 
 \description{The function creates an event study plot that treats all
   clustered events as one event. It plots both the lower and upper tail
-  events and the events are defined based on the cut off probability
-  values provided (in percentage terms).This function replicates result
-  of Patnaik, Shah, and Singh (2013).}
+  events.}
 
 \usage{
 eesPlot(z,
@@ -42,10 +40,15 @@ eesPlot(z,
     percentage terms).}
 }
 
+\details{
+  The events are defined based on the cut off probability values
+  provided (in percentage terms).This function replicates result of
+  Patnaik, Shah, and Singh (2013).
+}
+
 \value{A plot of the response series with lower and upper tail events
   defined on the event series.}
 
-%% FIXME: example doesn't work!
 \examples{
 library(eventstudies)
 data(eesData)

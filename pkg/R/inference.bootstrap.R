@@ -1,6 +1,3 @@
-library(boot)
-library(zoo)
-
 # This does bootstrap inference for the difference in the
 # average "car" between t1 and t2 (both in event time).
 # es.w is a zoo object, where rows are in event time

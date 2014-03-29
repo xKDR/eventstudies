@@ -5,9 +5,9 @@
 Extreme events study analysis for a univariate time series
 }
 
-\description{This function identifies tail events on a univariate time
-  series, generates summary statistics for clustered and unclustered
-  tail events.}
+\description{This function is used to identify tail events on a
+  univariate time series. It generates summary statistics for clustered and
+  unclustered tail events.}
 
 \usage{
 ees(input, prob.value)
@@ -15,10 +15,10 @@ ees(input, prob.value)
 
 \arguments{
  
- \item{input}{a univariate \pkg{zoo} time series for which tail events
-   identification is required.}
+ \item{input}{a univariate \pkg{zoo} or \pkg{xts} time series for which
+   tail events identification is required.}
  
- \item{prob.value}{The cut off (in percent) on the probability
+ \item{prob.value}{The cut off (in per cent) on the probability
    distribution for the tail event.}
 }
 

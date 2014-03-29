@@ -35,7 +35,7 @@ phys2eventtime(z, events, width = 10)
   event date.
 
   For a given \dQuote{width}, if there is any \sQuote{NA} in the event
-  window, then the last observation is carried forward.}
+  window, then the last observation is carried forward.
 
   Currently this function requires \dQuote{z} to have at least one
   \emph{column}. It relies on \sQuote{colnames} of z for the series
@@ -62,7 +62,7 @@ phys2eventtime(z, events, width = 10)
 \examples{
 data(StockPriceReturns)
 data(SplitDates)
-phys2eventtime(z = StockPriceReturns, events = SplitDates, width = 5)
+result <- phys2eventtime(z = StockPriceReturns, events = SplitDates, width = 5)
 }
 
 \keyword{ phys2eventime }

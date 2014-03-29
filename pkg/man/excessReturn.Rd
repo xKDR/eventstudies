@@ -1,7 +1,7 @@
 \name{excessReturn}
 \alias{excessReturn}
 
-\title{A function that estimates excess return}
+\title{Estimate excess returns}
 
 \description{ This function estimates excess returns. If the firm return
   is \dQuote{firm.returns} and market return is \dQuote{market.returns},

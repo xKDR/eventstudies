@@ -81,8 +81,9 @@ eventstudy(firm.returns,
 
   \dQuote{type} currently supports:
   \itemize{
-    \item{\dQuote{marketResidual}: uses \code{\link{marketResidual}} to
-      extract market returns from firms return using a linear model.}
+    \item{\dQuote{marketResidual}: uses \code{\link{marketResidual}}
+      function to extract market returns from firms return using a
+      linear model.}
 
     \item{\dQuote{excessReturn}: uses \code{\link{excessReturn}} to
       subtract market return from firm return.}
@@ -92,21 +93,50 @@ eventstudy(firm.returns,
 
     \item{\dQuote{None}: don't use any model.}
   }
+  Arguments to a model type can be sent inside \sQuote{...}. See
+  \sQuote{Model arguments} section for details on accepted fields.
 
   \dQuote{remap} can take three values:
   \itemize{
-    \item{\dQuote{cumsum}: cumulative sum, uses \code{\link{remap.cumsum}}. [Default]}
-    \item{\dQuote{cumprod}: cumulative product, buy-hold-abnormal-return (BHAR),
-      uses \code{\link{remap.cumprod}}.}
-    \item{\dQuote{reindex}: re-indexes the event window by using
-      \code{\link{remap.event.reindex}}.}
+    \item \dQuote{cumsum}: cumulative sum, uses \code{\link{remap.cumsum}}. [Default]
+    \item \dQuote{cumprod}: cumulative product, buy-hold-abnormal-return (BHAR),
+      uses \code{\link{remap.cumprod}}.
+    \item \dQuote{reindex}: re-indexes the event window by using
+      \code{\link{remap.event.reindex}}.
   }
 
   For computing confidence intervals, the function can either use
   bootstrap or Wilcoxon signed-rank test. See
   \code{\link{inference.bootstrap}} and \code{\link{inference.wilcox}}
   for more details.
+
+  \sQuote{...} is directly supplied to the model mentioned in the
+  \dQuote{type} argument. See section on \sQuote{Model arguments} for
+  more details.
 }
+
+\section{\bold{Model arguments}}{
+  Each model can take extra arguments (supplied as \sQuote{...}) apart
+  from mandatory ones for finer control over the analysis. Check the
+  respective function documentation for definitions. The arguments are
+  listed here:
+
+  \itemize{
+    \item \dQuote{marketResidual}: \cr
+    - market.returns
+    \item \dQuote{excessReturn}: \cr
+    - market.returns
+    \item \dQuote{lmAMM}: \cr
+    - market.returns \cr
+    - others \cr
+    - switch.to.innov \cr
+    - market.returns.purge \cr
+    - nlags \cr
+    - dates \cr
+    - verbose \cr
+  }
+}
+
 
 \value{
   A list with class attribute \dQuote{es} holding the

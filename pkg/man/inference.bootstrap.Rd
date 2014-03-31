@@ -1,7 +1,7 @@
 \name{inference.bootstrap}
 \alias{inference.bootstrap}
 
-\title{Function to do bootstrap inference for event study analysis.}
+\title{Do bootstrap inference for event study analysis}
 
 \description{
   This function does bootstrap inference to generate distribution of
@@ -19,7 +19,7 @@ inference.bootstrap(es.w,
 \arguments{
   \item{es.w}{
     a \pkg{zoo} series indexed by event time: the \dQuote{z.e}
-    component of the list returned by the \sQuote{phys2eventtime()}
+    component of the list returned by the \code{\link{phys2eventtime}}
     function.
   }
 
@@ -36,6 +36,12 @@ inference.bootstrap(es.w,
 
   \item{main}{main title of the plot. Used if \dQuote{to.plot} is
     \sQuote{TRUE}.}
+}
+
+%% FIXME: more details
+\details{
+  Function \sQuote{boot} from package \pkg{boot} is used for
+  bootstrapping with \emph{replicates} of 1000.
 }
 
 \value{

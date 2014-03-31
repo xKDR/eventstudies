@@ -1,8 +1,7 @@
 \name{manyfirmssubperiod.lmAMM}
 \alias{manyfirmssubperiod.lmAMM}
 
-\title{A function to compute AMM for multiple firms across several
-periods}
+\title{Compute AMM for multiple firms across several periods}
 
 \description{This function runs AMM for multiple firms at once using
   the matrix of data obtained from \code{makeX}, and a matrix of LHS
@@ -29,13 +28,18 @@ manyfirmssubperiod.lmAMM(firm.returns,
     market model.}
 
   \item{dates}{a set of dates that mark out subperiods of interest. If
-    dates is NULL, then full period is considered.}
+    dates is \sQuote{NULL}, then full period is considered.}
 
   \item{periodnames}{a \sQuote{character} vector of names for each
     subperiod that has been marked by the \dQuote{dates} argument.}
 
   \item{verbose}{Whether to print detailed output. Default is \sQuote{FALSE}}
 }
+
+%% FIXME: \details section!
+%% steps:
+%% - calculates exposures and SDS
+%% - runs AMM for each subperiod for each firm
 
 \section{Warning}{Do not have any space between names provided under
   \dQuote{periodnames}.}

@@ -39,7 +39,7 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
   Function \sQuote{makeX} is used to prepare the explanatory variables
   (\dQuote{X}) used in the estimation of AMM. The first variable of
   \dQuote{X} is always the stock market index. Other variables could be
-  currency or bond returns, or other variables as desired by the user.
+  currency, bond returns, or other variables as required.
 
   If \dQuote{nlags} is \sQuote{NA} (default), then the function tries to
   find the best lag structure using the AIC.
@@ -74,8 +74,8 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
 \author{Ajay Shah, Vimal Balasubramaniam}
 
 \seealso{
-  \code{\link{makeX}} for preparing explanatory variables for
-  computation of Augmented Market Models used in this function.
+  \code{\link{makeX}}
+  \code{\link{lm}}
 }
 
 \examples{

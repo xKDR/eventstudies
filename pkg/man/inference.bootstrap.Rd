@@ -51,7 +51,9 @@ inference.bootstrap(es.w,
 }
 
 \seealso{
-  phys2eventtime
+  \code{\link{boot}}
+  \code{\link{phys2eventtime}}
+  \code{\link{inference.wilcox}}
 }
 
 \examples{

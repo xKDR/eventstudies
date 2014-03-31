@@ -2,12 +2,13 @@
 \alias{inference.wilcox}
 
 \title{
-  Wilcox inference for the event study.
+  Wilcox inference for event study analysis
 }
 
 \description{
-This function does wilcox inference to generate distribution of average of all the cumulative returns time-series.
- }
+  This function does wilcox inference to generate distribution of average
+  of all the cumulative returns time-series.
+}
 
 \usage{
 inference.wilcox(es.w,
@@ -23,17 +24,22 @@ inference.wilcox(es.w,
     \dQuote{z.e} component of the list returned by function
     \dQuote{phys2eventtime}.}
 
-  \item{to.plot}{a \sQuote{logical}. Whether to  generate an eventstudy plot of the
-    inference estimated. Default is \sQuote{TRUE}.}
+  \item{to.plot}{a \sQuote{logical}. indicating whether to  generate an
+    eventstudy plot of the inference estimated. Defaults to
+    \sQuote{TRUE}.
+  }
 
-  \item{xlab}{If to.plot is \sQuote{TRUE}, then the plot generated will take this X label.}
+  \item{xlab}{the x-axis label of the generated plot. Used if
+    \dQuote{to.plot} is \sQuote{TRUE}.}
+  
+  \item{ylab}{the y-axis label of the generated plot. Used if
+    \dQuote{to.plot} is \sQuote{TRUE}.}
 
-  \item{ylab}{If to.plot is \sQuote{TRUE}, then the plot generated will
-  take this Y label.}
-
-  \item{main}{If to.plot is \sQuote{TRUE}, then the plot generated will
-    take this as the main title.}
+  \item{main}{main title of the plot. Used if \dQuote{to.plot} is
+    \sQuote{TRUE}.}
 }
+
+%% FIXME: add \details section?
 
 \value{A \sQuote{matrix} with 3 columns: the lower confidence interval (CI),
   the mean, and the upper CI which are the result of wilcox inference.}
@@ -41,7 +47,8 @@ inference.wilcox(es.w,
 \author{Vikram Bahure}
 
 \seealso{
-  phys2eventtime
+  \code{\link{phys2eventtime}}
+  \code{\link{inference.bootstrap}}
 }
 
 \examples{

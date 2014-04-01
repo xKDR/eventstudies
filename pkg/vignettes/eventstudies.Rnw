@@ -169,8 +169,8 @@ As required by the package, the event date (the dates on which stock splits occu
 <<>>= 
 data(SplitDates) 
 head(SplitDates) 
-data(inr) 
-inrusd <- diff(log(inr))*100
+data(INR) 
+inrusd <- diff(log(INR))*100
 all.data <- merge(StockPriceReturns,nifty.index,inrusd,all=TRUE) 
 StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("nifty.index", "inr"))] 
 nifty.index <- all.data$nifty.index 

@@ -3,9 +3,9 @@ context("INR Inference")
 test_that("test.inr.inference", {
 library(eventstudies)
 
-load(system.file("data", "inr.rda",package = "eventstudies"))
+load(system.file("data", "INR.rda",package = "eventstudies"))
 
-inr_returns <- diff(log(inr))[-1]
+inr_returns <- diff(log(INR))[-1]
 
 eventslist <- data.frame(outcome.unit=rep("inr",10),
                          event.when=as.Date(c(

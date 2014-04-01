@@ -63,10 +63,10 @@ makeX(market.returns,
 \author{Ajay Shah, Vimal Balasubramaniam}
 
 \examples{
-data("lmAMMData")
+data("AMMData")
 
-market.returns <- lmAMMData$index.nifty
-currency.returns <- lmAMMData$currency.inrusd
+market.returns <- AMMData$index.nifty
+currency.returns <- AMMData$currency.inrusd
 
 X <- makeX(market.returns,
            others = currency.returns,

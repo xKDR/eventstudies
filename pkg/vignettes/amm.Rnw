@@ -78,7 +78,7 @@ followed constructing \texttt{X} (regressors) and firm returns
 Regressors in the AMM equation are market returns and currency
 returns, while regressands is firm returns. All the variables should
 have balanced panel if not then merge the time series variable to get
-one. \textit{lmAMMData} is an time series object with market returns as
+one. \textit{AMMData} is an time series object with market returns as
 \textit{Nifty} and currency returns as \textit{INR/USD}. If
 currency exposure is to be estimated for different periods separately
 then argument \textit{dates} will be helpful or else \textit{NULL}
@@ -92,10 +92,10 @@ returns before using AMM model.
 <<>>=
 # Create RHS before running subperiod.lmAMM()
 library(eventstudies)
-data("lmAMMData")
-nifty <- lmAMMData$index.nifty
-inrusd <- lmAMMData$currency.inrusd
-regressand <- lmAMMData[,c("Infosys","TCS")]
+data("AMMData")
+nifty <- AMMData$index.nifty
+inrusd <- AMMData$currency.inrusd
+regressand <- AMMData[,c("Infosys","TCS")]
 regressors <- makeX(nifty, others=inrusd,
                     switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1,
                     dates=as.Date(c("2012-02-01","2013-01-01","2014-01-20")), verbose=FALSE)

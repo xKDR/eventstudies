@@ -54,11 +54,11 @@ manyfirmssubperiod.lmAMM(firm.returns,
 
 ## Running manyfirmssubperiod.lmAMM() involves as many steps as working
 ## with onefirmAMM.
-data("lmAMMData")
+data("AMMData")
 
-firm.returns <- lmAMMData[, c("Infosys","TCS")]
-market.returns <- lmAMMData[, "index.nifty"]
-currency.returns <- lmAMMData[, "currency.inrusd"]
+firm.returns <- AMMData[, c("Infosys","TCS")]
+market.returns <- AMMData[, "index.nifty"]
+currency.returns <- AMMData[, "currency.inrusd"]
 
 ## Creating X for AMM estimation using makeX function
 X <- makeX(market.returns,

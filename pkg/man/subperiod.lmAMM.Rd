@@ -52,12 +52,12 @@ subperiod.lmAMM(firm.returns,
 \code{\link{manyfirmssubperiod.lmAMM}}}
 
 \examples{ 
-data("lmAMMData")
+data("AMMData")
 
 ## Create RHS before running subperiod.lmAMM()
-firm.returns <- lmAMMData$Infosys
-market.returns <- lmAMMData$index.nifty
-currency.returns <- lmAMMData$currency.inrusd
+firm.returns <- AMMData$Infosys
+market.returns <- AMMData$index.nifty
+currency.returns <- AMMData$currency.inrusd
 
 regressors <- makeX(market.returns,
                     others = currency.returns,

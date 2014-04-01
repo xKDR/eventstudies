@@ -1,12 +1,12 @@
-\name{mmData}
-\alias{mmData}
+\name{MMData}
+\alias{MMData}
 
 
 \title{Sample data used for market model examples}
 
 \description{This data is only used for market model examples.}
 
-\usage{data(mmData)}
+\usage{data(MMData)}
 
 \format{\pkg{zoo}}
 
@@ -14,8 +14,8 @@
 
 \examples{
 library(zoo)
-data(mmData)
-str(mmData)
+data(MMData)
+str(MMData)
 }
 
-\keyword{mmData}
+\keyword{MMData}

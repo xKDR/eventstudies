@@ -22,9 +22,9 @@
 
 \examples{ 
 data(StockPriceReturns)
-data(nifty.index)
+data(NiftyIndex)
 er.result <- excessReturn(firm.returns = StockPriceReturns,
-			  market.returns = nifty.index)
+			  market.returns = NiftyIndex)
 }
 
 \keyword{excessReturn}

@@ -22,10 +22,10 @@
 
 \examples{ 
 data(StockPriceReturns)
-data(nifty.index)
+data(NiftyIndex)
 
 mm.result <- marketResidual(firm.returns = StockPriceReturns,
-                            market.returns = nifty.index)
+                            market.returns = NiftyIndex)
 
 }
 

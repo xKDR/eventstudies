@@ -153,15 +153,15 @@ We intend to expand the suite of inference procedures available for analysis to 
 
 In this section, we demonstrate the package with a study of the impact of stock splits on the stock prices of firms. We use the returns series of the thirty index companies, as of 2013, of the Bombay Stock Exchange (BSE), between 2001 and 2013.  We also have stock split dates for each firm since 2000. 
 
-Our data consists of a \textit{zoo} object for stock price returns for the thirty firms. This is our ``outcome variable'' of interest, and is called \textit{StockPriceReturns}. Another zoo object, \textit{nifty.index}, contains a time series of market returns. 
+Our data consists of a \textit{zoo} object for stock price returns for the thirty firms. This is our ``outcome variable'' of interest, and is called \textit{StockPriceReturns}. Another zoo object, \textit{NiftyIndex}, contains a time series of market returns. 
 
 <<>>= 
 library(eventstudies) 
 data(StockPriceReturns)
-data(nifty.index) 
+data(NiftyIndex) 
 str(StockPriceReturns) 
 head(StockPriceReturns[rowSums(is.na((StockPriceReturns)))==3,1:3]) 
-head(nifty.index) 
+head(NiftyIndex) 
 @
 
 As required by the package, the event date (the dates on which stock splits occured for these 30 firms) for each firm is recorded in \textit{SplitDates} where ``outcome.unit'' is the name of the firm (the column name in ``StockPriceReturns'') and ``event.date'' is when the event took place for that outcome unit. In R, the column ``outcome.unit'' has to be of class ``character'' and ``event.date'' of class ``Date'', as seen below:
@@ -171,9 +171,9 @@ data(SplitDates)
 head(SplitDates) 
 data(INR) 
 inrusd <- diff(log(INR))*100
-all.data <- merge(StockPriceReturns,nifty.index,inrusd,all=TRUE) 
-StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("nifty.index", "inr"))] 
-nifty.index <- all.data$nifty.index 
+all.data <- merge(StockPriceReturns,NiftyIndex,inrusd,all=TRUE) 
+StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("NiftyIndex", "inr"))] 
+NiftyIndex <- all.data$NiftyIndex 
 inrusd <- all.data$inr
 @
 
@@ -188,14 +188,14 @@ and \texttt{mm.result} respectively. These are the standard
 idiosyncratic return estimation that is possible with this package.
 
 <<>>= # Excess return 
-er.result <- excessReturn(firm.returns = StockPriceReturns, market.returns = nifty.index)
+er.result <- excessReturn(firm.returns = StockPriceReturns, market.returns = NiftyIndex)
 er.result <- er.result[rowSums(is.na(er.result))!=NCOL(er.result),]
 head(er.result[,1:3])
 
 @
 
 <<>>= # Extracting market residual
-mm.result <- marketResidual(firm.returns = StockPriceReturns, market.returns = nifty.index)
+mm.result <- marketResidual(firm.returns = StockPriceReturns, market.returns = NiftyIndex)
 mm.result <- mm.result[rowSums(is.na(mm.result))!=NCOL(mm.result),]
 head(mm.result[,1:3])
 
@@ -223,7 +223,7 @@ firm returns to compute augmented market model residuals.
 ## AMM residuals ##
 ###################
 ## Getting Regressors
-regressors <- makeX(market.returns=nifty.index, others=inrusd, 
+regressors <- makeX(market.returns=NiftyIndex, others=inrusd, 
                     market.returns.purge=TRUE, nlags=1)
 ## AMM residual to time series
 timeseries.lmAMM <- function(firm.returns,X,verbose=FALSE,nlags=1){
@@ -341,19 +341,19 @@ es.na <- eventstudy(firm.returns = StockPriceReturns, eventList =
 es.mm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
                     width = 10, to.remap = TRUE, remap = "cumsum", 
                     inference = TRUE, inference.strategy = "bootstrap", 
-                    type = "marketResidual", market.returns = nifty.index) 
+                    type = "marketResidual", market.returns = NiftyIndex) 
 
 ## Event study using excess return and bootstrap 
 es.er <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
                     width = 10, to.remap = TRUE, remap = "cumsum", 
                     inference = TRUE, inference.strategy = "bootstrap",
-                    type = "excessReturn", market.returns = nifty.index)
+                    type = "excessReturn", market.returns = NiftyIndex)
 
 ## Event study using augmented market model (AMM) and bootstrap
 es.amm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
                      width = 10, to.remap = TRUE, remap = "cumsum", 
                      inference = TRUE, inference.strategy = "bootstrap", 
-                     type = "lmAMM", market.returns = nifty.index, 
+                     type = "lmAMM", market.returns = NiftyIndex, 
                      others=inrusd, verbose=FALSE, 
                      switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
 print(es.na)

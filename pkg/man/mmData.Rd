@@ -2,9 +2,9 @@
 \alias{mmData}
 
 
-\title{Data for testing the market model and use with examples.}
+\title{Sample data used for market model examples}
 
-\description{This data is only used for testing.}
+\description{This data is only used for market model examples.}
 
 \usage{data(mmData)}
 

@@ -4,7 +4,7 @@
 
 \alias{SplitDates}
 
-\title{A set of events to perform eventstudy analysis.}
+\title{Sample data containing set of events to perform eventstudy analysis.}
 
 \description{ This data set contains stock split event dates for the index
   constituents of the Bombay Stock Exchange index (SENSEX). The data

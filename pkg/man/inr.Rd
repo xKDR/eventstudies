@@ -2,9 +2,7 @@
 \alias{inr}
 \docType{data}
 
-\title{
-  Exchange rate for Indian rupee: INR/USD
-}
+\title{Exchange rate data of Indian Rupee to US Dollar}
 
 \description{
   A sample of INR/USD rates from 1990 to 2011.

@@ -51,8 +51,8 @@ Please refer to the paper Patnaik, Shah and Singh (2013) for detailed explanatio
 
 \examples{
 library(eventstudies)
-data(eesData)
-eesPlot(z = eesData,
+data(EESData)
+eesPlot(z = EESData,
         response.series.name = "nifty",
         event.series.name = "sp500",
         titlestring = "S&P500",

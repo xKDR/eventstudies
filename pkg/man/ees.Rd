@@ -54,7 +54,7 @@ This function helps to understand the various feature of the event dates by prov
 \author{Vikram Bahure}
 \examples{
 library(eventstudies)
-data(eesData)
-input <- eesData$sp500
+data(EESData)
+input <- EESData$sp500
 output <- ees(input, prob.value = 5)
 }

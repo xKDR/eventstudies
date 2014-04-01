@@ -66,16 +66,16 @@ in the paper.
 
 Since the object of interest is the impact on returns of the outcome
 variable, nifty, with tail events on the S\&P 500, we first obtain a
-zoo object of returns data (``eesData''). Next, we define tail events
+zoo object of returns data (``EESData''). Next, we define tail events
 for a given probability value; if \textit{prob.value} is 5, then
 returns that fall under $0-5\%$ and $95-100\%$ of the probability
 distribution form our set of events. 
 
 <<>>==
 library(eventstudies) 
-data(eesData) 
+data(EESData) 
 
-input <- eesData$sp500 
+input <- EESData$sp500 
 
 deprintize<-function(f){ 
   return(function(...){
@@ -212,7 +212,7 @@ where data is centered on event date (``0'') and the graph shows 4
 days before and after the event.
 
 <<>>= 
-eesPlot(z=eesData, response.series.name="nifty", event.series.name="sp500", titlestring="S&P500", ylab="(Cum.) change in NIFTY", prob.value=5, width=5) 
+eesPlot(z=EESData, response.series.name="nifty", event.series.name="sp500", titlestring="S&P500", ylab="(Cum.) change in NIFTY", prob.value=5, width=5) 
 @
 
 \begin{figure}[t]
@@ -221,7 +221,7 @@ eesPlot(z=eesData, response.series.name="nifty", event.series.name="sp500", titl
     \setkeys{Gin}{width=1\linewidth}
     \setkeys{Gin}{height=0.8\linewidth} 
 <<fig=TRUE,echo=FALSE>>= 
-res <- deprintize(eesPlot)(z=eesData, response.series.name="nifty",
+res <- deprintize(eesPlot)(z=EESData, response.series.name="nifty",
                            event.series.name="sp500",
                            titlestring="S&P500", 
                            ylab="(Cum.) change in NIFTY", 

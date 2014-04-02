@@ -3,10 +3,8 @@
 
 \title{Augmented market model (AMM) estimation}
 
-\description{\sQuote{lmAMM} is used to estimate augmented market
-  model. It can be used to estimate AMM and calculate augmented market
-  model residuals (AMM abnormal returns) stripped of market and macro
-  variations.}
+\description{\sQuote{lmAMM} (linear augmented market models) estimates
+  exposure and residuals.}
 
 \usage{
 lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
@@ -14,8 +12,7 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
 
 \arguments{
 
-  \item{firm.returns}{a \pkg{zoo} time series object of firm returns for
-    AMM estimation.}
+  \item{firm.returns}{a \pkg{zoo} time series object of firm returns.}
 
   \item{X}{a time series of explanatory variables obtained from the
     \sQuote{makeX} function. See \sQuote{Details}.}
@@ -29,6 +26,7 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
 
 }
 
+% FIXME: review/rewrite?
 \details{
   The function relates firm returns to the regressors (market
   index movements, currency fluctuations etc.) using the linear model
@@ -39,10 +37,10 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
   Function \sQuote{makeX} is used to prepare the explanatory variables
   (\dQuote{X}) used in the estimation of AMM. The first variable of
   \dQuote{X} is always the stock market index. Other variables could be
-  currency, bond returns, or other variables as required.
+  currency, bond returns, or any macro-economic indicator for example.
 
-  If \dQuote{nlags} is \sQuote{NA} (default), then the function tries to
-  find the best lag structure using the AIC.
+  If \dQuote{nlags} is \sQuote{NA} (default), then the function finds
+  the best lag structure using the AIC(n).
 
   \sQuote{lmAMM} calls the \code{stats::lm} to do the
   OLS. \sQuote{print} function on an object of \sQuote{class}
@@ -51,22 +49,19 @@ lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
 
 \value{The function returns an object of \sQuote{class} \dQuote{amm}.
 
-  The functions \sQuote{summary} and \sQuote{print} are provided to
-  print a summary of results and print the \sQuote{lm} command,
-  coefficients, and exposures of the analysis. The function
-  \sQuote{plot} is provided to plot the model residuals and firm
-  returns.
+  Function \sQuote{summary} is provided to print a summary of
+  results. \sQuote{print} prints the coefficients and exposures of the
+  analysis. \sQuote{plot} plots the model residuals and firm returns.
 
-  An object of class \dQuote{amm} is a \sQuote{list} containing
-  the result of \code{stats::lm} function along with the following
-  components:
+  An object of class \dQuote{amm} is a \sQuote{list} containing the
+  output of \code{stats::lm} function which includes \dQuote{residuals},
+  along with the following components:
 
   \item{exposures}{a \sQuote{numeric} containing exposure estimates for
-    the firm j.}
+    the firm.}
 
   \item{s.exposures}{a \sQuote{numeric} containing the HAC adjusted
-    standard error of the exposures estimated for the firm
-    with returns \sQuote{firm.returns}.}
+    standard error of the exposures estimated for the firm.}
 
   \item{nlags}{shows the lag length provided by user.}
 }

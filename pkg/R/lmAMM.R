@@ -1,202 +1,4 @@
-###############
-## One firm AMM
-###############
-## This function takes care of the structural break dates introduced by calculating exposure for sub periods differently
-## This function is used when date are provided in the function
-subperiod.lmAMM <- function(firm.returns,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
-  ## Creating empty frames
-  if(is.null(dates)){
-    dates.no <- c(start(firm.returns),end(firm.returns))
-  } else{
-    dates.no <- dates
-  }
-  exposures <- data.frame(matrix(NA,ncol=ncol(X),nrow=(length(dates.no)-1)))
-  colnames(exposures) <- colnames(X)
-  sds <- exposures
-  periodnames <- NULL
-  
-  ## Getting firm exposure, amm residuals
-  if(is.null(dates)){
-   res <- lmAMM(firm.returns,X,verbose=verbose,nlags=nlags)
-   if(is.null(res)!=TRUE){
-     exposures <- res$exposure
-     sds <- res$s.exposure
-     m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
-     if(residual==TRUE){
-       m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
-     }
-     rval <- list(exposures=exposures,sds=sds,residuals=m.residuals)
-   } else {
-     rval <- NULL
-   }
- }else{
-   tmp <- window(firm.returns,start=dates[1],end=dates[1+1])
-   rhs <- window(X,start=dates[1],end=dates[1+1])
-   res <- lmAMM(firm.returns=tmp,
-                        X=rhs,
-                        verbose=verbose,
-                        nlags=nlags)
-   exposures[1,] <- res$exposure
-   periodnames <- c(periodnames,paste(dates[1],dates[1+1],sep=" TO "))
-   sds[1,] <- res$s.exposure
-   m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
-   colnames(m.residuals) <- paste(dates[1],"to",dates[1+1],sep=".")
-   for(i in 2:(length(dates)-1)){
-     tmp <- window(firm.returns,start=dates[i],end=dates[i+1])
-     rhs <- window(X,start=dates[i],end=dates[i+1])
-     res <- lmAMM(firm.returns=tmp,
-                          X=rhs,
-                          verbose=verbose,
-                          nlags=nlags)
-     exposures[i,] <- res$exposure
-     periodnames <- c(periodnames,paste(dates[i],dates[i+1],sep=" TO "))
-     sds[i,] <- res$s.exposure
-     period.resid <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
-     colnames(period.resid) <- paste(dates[i],"to",dates[i+1],sep=".")
-     m.residuals <- merge(m.residuals, period.resid, all=TRUE)
-   }
-   rownames(exposures) <- rownames(sds) <- periodnames
-   rval <- list(exposures=exposures,sds=sds,residuals=m.residuals)
- } 
-  return(rval)
-}
-
-########################
-# Many firms AMM
-########################
-manyfirmssubperiod.lmAMM <-
-function(firm.returns,X,
-                          lags,dates=NULL, periodnames=NULL,verbose=FALSE){
-  if(is.null(dates)){
-    dates=c(start(X),end(X))
-    periodnames="Full"
-  }
-  nperiods <- length(periodnames)
-  if(length(dates) != (nperiods+1)){
-    cat("Mistake in length of dates versus length of periods.\n")
-    return(NULL)
-  }
-  nfirms <- ncol(firm.returns)
-
-  # Let's get "exposure' and 'sds'. Setting up structures:-
-
-  exposures <- matrix(NA,nrow=nfirms,ncol=nperiods*ncol(X))
-  exposures <- as.data.frame(exposures)
-  rownames(exposures) <- colnames(firm.returns)
-  tmp <- NULL 
-  for(i in 1:length(periodnames)){
-    for(j in 1:NCOL(X)){
-      tmp <-  c(tmp, paste(colnames(X)[j],
-                           periodnames[i],sep="."))
-    }
-  }
-  colnames(exposures) <- tmp
-  sds <- exposures
-  colnames(sds) <- paste("sd",colnames(exposures),sep=".")
-
-  # Setup a list structure for an OLS that failed
-  empty <- list(exposures=rep(NA,ncol(X)),
-                s.exposures=rep(NA,ncol(X)))
-  
-  for(i in 1:NCOL(firm.returns)){
-    cat("AMM estimation for",colnames(firm.returns)[i],"\n")
-    if (verbose) {cat ("AMM estimation for", colnames(firm.returns)[i], "\n")}
-    stock.return <- firm.returns[,i]
-    dataset <- cbind(stock.return, X)   # This is the full time-series
-    this.exp <- this.sds <- NULL
-    for(j in 1:nperiods){              # now we chop it up 
-      t1 <- dates[j]
-      t2 <- dates[j+1]
-      this <- window(dataset,start=t1, end=t2)
-      fe <- lmAMM(this[,1],this[,-1],nlags=lags,verbose)
-      if(is.null(fe)) {fe <- empty}
-      this.exp <- c(this.exp, fe$exposures)
-      this.sds <- c(this.sds, fe$s.exposures)
-    }
-    exposures[colnames(firm.returns)[i],] <- this.exp
-    sds[colnames(firm.returns)[i],] <- this.sds
-  }
-  list(exposures=exposures, sds=sds, sig=exposures/sds)
-}
-
-###############################################
-## Estimating one firm's exposure in one period
-###############################################
-lmAMM <- function(firm.returns, X, nlags=NA, verbose=FALSE) {
-  do.ols <- function(nlags) {
-    tmp <- cbind(firm.returns, X[,1]) # Assume 1st is stock index, and no lags are required there.
-    labels <- c("firm.returns","market.returns")
-    if (NCOL(X) > 1) {
-      for (i in 2:NCOL(X)) {
-        for (j in 0:nlags) {
-          tmp <- cbind(tmp, lag(X[,i], -j))
-          labels <- c(labels, paste(colnames(X)[i], j, sep="."))
-        }
-      }
-    }
-    tmp <- na.omit(tmp)
-    if (nrow(tmp) < 30) {             # refuse to do the work.
-      return(NULL)                    # returns out of do.ols() only
-    }
-
-    colnames(tmp) <- labels          # So the OLS results will look nice
-    lm(firm.returns ~ ., data=as.data.frame(tmp))
-  }
-
-  if (is.na(nlags)) {
-    if (verbose) {cat("Trying to find the best lag structure...\n")}
-    bestlag <- 0
-    bestm <- NULL
-    bestAIC <- Inf
-    for (trylag in 0:min(10,log10(length(firm.returns)))) {
-      thism <- do.ols(trylag)
-      thisAIC <- AIC(thism, k=log(length(thism$fitted.values)))
-      if (verbose) {cat(trylag, " lags, SBC = ", thisAIC, "\n")}
-      if (thisAIC < bestAIC) {
-        bestlag <- trylag
-        bestAIC <- thisAIC
-        bestm <- thism
-      }
-    }
-    nlags <- bestlag
-    m <- bestm
-  } else {
-    m <- do.ols(nlags)
-    if (is.null(m)) {return(NULL)}
-  }
-  # In either event, you endup holding an "m" here.
-  if (verbose) {cat("\n\nThe OLS:\n"); print(summary(m))}
-
-  # Compute a series of exposure measures, and their standard errors.
-  beta <- m$coefficients
-  Sigma <- vcovHAC(m)
-  # First the market.returns
-  exposures <- beta[2]                  # no lags for market.returns
-  s.exposures <- sqrt(Sigma[2,2])
-  # From here on, there's a block of 1+nlags coeffs for each
-  # of the non-market.returns regressors.
-  if (NCOL(X) > 1) {
-    for (i in 2:NCOL(X)) {
-      n.block1 <- 2 + ((i-2)*(1+nlags)) # Just 2 for the 1st case.
-      n.block2 <- length(beta) - n.block1 - (1 + nlags)
-      w <- c(rep(0, n.block1), rep(1, 1+nlags), rep(0, n.block2))
-      exposures <- c(exposures, w %*% beta)
-      s.exposures <- c(s.exposures, sqrt(w %*% Sigma %*% w))
-    }
-  }
-  results <- m
-  names(exposures) <- names(s.exposures) <- colnames(X)
-  results$exposures <- exposures
-  results$s.exposures <- s.exposures
-  results$nlags <- nlags
-  class(results) <- "amm"
-  return(results)
-}
-
-
-###########################
-# Maintaining NAs in AR model
-###########################
+## Function to retain NA positions
 ARinnovations <- function(x) {
   stopifnot(NCOL(x) == 1)
   dt <- NULL
@@ -215,9 +17,8 @@ ARinnovations <- function(x) {
   list(result=result, m=m)
 }
 
-# ---------------------------------------------------------------------------
-# The workhorse called by makeX to return a nice matrix of RHS
-# variables to be used in an analysis. 
+## The workhorse called by makeX to return a nice matrix of RHS
+## variables to be used in an analysis. 
 do.one.piece <- function(market.returns, others, switch.to.innov, market.returns.purge, nlags, verbose=FALSE) {
   thedates <- index(market.returns)
   if (verbose) {
@@ -325,6 +126,191 @@ makeX <- function(market.returns, others,
   X
 }
 
+## One regressor, one period AMM estimation
+lmAMM <- function(firm.returns, X, nlags=NA, verbose=FALSE) {
+  do.ols <- function(nlags) {
+    tmp <- cbind(firm.returns, X[,1]) # Assume 1st is stock index, and no lags are required there.
+    labels <- c("firm.returns","market.returns")
+    if (NCOL(X) > 1) {
+      for (i in 2:NCOL(X)) {
+        for (j in 0:nlags) {
+          tmp <- cbind(tmp, lag(X[,i], -j))
+          labels <- c(labels, paste(colnames(X)[i], j, sep="."))
+        }
+      }
+    }
+    tmp <- na.omit(tmp)
+    if (nrow(tmp) < 30) {             # refuse to do the work.
+      return(NULL)                    # returns out of do.ols() only
+    }
+
+    colnames(tmp) <- labels          # So the OLS results will look nice
+    lm(firm.returns ~ ., data=as.data.frame(tmp))
+  }
+
+  if (is.na(nlags)) {
+    if (verbose) {cat("Trying to find the best lag structure...\n")}
+    bestlag <- 0
+    bestm <- NULL
+    bestAIC <- Inf
+    for (trylag in 0:min(10,log10(length(firm.returns)))) {
+      thism <- do.ols(trylag)
+      thisAIC <- AIC(thism, k=log(length(thism$fitted.values)))
+      if (verbose) {cat(trylag, " lags, SBC = ", thisAIC, "\n")}
+      if (thisAIC < bestAIC) {
+        bestlag <- trylag
+        bestAIC <- thisAIC
+        bestm <- thism
+      }
+    }
+    nlags <- bestlag
+    m <- bestm
+  } else {
+    m <- do.ols(nlags)
+    if (is.null(m)) {return(NULL)}
+  }
+  # In either event, you endup holding an "m" here.
+  if (verbose) {cat("\n\nThe OLS:\n"); print(summary(m))}
+
+  # Compute a series of exposure measures, and their standard errors.
+  beta <- m$coefficients
+  Sigma <- vcovHAC(m)
+  # First the market.returns
+  exposures <- beta[2]                  # no lags for market.returns
+  s.exposures <- sqrt(Sigma[2,2])
+  # From here on, there's a block of 1+nlags coeffs for each
+  # of the non-market.returns regressors.
+  if (NCOL(X) > 1) {
+    for (i in 2:NCOL(X)) {
+      n.block1 <- 2 + ((i-2)*(1+nlags)) # Just 2 for the 1st case.
+      n.block2 <- length(beta) - n.block1 - (1 + nlags)
+      w <- c(rep(0, n.block1), rep(1, 1+nlags), rep(0, n.block2))
+      exposures <- c(exposures, w %*% beta)
+      s.exposures <- c(s.exposures, sqrt(w %*% Sigma %*% w))
+    }
+  }
+  results <- m
+  names(exposures) <- names(s.exposures) <- colnames(X)
+  results$exposures <- exposures
+  results$s.exposures <- s.exposures
+  results$nlags <- nlags
+  class(results) <- "amm"
+  return(results)
+}
+
+## One regressor, with sub periods. 
+subperiod.lmAMM <- function(firm.returns,X,nlags=1,verbose=FALSE,dates=NULL,residual=TRUE){
+  ## Creating empty frames
+  if(is.null(dates)){
+    dates.no <- c(start(firm.returns),end(firm.returns))
+  } else{
+    dates.no <- dates
+  }
+  exposures <- data.frame(matrix(NA,ncol=ncol(X),nrow=(length(dates.no)-1)))
+  colnames(exposures) <- colnames(X)
+  sds <- exposures
+  periodnames <- NULL
+  
+  ## Getting firm exposure, amm residuals
+  if(is.null(dates)){
+   res <- lmAMM(firm.returns,X,verbose=verbose,nlags=nlags)
+   if(is.null(res)!=TRUE){
+     exposures <- res$exposure
+     sds <- res$s.exposure
+     m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
+     if(residual==TRUE){
+       m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
+     }
+     rval <- list(exposures=exposures,sds=sds,residuals=m.residuals)
+   } else {
+     rval <- NULL
+   }
+ }else{
+   tmp <- window(firm.returns,start=dates[1],end=dates[1+1])
+   rhs <- window(X,start=dates[1],end=dates[1+1])
+   res <- lmAMM(firm.returns=tmp,
+                        X=rhs,
+                        verbose=verbose,
+                        nlags=nlags)
+   exposures[1,] <- res$exposure
+   periodnames <- c(periodnames,paste(dates[1],dates[1+1],sep=" TO "))
+   sds[1,] <- res$s.exposure
+   m.residuals <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
+   colnames(m.residuals) <- paste(dates[1],"to",dates[1+1],sep=".")
+   for(i in 2:(length(dates)-1)){
+     tmp <- window(firm.returns,start=dates[i],end=dates[i+1])
+     rhs <- window(X,start=dates[i],end=dates[i+1])
+     res <- lmAMM(firm.returns=tmp,
+                          X=rhs,
+                          verbose=verbose,
+                          nlags=nlags)
+     exposures[i,] <- res$exposure
+     periodnames <- c(periodnames,paste(dates[i],dates[i+1],sep=" TO "))
+     sds[i,] <- res$s.exposure
+     period.resid <- xts(res$residuals,as.Date(attr(res$residuals,"names")))
+     colnames(period.resid) <- paste(dates[i],"to",dates[i+1],sep=".")
+     m.residuals <- merge(m.residuals, period.resid, all=TRUE)
+   }
+   rownames(exposures) <- rownames(sds) <- periodnames
+   rval <- list(exposures=exposures,sds=sds,residuals=m.residuals)
+ } 
+  return(rval)
+}
+
+## Many regressors, many periods, one matrix of RHS
+manyfirmssubperiod.lmAMM <- function(firm.returns,X,
+                          lags,dates=NULL, periodnames=NULL,verbose=FALSE){
+  if(is.null(dates)){
+    dates=c(start(X),end(X))
+    periodnames="Full"
+  }
+  nperiods <- length(periodnames)
+  if(length(dates) != (nperiods+1)){
+    cat("Mistake in length of dates versus length of periods.\n")
+    return(NULL)
+  }
+  nfirms <- ncol(firm.returns)
+
+  # Let's get "exposure' and 'sds'. Setting up structures:-
+
+  exposures <- matrix(NA,nrow=nfirms,ncol=nperiods*ncol(X))
+  exposures <- as.data.frame(exposures)
+  rownames(exposures) <- colnames(firm.returns)
+  tmp <- NULL 
+  for(i in 1:length(periodnames)){
+    for(j in 1:NCOL(X)){
+      tmp <-  c(tmp, paste(colnames(X)[j],
+                           periodnames[i],sep="."))
+    }
+  }
+  colnames(exposures) <- tmp
+  sds <- exposures
+  colnames(sds) <- paste("sd",colnames(exposures),sep=".")
+
+  # Setup a list structure for an OLS that failed
+  empty <- list(exposures=rep(NA,ncol(X)),
+                s.exposures=rep(NA,ncol(X)))
+  
+  for(i in 1:NCOL(firm.returns)){
+    cat("AMM estimation for",colnames(firm.returns)[i],"\n")
+    if (verbose) {cat ("AMM estimation for", colnames(firm.returns)[i], "\n")}
+    stock.return <- firm.returns[,i]
+    dataset <- cbind(stock.return, X)   # This is the full time-series
+    this.exp <- this.sds <- NULL
+    for(j in 1:nperiods){              # now we chop it up 
+      t1 <- dates[j]
+      t2 <- dates[j+1]
+      this <- window(dataset,start=t1, end=t2)
+      fe <- lmAMM(this[,1],this[,-1],nlags=lags,verbose)
+      if(is.null(fe)) {fe <- empty}
+      this.exp <- c(this.exp, fe$exposures)
+      this.sds <- c(this.sds, fe$s.exposures)
+    }
+    exposures[colnames(firm.returns)[i],] <- this.exp
+    sds[colnames(firm.returns)[i],] <- this.sds
+  }
+  list(exposures=exposures, sds=sds, sig=exposures/sds)
+}
 
 ############################################
 ## Summary, print and plot functions for AMM
@@ -360,3 +346,5 @@ plot.amm <- function(x, ...){
   legend("topleft",legend=c("AMM residual","Firm returns"),lty=1:2, lwd=2,
          col=c("indian red", "navy blue"), bty='n')
 }
+
+

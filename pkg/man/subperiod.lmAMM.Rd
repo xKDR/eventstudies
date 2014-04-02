@@ -1,13 +1,13 @@
 \name{subperiod.lmAMM}
 \alias{subperiod.lmAMM}
 
-\title{Function to estimate exposure for a single firm over multiple periods}
+\title{Estimate exposure for a single regressor over multiple periods}
 
-\description{This function typically utilises a firm.returns vector and
-  an X matrix of explanatory variables obtained out of the
-  \sQuote{makeX} function. It computes the exposure for all columns in X
-  for the specified time periods.
+\description{This function estimates exposure for a single regressor
+  over a set of regressands obtained by using \sQuote{makeX}
+  over multiple periods.
 }
+
 
 \usage{
 subperiod.lmAMM(firm.returns,
@@ -19,37 +19,49 @@ subperiod.lmAMM(firm.returns,
 }
 
 \arguments{
-  \item{firm.returns}{a \sQuote{numeric} vector of data for one firm.
+  \item{firm.returns}{a \sQuote{numeric} vector of data for one
+    regressor (firm).
   }
-  \item{X}{a matrix of explanatory variables obtained from
-    the \sQuote{makeX()} function. The first variable is always the
-    stock market index. Other variables could be risk factors
-    such as currency or bond returns, or foreign portfolio inflows.
+
+  \item{X}{a matrix of regressands obtained by using \sQuote{makeX}. 
+    See \sQuote{Details} when this is specified as a market model. 
   }
-  \item{nlags}{\sQuote{integer} of length 1, number of lags of explanatory
-  variables. When unspecified, the best lag using the AIC is used.
+  
+  \item{nlags}{specifies a lag length required from the specified set
+    of regressands. When unspecified, the best lag using the AIC is used.
   }
+
   \item{verbose}{\sQuote{logical}, indicating whether the function
     should print detailed results.
   }
-  \item{dates}{object of \sQuote{Date} class, specifying the time period
-  to estimate exposures for. Default is \sQuote{NULL}. If no dates are
-  mentioned, \sQuote{subperiod.lmAMM} does what \sQuote{firmExposures()}
-  would do, i.e., estimate exposures for the full time period.
+
+  \item{dates}{ a \sQuote{Date} class vector, specifying break points in
+    the time series to be used for sub-period identification.
+    The default value is \sQuote{NULL} resulting in estimates
+    identical to \sQuote{lmAMM}.
   }
+  
   \item{residual}{\sQuote{logical}, returns AMM residuals if TRUE, AMM
-  exposure otherwise. Defaults to \sQuote{TRUE}.}
+    exposure otherwise. Defaults to \sQuote{TRUE}.}
 }
-\value{A \sQuote{list} of length 3 is returned:
-  \item{exposures}{AMM exposure}
-  \item{sds}{HAC adjusted standard errors}
-  \item{residuals}{an \sQuote{xts} object of the residuals from the fitted model}
+
+\details{
+  When \sQuote{dates} is \sQuote{NULL}, resulting estimates from this
+  function is identical to \sQuote{lmAMM}.
+}
+
+\value{A \sQuote{list} object of length 3 is returned with: 
+  \itemize{
+    \item{\dQuote{exposures}: A matrix of exposures by sub-period and regressands.}
+    \item{\dQuote{sds}: HAC adjusted standard errors for all exposures.}
+    \item{\dQuote{residuals}: Contain residuals of class \pkg{xts} from the
+      fitted model for all sub-periods.}
+  }
 }
 
 \author{Vimal Balasubramaniam}
 
-\seealso{ \code{\link{lmAMM}},
-\code{\link{manyfirmssubperiod.lmAMM}}}
+\seealso{ \code{\link{lmAMM}}}
 
 \examples{ 
 data("AMMData")

@@ -74,5 +74,5 @@ X <- makeX(market.returns,
            market.returns.purge = FALSE,
            verbose = FALSE)
 }
-
+head(X)
 \keyword{makeX}

@@ -202,5 +202,7 @@ es <- eventstudy(firm.returns = StockPriceReturns,
                  inference = TRUE,
                  inference.strategy = "bootstrap")
 }
+print(es)
+plot(es)
 
 \keyword{eventstudy}

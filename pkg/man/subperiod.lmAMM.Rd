@@ -76,5 +76,5 @@ res <- subperiod.lmAMM(firm.returns,
                                          "2013-01-01",
                                          "2014-01-20")))
 }
-
+str(res)
 \keyword{subperiod.lmAMM}

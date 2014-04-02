@@ -78,6 +78,6 @@ data(SplitDates)
 result <- phys2eventtime(z = StockPriceReturns,
 			 events = SplitDates,
 			 width = 5)
-}
 str(result)
+}
 \keyword{phys2eventime}

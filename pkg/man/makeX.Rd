@@ -73,6 +73,6 @@ X <- makeX(market.returns,
            switch.to.innov = FALSE,
            market.returns.purge = FALSE,
            verbose = FALSE)
-}
 head(X)
+}
 \keyword{makeX}

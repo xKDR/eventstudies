@@ -201,8 +201,8 @@ es <- eventstudy(firm.returns = StockPriceReturns,
                  remap = "cumsum",
                  inference = TRUE,
                  inference.strategy = "bootstrap")
-}
 print(es)
 plot(es)
+}
 
 \keyword{eventstudy}

@@ -1,13 +1,14 @@
 \name{eventstudy}
 \alias{eventstudy}
 
-\title{Function for performing event study analysis}
+\title{Event study analysis}
 
 \description{
-  %% FIXME
-  \sQuote{eventstudy} performs event study analysis. It calculates
-  returns using a specified model, converts physical dates to event
-  frame, and conducts inference on the unit of interest.
+  \sQuote{eventstudy} provides a easy interface that integrates all
+  functionalities of package \pkg{eventstudies} to undertake event study
+  analysis. It allows the user to specify the type of data adjustment
+  to be done (using the augmented market model functionalities of the
+  package) and then an inference strategy of choice.
 }
 
 \usage{
@@ -25,59 +26,67 @@ eventstudy(firm.returns,
 
 \arguments{
   \item{firm.returns}{
-   a \pkg{zoo} timeseries on which event study is to be performed.
+    a \pkg{zoo} matrix of \sQuote{outcome} or \sQuote{response} series. 
   }
 
   \item{eventList}{
-    \sQuote{data.frame} of two columns containing event dates to pass to
-    \code{\link{phys2eventtime}} function. \dQuote{outcome.unit}
-    consists of column names of series inside \dQuote{firm.returns}, and
-    \dQuote{event.when} is the respective event date.
+    a \code{data.frame} of two columns with event dates (with the column
+    name \dQuote{event.when}) and column names
+    of the \sQuote{response} series from \sQuote{firm.returns} (with the
+    column name \dQuote{outcome.unit}. 
   }
 
-  \item{width}{integer of length 1, creates an event window to
-    study the impact (pre and post event) on the variable.}
+  \item{width}{an \sQuote{integer} of length 1 that specifies a
+    symmetric event window around the event date.
+  }
 
   \item{type}{
-    a scalar of type \sQuote{character} specifying the market
-    model adjustment. See \sQuote{Details}.
+    a scalar of type \sQuote{character} specifying the type of data
+    adjustment required before conducting an event study analysis. See
+    \sQuote{Details}.
   }
 
-  \item{to.remap}{\sQuote{logical}, indicating whether to convert
-    event-window returns into cumulative sum, cumulative product, or
-    re-index.}
+  \item{to.remap}{\sQuote{logical}, indicating whether or not to remap
+    the data in \sQuote{firm.returns}.
+  }
 
   \item{remap}{
-    \sQuote{character}, conversion function for remapping event-window
-    returns. Used when \dQuote{to.remap} is \sQuote{TRUE}.
-  }
+    \sQuote{character}, indicating the type of remap required, 
+    \dQuote{cumsum}, \dQuote{cumprod}, or \dQuote{reindex}. Used when
+    \sQuote{to.remap} is \sQuote{TRUE}. 
+   }
 
   \item{is.levels}{
-    \sQuote{logical}, indicating the format of the data. Set it to
-    \sQuote{FALSE} if the data is in returns format, else \sQuote{TRUE}.
+    \sQuote{logical}, indicating whether data in \sQuote{firm.returns}
+    needs to be converted into percentage returns. If
+    \sQuote{TRUE}, \sQuote{firm.returns} will be converted into
+    percentage returns. 
   }
-  %% FIXME: do you compute confidence interval or use it for computing?
+
   \item{inference}{
-    \sQuote{logical}, specifying whether to compute confidence interval
-    for the estimator.
+    \sQuote{logical}, specifying whether to undertake statistical
+    inference and compute confidence intervals. The default setting is
+    \sQuote{TRUE}. 
   }
 
   \item{inference.strategy}{a \sQuote{character} scalar specifying the
-    inference strategy to compute confidence intervals. Is used only if
-    \dQuote{inference} is \sQuote{TRUE}. Currently supported options are
-    \dQuote{bootstrap} and \dQuote{wilcox}. Defaults to \dQuote{bootstrap}.}
-
+    inference strategy to be used for estimating the confidence
+    interval. Presently, two methods are available: \dQuote{bootstrap}
+    and \dQuote{wilcox}.
+  }
+  
   \item{...}{
-    further arguments to pass to the model.
+    All other arguments to be passed depends on whether \sQuote{type}
+    is \dQuote{marketResidual}, \dQuote{excessReturn}, or
+    \dQuote{lmAMM}. When \dQuote{None}, no additional arguments will be
+    needed. See \sQuote{Details}. 
   }
 }
 
 \details{
-
-  \dQuote{firm.returns} may contain only one series. For performing
-  analysis for a single series, use \sQuote{[} with \code{drop =
-  FALSE} for subsetting the data set. See \code{\link{phys2eventtime}}
-  for more details.
+  \dQuote{firm.returns} can contain only one series. To study a single
+  series, use \sQuote{[} with \code{drop = FALSE} for subsetting the
+  data set. See \code{\link{phys2eventtime}} for more details.
 
   \dQuote{type} currently supports:
   \itemize{
@@ -91,8 +100,9 @@ eventstudy(firm.returns,
     \item{\dQuote{lmAMM}: uses \code{\link{lmAMM}} to perform
       Augmented Market Model estimation.}
 
-    \item{\dQuote{None}: don't use any model.}
+    \item{\dQuote{None}: does not use any model.}
   }
+  
   Arguments to a model type can be sent inside \sQuote{...}. See
   \sQuote{Model arguments} section for details on accepted fields.
 
@@ -100,9 +110,9 @@ eventstudy(firm.returns,
   \itemize{
     \item \dQuote{cumsum}: cumulative sum, uses \code{\link{remap.cumsum}}. [Default]
     \item \dQuote{cumprod}: cumulative product, buy-hold-abnormal-return (BHAR),
-      uses \code{\link{remap.cumprod}}.
+    uses \code{\link{remap.cumprod}}.
     \item \dQuote{reindex}: re-indexes the event window by using
-      \code{\link{remap.event.reindex}}.
+    \code{\link{remap.event.reindex}}.
   }
 
   For computing confidence intervals, the function can either use
@@ -113,13 +123,16 @@ eventstudy(firm.returns,
   \sQuote{...} is directly supplied to the model mentioned in the
   \dQuote{type} argument. See section on \sQuote{Model arguments} for
   more details.
+
+  The argument \sQuote{width} in \code{\link{phys2eventtime}} has been
+  set to zero.
 }
 
 \section{\bold{Model arguments}}{
   Each model can take extra arguments (supplied as \sQuote{...}) apart
   from mandatory ones for finer control over the analysis. Check the
-  respective function documentation for definitions. The arguments are
-  listed here:
+  respective function documentation for definitions. The arguments from
+  the relevant functions are listed here:
 
   \itemize{
     \item \dQuote{marketResidual}: \cr
@@ -137,24 +150,28 @@ eventstudy(firm.returns,
   }
 }
 
-
 \value{
   A list with class attribute \dQuote{es} holding the
   following elements:
 
   \item{eventstudy.output}{
-    a \sQuote{matrix} containing mean/median estimate with
-    confidence interval; \sQuote{NULL} if there are no \dQuote{success}
-    \dQuote{outcomes}.
+    a \sQuote{matrix} containing mean (bootstrap) or median (with
+    wilcoxon) estimate with confidence interval; \sQuote{NULL} if there
+    are no \dQuote{success} \dQuote{outcomes}.
   }
 
-  \item{outcomes}{a character vector having outcome of each event date:}
-
-  \itemize{
-    \item{success: shows the successful use of event date.}
-    \item{wdatamissing: appears when width data is missing around the event.}
-    \item{wrongspan: if event date falls outside the range of physical date.}
-    \item{unitmissing: when the unit (firm name) is missing in the event list.}
+  \item{outcomes}{a character vector that is the output from
+    \code{\link{phys2eventtime}} containing details of the successful use
+    of an event:
+    
+    \itemize{
+      \item{success: shows the successful use of event date.}
+      \item{wdatamissing: appears when width data is missing around the
+      event. This will not appear when this function is used since the
+      argument \sQuote{width} in \code{\link{phys2eventtime}} is set to zero.}
+      \item{wrongspan: if event date falls outside the range of physical date.}
+      \item{unitmissing: when the unit (firm name) is missing in the event list.}
+    }
   }
 
   \item{inference}{
@@ -170,7 +187,6 @@ eventstudy(firm.returns,
     a \sQuote{character} specifying the remapping technique
     used. Options are mentioned in \dQuote{remap} argument description.
   }
-
 }
 
 \author{Vikram Bahure}
@@ -201,8 +217,7 @@ es <- eventstudy(firm.returns = StockPriceReturns,
                  remap = "cumsum",
                  inference = TRUE,
                  inference.strategy = "bootstrap")
-print(es)
-plot(es)
+str(es)
 }
 
 \keyword{eventstudy}

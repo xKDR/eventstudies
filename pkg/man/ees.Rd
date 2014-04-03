@@ -14,48 +14,86 @@
 
 \arguments{
  
- \item{input}{a univariate \pkg{zoo} or \pkg{xts} time series for which
-   tail events identification is required.}
- 
- \item{prob.value}{The cut off (in per cent) on the probability
-   distribution for the tail event.}
+  \item{input}{a univariate \pkg{zoo} or \pkg{xts} time series object}
+  
+  \item{prob.value}{The value (in percent) on the probability
+    distribution to define a tail event.}
 }
 
-\details{ Patnaik, Shah and Singh (2013) uses modified event study methodology in the paper, which is used to understand the impact of extreme tail events on a given variable (foreign investment, stock market returns in this case). Event dates are defined as those on which extreme values of returns or flows are observed. The argument \sQuote{prob.value} defines the extreme tail values on both side of the distribution as event dates.  For instance, if \sQuote{prob.value} is 2.5 then it will consider 2.5 percent tail values on both side of the empirical distribution of the variable as event dates. The paper further differentiates between clustered events (consecutive extreme events) and unclustered events which is described in detail in summary tables.
-This function helps to understand the various feature of the event dates by providing following summary statistics:
-   \itemize{
-    \item \dQuote{Distribution of extreme events}:  Number of events in clustered, unclustered and events used and discarded from the analysis
-    \item \dQuote{Run length distribution}: Table shows number of clustered events with a particular run length
-    \item \dQuote{Quantile values}: Quantile wise distribution of extreme events
-    \item \dQuote{Yearly distribution}: Year wise distribution of extreme events
-  }
-  Please refer to Patnaik, Shah and Singh (2013) for more detailed explanation.
+\details{
+  Tail (Rare) events are often the object of interest in finance. These
+  events are defined as those that have a low probability of
+  occurrence. This function identifies such events based on
+  \sQuote{prob.value} mentioned by the user and generates summary
+  statistics about the events. If \sQuote{prob.value} is 2.5\%, events
+  below 2.5\% (lower tail) and above 97.5\% (upper tail) of the
+  distribution are identified as extreme events. 
+
+  Following statistics is generated for both lower and upper tail
+  events: 
+
+  \itemize{
+    \item \sQuote{extreme.event.distribution} provides summary
+    statistics on the number of consecutive events (\dQuote{clustered}
+    events) and those that are not (\dQuote{unclustered}
+    events). Consecutive events that are \dQuote{mixed}, i.e., with
+    upper (lower) tail event occurring after a lower (upper) tail event,
+    are classified separately. 
+
+    \item \sQuote{runlength}: When events are \dQuote{clustered},
+    \sQuote{runlength} classifies such clusters into different duration
+    bins.  
+
+    \item \sQuote{quantile.values}: Within such events,
+    \sQuote{quantile.values} provide the probability distribution values
+    at 0\%, 25\%, 50\%, 75\% and 100\%, alongside the mean.
+    
+    \item \sQuote{yearly.extreme.event}: A year-wise tabulation of such
+    extreme events, with a clustered event taken as one event. 
+  }  
 }
 
 \value{ A \code{list} object containing:
 
   \item{data.summary}{a \sQuote{data.frame} containing summary of
-    the data set.}
+    the data set minimum, maximum, inter-quartile range, mean, median,
+    standard deviation and quantile values at 5\%, 25\%, 75\% and 95\%.}
 
-  \item{lower.tail}{a \sQuote{list} containing: distribution of extreme
-    events, run length distribution, quantile values, yearly
-    distribution, and the tail events data.}
+  \item{lower.tail}{a \sQuote{list} that contains
+    \sQuote{extreme.event.distribution}, \sQuote{runlength},
+    \sQuote{quantile.values} and \sQuote{yearly.extreme.event} for the
+    events on the lower tail of the distribution. See
+    \sQuote{Details}.}
 
-  \item{upper.tail}{a \sQuote{list} containing: distribution of extreme
-    events, run length distribution, quantile values, yearly
-    distribution, and the tail events data.}
+    \item{upper.tail}{a \sQuote{list} that contains
+    \sQuote{extreme.event.distribution}, \sQuote{runlength},
+    \sQuote{quantile.values} and \sQuote{yearly.extreme.event} for the
+    events on the upper tail of the distribution. See
+    \sQuote{Details}.}
 }
 
-\references{To convert number to words, code uses function
+\references{
+  Ila Patnaik, Nirvikar Singh and Ajay Shah (2013).
+  Foreign Investors under stress: Evidence from
+  India. \emph{International Finance}, \bold{16(2)}, 213-244.
+  URL
+  http://onlinelibrary.wiley.com/doi/10.1111/j.1468-2362.2013.12032.x/abstract
+  and also available at http://macrofinance.nipfp.org.in/releases/PatnaikShahSingh2013_Foreign_Investors.html
+
+  To convert number to words, code uses function
   \href{http://finzi.psych.upenn.edu/R/Rhelp02a/archive/46843.html}{\dQuote{numbers2words}}
   by \href{http://socserv.mcmaster.ca/jfox/}{John Fox} and
   \dQuote{deprintize} function by \href{http://mbq.me/}{Miron Kursa}.
+
 }
 
 \author{Vikram Bahure}
+
+
 \examples{
 library(eventstudies)
 data(EESData)
-input <- EESData$sp500
-output <- ees(input, prob.value = 5)
+input <- EESData$sp500 ## Input S&P 500 as the univariate series
+output <- ees(input, prob.value = 5) ## Estimate 5\% tails.
+str(output)
 }

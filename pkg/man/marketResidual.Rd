@@ -1,22 +1,22 @@
 \name{marketResidual}
 \alias{marketResidual}
 
-\title{This function extracts market return from the firm return.}
+\title{Extract residuals from a market model}
 
-\description{This function extracts market return using regression from
-  the firm return to get the residual return. }
+\description{This function extracts residuals from a market model using
+  function \code{stats:lm}.}
 
 \usage{marketResidual(firm.returns, market.returns)}
 
 \arguments{
 
-  \item{firm.returns}{a \pkg{zoo} time series object with all firm returns.}
+  \item{firm.returns}{a \pkg{zoo} time series object (univariate or
+  otherwise) with firm returns.}
 
   \item{market.returns}{a \pkg{zoo} time series of market index returns.}
 }
 
-\value{Market residual after extracting market returns from the firm
-  return.}
+\value{Residual returns unexplained by market index returns.}
 
 \author{Vikram Bahure}
 

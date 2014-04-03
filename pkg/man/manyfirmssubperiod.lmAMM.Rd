@@ -1,11 +1,12 @@
 \name{manyfirmssubperiod.lmAMM}
 \alias{manyfirmssubperiod.lmAMM}
 
-\title{Compute AMM for multiple firms across several periods}
+\title{Estimate exposure for multiple regressors over multiple periods.}
 
-\description{This function runs AMM for multiple firms at once using
-  the matrix of data obtained from \code{makeX}, and a matrix of LHS
-  variables.}
+\description{\code{\link{manyfirmssubperiod.lmAMM}} estimates exposure
+  for multiple regressands over a set of regressors obtained by using
+  \sQuote{makeX} over multiple periods.
+  }
 
 \usage{
 manyfirmssubperiod.lmAMM(firm.returns,
@@ -17,32 +18,39 @@ manyfirmssubperiod.lmAMM(firm.returns,
 }
 
 \arguments{
+  \item{firm.returns}{a \sQuote{zoo} matrix of data for multiple
+    regressands (firms).
+  }
 
-  \item{firm.returns}{A \pkg{zoo} object of all firms on which AMM is to be
-    run.}
-
-  \item{X}{a \pkg{zoo} object containing at least two regressors
-    generally obtained after applying the \dQuote{makeX} function.}
-
+  \item{X}{a matrix of regressors obtained by using \sQuote{makeX}. 
+  }
+  
   \item{lags}{an integer specifying the number of lags to be used in the
     market model.}
 
-  \item{dates}{a set of dates that mark out subperiods of interest. If
-    dates is \sQuote{NULL}, then full period is considered.}
+  \item{dates}{ a \sQuote{Date} class vector, specifying break points in
+    the time series to be used for sub-period identification.
+    The default value is \sQuote{NULL} resulting in estimates
+    identical to \sQuote{lmAMM} used over multiple regressands.
+  }
 
   \item{periodnames}{a \sQuote{character} vector of names for each
     subperiod that has been marked by the \dQuote{dates} argument.}
 
-  \item{verbose}{Whether to print detailed output. Default is \sQuote{FALSE}}
+  \item{verbose}{\sQuote{logical}, indicating whether the function
+    should print detailed results.
+  }
 }
 
-%% FIXME: \details section!
-%% steps:
-%% - calculates exposures and SDS
-%% - runs AMM for each subperiod for each firm
+\details{
+  This function computes the exposure, and HAC adjusted standard errors
+  to linear augmented market models estimated for several regressands
+  across multiple periods. 
+}
 
 \section{Warning}{Do not have any space between names provided under
-  \dQuote{periodnames}.}
+  \dQuote{periodnames}.
+}
 
 \author{Ajay Shah, Vimal Balasubramaniam}
 

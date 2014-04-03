@@ -11,7 +11,7 @@
 }
 
 \arguments{
-  \item{firm.returns}{a \sQuote{zoo} vector of data for one
+  \item{firm.returns}{a univariate \sQuote{zoo} object of data for one
     regressor (firm).
   }
 

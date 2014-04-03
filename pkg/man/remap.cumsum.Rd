@@ -1,31 +1,31 @@
 \name{remap.cumsum}
 \alias{remap.cumsum}
 
-\title{This function gives the cumulative total of the values (in
-  level or percentage form).}
+\title{Cumulative values}
 
 \description{
-  This function gives the cumulative total of the values. 
+  This function remaps a time series into its cumulative summation. 
 }
 
 \usage{
-remap.cumsum(z, is.pc = TRUE, base = 0)
+remap.cumsum(z, is.pc = FALSE, base = 0)
 }
 
 \arguments{
-  \item{z}{a \pkg{zoo} object indexed by event time, as returned from
+  \item{z}{a \pkg{zoo} object indexed by event time obtained from
     \dQuote{phys2eventtime}.}
 
-  \item{is.pc}{\sQuote{logical}, whether input is a percentage.}
+  \item{is.pc}{\sQuote{logical}, whether input is a percentage. Default
+  value set to \sQuote{FALSE}.}
 
   \item{base}{an integer specifying the base for cumulative sum.}
 }
 
-\value{A \pkg{zoo} series is returned having each column replaced by
-  the cumulative sum of the column.}
+\value{A \pkg{zoo} object with the cumulative summation for each series.
+}
 
 \seealso{
-  eventDays, eventstudyData, phys2eventtime
+  \code{\link{phys2eventtime}}
 }
 
 \examples{
@@ -37,4 +37,5 @@ es.results <- phys2eventtime(z = StockPriceReturns,
                              width = 5)
 es.w <- window(es.results$z.e, start = -5, end = +5)
 eventtime <- remap.cumsum(es.w, is.pc = FALSE, base = 0)
+head(eventtime[,1:5])
 }

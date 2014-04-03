@@ -3,8 +3,8 @@
 
 \title{Estimate exposure for a single regressor over multiple periods}
 
-\description{This function estimates exposure for a single regressor
-  over a set of regressands obtained by using \sQuote{makeX}
+\description{This function estimates exposure for a single regressand
+  over a set of regressors obtained by using \sQuote{makeX}
   over multiple periods.
 }
 
@@ -20,15 +20,16 @@ subperiod.lmAMM(firm.returns,
 
 \arguments{
   \item{firm.returns}{a \sQuote{zoo} vector of data for one
-    regressor (firm).
+    regressand (firm).
   }
 
-  \item{X}{a matrix of regressands obtained by using \sQuote{makeX}. 
+  \item{X}{a matrix of regressors obtained by using \sQuote{makeX}. 
     See \sQuote{Details} when this is specified as a market model. 
   }
   
   \item{nlags}{specifies a lag length required from the specified set
-    of regressands. When unspecified, the best lag using the AIC is used.
+    of regressors. When unspecified, the best lag using the AIC is
+    computed for the market model.
   }
 
   \item{verbose}{\sQuote{logical}, indicating whether the function

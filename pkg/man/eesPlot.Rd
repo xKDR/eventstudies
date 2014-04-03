@@ -1,11 +1,10 @@
 \name{eesPlot}
 \alias{eesPlot}
 
-\title{
-Extreme event study analysis: Plotting clustered and unclustered extreme events returns
-}
+\title{Plotting clustered and unclustered extreme events}
 
-\description{ This function uses modified event study methodology from Patnaik, Shah and Singh (2013) to plot the impact of event series on the response series. 
+\description{ This function plots an event study with extreme events
+  as identified by the function \sQuote{ees}.
 }
 
 \usage{
@@ -20,34 +19,52 @@ eesPlot(z,
 
 \arguments{
   
-  \item{z}{Data object with both response and event series on which
-    event study is to be performed.}
+  \item{z}{a time series object with the response and event series.}
 
-  \item{response.series.name}{Column name of the series in \sQuote{z} on which
-    response is to be observed.}
+  \item{response.series.name}{Column name of the series in \sQuote{z}
+    that will be the \sQuote{outcome} or \sQuote{response} series.}
 
-  \item{event.series.name}{Column name of the series in \sQuote{z} on which
-    event is to be defined.}
+  \item{event.series.name}{Column name of the series in \sQuote{z} that
+  will be the \sQuote{event} series.}
 
-  \item{titlestring}{Title for event study plot.}
+  \item{titlestring}{Title for event study plot}
 
-  \item{ylab}{Y-axis label of the plot.}
+  \item{ylab}{Y-axis label of the plot}
 
-  \item{width}{Width for event study plot.}
+  \item{width}{Time window before and after the event to be plotted}
 
   \item{prob.value}{Cut-off values in the probability distribution (in
-    percentage terms).}
+    percentage terms) to identify extreme events.}
 }
 
-\details{Patnaik, Shah, and Singh (2013) use modified event study methodology to draw the event study plot. The function draws the event dates from the tail of the event series. Extreme events are then formatted by fusing the consecutive events on same side of the tail into one event, further fusing the response series on a clustered event and removing the mixed clusters (consecutive events from left and right tails). After formatting the events, response series is converted to event time frame and mean response is constructed for all event dates. The function also estimates confidence interval using bootstrap inference strategy.  
+\details{
+  This function draws from many different functions in the package:
+  \itemize{
+    \item Identify extreme events based on \sQuote{prob.value} on the
+    series named \sQuote{event.series.name} in \sQuote{z}, similar to
+    the function \code{ees};
+    
+    \item Treats clusters in the events identified as one event by
+    cumulating the series named \sQuote{response.series.name} in
+    \sQuote{z} for the period in the cluster;
 
-The paper defines extreme tail events as event dates and the argument \sQuote{prob.value} is used for the same. The function using  the argument \sQuote{event.series.name} picks a column from the data object \sQuote{z}, which is used to extract extreme event dates. While, argument \sQuote{response.series.name} gets the response series on which impact of the extreme event dates is to be analysed. 
+    \item Obtains confidence intervals using \code{inference.bootstrap}
+    and the presents the anaylsis in a graph. 
+  }
 
-Please refer to the paper Patnaik, Shah and Singh (2013) for detailed explanation.
 }
 
 \value{A plot of the response series with lower and upper tail events
   defined on the event series.}
+
+\references{
+  Ila Patnaik, Nirvikar Singh and Ajay Shah (2013).
+  Foreign Investors under stress: Evidence from
+  India. \emph{International Finance}, \bold{16(2)}, 213-244.
+  URL
+  http://onlinelibrary.wiley.com/doi/10.1111/j.1468-2362.2013.12032.x/abstract
+  and also available at http://macrofinance.nipfp.org.in/releases/PatnaikShahSingh2013_Foreign_Investors.html
+}
 
 \examples{
 library(eventstudies)

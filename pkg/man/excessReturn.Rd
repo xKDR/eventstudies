@@ -1,18 +1,21 @@
 \name{excessReturn}
 \alias{excessReturn}
 
-\title{Estimate excess returns}
+\title{Estimate excess returns over the market}
 
-\description{ This function estimates excess returns. If the firm return
-  is \dQuote{firm.returns} and market return is \dQuote{market.returns},
-  then output will be \dQuote{firm.returns} less
-  \dQuote{market.returns}.  }
+\description{
+  This function estimates excess returns over the market. If the firm
+  return is \dQuote{firm.returns} and market return is
+  \dQuote{market.returns}, then output will be \dQuote{firm.returns}
+  less \dQuote{market.returns}.
+}
 
 \usage{excessReturn(firm.returns, market.returns)}
 
 \arguments{
   \item{firm.returns}{a \pkg{zoo} timeseries with firm returns from
     which excess returns from market are to be calculated.}
+  
   \item{market.returns}{a \pkg{zoo} object containing market index
     returns.}
 }

@@ -1,30 +1,34 @@
 \name{remap.cumprod}
 \alias{remap.cumprod}
 
-\title{Compute geometric returns.}
+\title{Cumulative geometric values}
 
-\description{This function computes the geometric returns for a given
+\description{This function computes the cumulative geometric values for a given
   \pkg{zoo} object.}
 
-\usage{remap.cumprod(z, is.pc = TRUE, is.returns = TRUE, base = 100)}
+\usage{
+   remap.cumprod(z, is.pc = FALSE, is.returns = TRUE, base = 100)
+}
 
 \arguments{
+  \item{z}{a \pkg{zoo} object indexed by event time obtained from
+  \code{\link{phys2eventtime}}.} 
 
-  \item{z}{a \pkg{zoo} object indexed by event time, as returned from
-    \dQuote{phys2eventtime}.}
+  \item{is.pc}{\sQuote{logical}, whether input is a percentage. Default
+  value set to \sQuote{FALSE}.}
 
-  \item{is.pc}{\sQuote{logical}, whether input is a percentage.}
-
-  \item{is.returns}{\sQuote{logical}, whether input is returns.}
+  \item{is.returns}{\sQuote{logical}, whether input is a returns series.}
 
   \item{base}{an integer specifying the base for cumulative product.}
 }
 
-\value{A \pkg{zoo} series is returned with each column replaced by the
-  product of \dQuote{base} and the cumulative product of the column.}
+\value{A \pkg{zoo} object with the cumulative product for each series,
+  representing a buy-hold return estimate.
+}
+
 
 \seealso{
-phys2eventtime
+ \code{\link{phys2eventtime}}
 }
 
 \examples{
@@ -39,4 +43,4 @@ eventtime <- remap.cumprod(es.w,
                            is.returns = TRUE,
                            base = 100)
 }
-
+head(eventtime[,1:5])

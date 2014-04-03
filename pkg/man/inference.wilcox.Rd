@@ -20,15 +20,17 @@ inference.wilcox(es.w,
 
 \arguments{
  
-  \item{es.w}{a \pkg{zoo} series indexed by event time. It is the
-    \dQuote{z.e} component of the list returned by function
-    \dQuote{phys2eventtime}.}
+  \item{es.w}{
+    a \pkg{zoo} object indexed by event time: the \dQuote{z.e}
+    component of the list returned by the \code{\link{phys2eventtime}}
+    function.
+  }
 
-  \item{to.plot}{a \sQuote{logical}. indicating whether to  generate an
+  \item{to.plot}{a \sQuote{logical} indicating whether to generate an
     eventstudy plot of the inference estimated. Defaults to
     \sQuote{TRUE}.
   }
-
+  
   \item{xlab}{the x-axis label of the generated plot. Used if
     \dQuote{to.plot} is \sQuote{TRUE}.}
   
@@ -39,7 +41,6 @@ inference.wilcox(es.w,
     \sQuote{TRUE}.}
 }
 
-%% FIXME: add \details section?
 
 \value{A \sQuote{matrix} with 3 columns: the lower confidence interval (CI),
   the mean, and the upper CI which are the result of wilcox inference.}
@@ -59,6 +60,5 @@ es.results <- phys2eventtime(z = StockPriceReturns,
                              width = 5)
 es.w <- window(es.results$z.e, start = -5, end = +5)
 eventtime <- remap.cumsum(es.w, is.pc = FALSE, base = 0)
-infr <- inference.wilcox(es.w = eventtime, to.plot = FALSE)
-head(infr)
+inference.wilcox(es.w = eventtime, to.plot = FALSE)
 }

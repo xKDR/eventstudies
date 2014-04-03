@@ -1,16 +1,17 @@
 \name{inference.bootstrap}
 \alias{inference.bootstrap}
 
-\title{Do bootstrap inference for event study analysis}
+\title{Bootstrap inference for event study estimator}
 
 \description{
-  This function does bootstrap inference to generate distribution of
-  average of all the cumulative returns time-series.
+  This function obtains a boostrapped confidence interval for estimates
+  of magnitude over the event horizon. 
 }
 
 \usage{
 inference.bootstrap(es.w,
                    to.plot = TRUE,
+                   boot.run = 1000,
                    xlab = "Event time", 
 		   ylab = "Cumulative returns of response series", 
 		   main = "Event study plot")
@@ -18,9 +19,14 @@ inference.bootstrap(es.w,
 
 \arguments{
   \item{es.w}{
-    a \pkg{zoo} series indexed by event time: the \dQuote{z.e}
+    a \pkg{zoo} object indexed by event time: the \dQuote{z.e}
     component of the list returned by the \code{\link{phys2eventtime}}
     function.
+  }
+
+  \item{boot.run}{
+    A \sQuote{numeric}, controlling the number of simulations required
+    for the bootstrap.
   }
 
   \item{to.plot}{a \sQuote{logical} indicating whether to generate an
@@ -36,12 +42,6 @@ inference.bootstrap(es.w,
 
   \item{main}{main title of the plot. Used if \dQuote{to.plot} is
     \sQuote{TRUE}.}
-}
-
-%% FIXME: more details
-\details{
-  Function \sQuote{boot} from package \pkg{boot} is used for
-  bootstrapping with \emph{replicates} of 1000.
 }
 
 \value{

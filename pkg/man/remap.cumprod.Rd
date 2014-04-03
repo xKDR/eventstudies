@@ -42,5 +42,6 @@ eventtime <- remap.cumprod(es.w,
                            is.pc = TRUE,
                            is.returns = TRUE,
                            base = 100)
-}
 head(eventtime[,1:5])
+}
+

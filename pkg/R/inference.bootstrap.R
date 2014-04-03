@@ -48,6 +48,7 @@ plot.inference <- function(inference, xlab="Event time",
 # This function does bootstrap inference for the entire
 # Ecar, i.e. main graph of the event study.
 inference.bootstrap <- function(es.w, to.plot=TRUE,
+                                boot.run=1000,
                                 xlab = "Event time",
                                 ylab = "Cumulative returns of response series",
                                 main = "Event study plot") {
@@ -55,7 +56,8 @@ inference.bootstrap <- function(es.w, to.plot=TRUE,
     colMeans(transposed[d,], na.rm=TRUE)
   }
   tmp <- t(as.matrix(es.w))
-  b <- boot(tmp, Ecar, R=1000)
+  b <- boot(tmp, Ecar, R=boot.run)
+  
 
   results <- NULL
   for (i in 1:ncol(b$t)) {

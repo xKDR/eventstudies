@@ -15,7 +15,10 @@ marketResidual <- function(firm.returns, market.returns){
     
     fulldata <- merge(x,y,all=TRUE)
     fulldata <- window(fulldata,start=startdate,end=enddate)
-    
+    if (length(fulldata) == 0) {
+      warning("no common window found");
+      return(NULL)
+    }
     ## Storing NA observations
     non.na.loc <- complete.cases(fulldata)
     fulldata <- fulldata[complete.cases(fulldata),]
@@ -30,12 +33,16 @@ marketResidual <- function(firm.returns, market.returns){
   
   ## Checking
   if(NCOL(firm.returns)>1){
-    result <- NULL
-    for(i in 1:NCOL(firm.returns)){
-      res <- mm.residual(y=firm.returns[,i],x=market.returns)
-      result <- merge(result,res,all=TRUE)
+    result <- lapply(firm.returns, function(i)
+           {
+             mm.residual(y=i,x=market.returns)
+           })
+    names(result) <- colnames(firm.returns)
+    chk <- which(do.call("c",lapply(result,is.null))==TRUE)
+    if(length(chk)!=0){
+      result <- result[-chk]
     }
-    colnames(result) <- colnames(firm.returns)
+    result <- do.call("merge.zoo", result)
   } else {
     result <- mm.residual(y=firm.returns,x=market.returns)
   }

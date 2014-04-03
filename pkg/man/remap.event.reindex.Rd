@@ -11,9 +11,10 @@
 
 \usage{remap.event.reindex(z)}
 
-\arguments{  
+\arguments{
   \item{z}{z is a zoo object obtained from
-  \code{\link{phys2eventtime}}. 
+    \code{\link{phys2eventtime}}. 
+  }
 }
 
 \value{Rescaled returns value}

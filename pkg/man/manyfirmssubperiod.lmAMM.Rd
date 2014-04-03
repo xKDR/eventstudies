@@ -1,10 +1,10 @@
 \name{manyfirmssubperiod.lmAMM}
 \alias{manyfirmssubperiod.lmAMM}
 
-\title{Estimate exposure for multiple regressors over multiple periods.}
+\title{Estimate exposure for many regressands over multiple periods.}
 
 \description{\code{\link{manyfirmssubperiod.lmAMM}} estimates exposure
-  for multiple regressands over a set of regressors obtained by using
+  for many regressands over a set of regressors obtained by using
   \sQuote{makeX} over multiple periods.
   }
 

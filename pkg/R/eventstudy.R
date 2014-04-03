@@ -2,7 +2,7 @@ eventstudy <- function(firm.returns,
                        eventList,
                        width = 10,
                        is.levels =  FALSE,
-                       type = "marketResidual",
+                       type = "None",
                        to.remap = TRUE,
                        remap = "cumsum",
                        inference = TRUE,
@@ -71,7 +71,7 @@ eventstudy <- function(firm.returns,
   index(outputModel) <- as.Date(index(outputModel))
     
 ### Convert to event frame
-  es <- phys2eventtime(z=outputModel, events=eventList, width=width)
+  es <- phys2eventtime(z=outputModel, events=eventList, width=0)
 
   if (is.null(es$z.e) || length(es$z.e) == 0) {
     es.w <- NULL

@@ -8,34 +8,37 @@
 ## Value: Market residual after extracting market returns from the firm return
 
 marketResidual <- function(firm.returns, market.returns){
+  mm.residual <- function(y,x){
+    ## Identify start and end date
+    startdate <- start(x)
+    enddate <- end(x)
+    
+    fulldata <- merge(x,y,all=TRUE)
+    fulldata <- window(fulldata,start=startdate,end=enddate)
+    
+    ## Storing NA observations
+    non.na.loc <- complete.cases(fulldata)
+    fulldata <- fulldata[complete.cases(fulldata),]
+    colnames(fulldata) <- c("x","y")
+    reg <- lm(y ~ x, data = fulldata)
+    
+    result <- rep(NA,length(non.na.loc))
+    result[non.na.loc] <- reg$residuals
+    result <- zoo(result,order.by=index(x))
+    result
+  }
+  
   ## Checking
   if(NCOL(firm.returns)>1){
-    result <- mm.residual(firm.returns[,1], market.returns)
-    for(i in 2:NCOL(firm.returns)){
-      res <- mm.residual(firm.returns[,i], market.returns)
-      result <- cbind(result,res)
+    result <- NULL
+    for(i in 1:NCOL(firm.returns)){
+      res <- mm.residual(y=firm.returns[,i],x=market.returns)
+      result <- merge(result,res,all=TRUE)
     }
     colnames(result) <- colnames(firm.returns)
   } else {
-    result <- mm.residual(firm.returns, market.returns)
+    result <- mm.residual(y=firm.returns,x=market.returns)
   }
-  result <- zoo(result)
   return(result)
 }
 
-mm.residual <- function(firm.returns, market.returns){
-  ## Storing NA observations
-    na.date <- firm.returns[which(complete.cases(firm.returns)==FALSE)]
-    firm <- firm.returns
-    market <- market.returns
-    mm.data <- merge(firm,market,all=TRUE)
-    colnames(mm.data) <- c("firm","market")
-    reg <- lm(firm ~ market, data = mm.data)
-    resid <- xts(reg$residuals,as.Date(attr(reg$residuals,"names")))
-    suppressWarnings(tot.resid <- rbind(resid,
-                                        xts(rep(NA,NROW(na.date)),
-                                            index(na.date))))
-    colnames(tot.resid) <- "firm.residual"
-  return(tot.resid)
-
-}

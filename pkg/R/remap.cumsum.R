@@ -1,6 +1,6 @@
 
 # If is.pc then a value like "1" means 0.01
-remap.cumsum <- function(z, is.pc=TRUE, base=0) {
+remap.cumsum <- function(z, is.pc=FALSE, base=0) {
   z <- firstValueZero(z)
   for (i in 1:NCOL(z)) {
     tmp <- z[,i]

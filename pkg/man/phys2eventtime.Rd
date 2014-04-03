@@ -55,7 +55,7 @@ phys2eventtime(z, events, width = 10)
 \value{
   Returns a \sQuote{list} of two elements:
 
-  \item{z.e}{a \pkg{zoo}/\pkg{xts} object indexed with event time; \dQuote{NULL} if
+  \item{z.e}{a \pkg{zoo} object indexed with event time; \dQuote{NULL} if
   there are no \dQuote{success} in \dQuote{outcomes}.}
 
   \item{outcomes}{a character vector with outcome definition for each event.}

@@ -7,60 +7,63 @@
   exposure and residuals.}
 
 \usage{
-lmAMM(firm.returns, X, nlags = NA, verbose = FALSE)
+   lmAMM(firm.returns, X, nlags = NULL, verbose = FALSE)
 }
 
 \arguments{
+  \item{firm.returns}{a \sQuote{zoo} vector of data for one
+    regressor (firm).
+  }
 
-  \item{firm.returns}{a \pkg{zoo} time series object of firm returns.}
+  \item{X}{a matrix of regressors obtained by using \sQuote{makeX}. 
+    See \sQuote{Details} when this is specified as a market model. 
+  }
+  
+  \item{nlags}{specifies a lag length required from the specified set
+    of regressors. When unspecified, the best lag using the AIC is used.
+  }
 
-  \item{X}{a time series of explanatory variables obtained from the
-    \sQuote{makeX} function. See \sQuote{Details}.}
-
-  \item{nlags}{an \sQuote{integer} with the number of lags of
-    explanatory variables.}
-
-  \item{verbose}{\sQuote{logical}. Print function details. If
-    \sQuote{TRUE}, print detailed results while running. Default is
-    \sQuote{FALSE}.}
-
+  \item{verbose}{\sQuote{logical}. If \sQuote{TRUE}, prints details of
+    piece-wise analysis.}
 }
 
-% FIXME: review/rewrite?
 \details{
-  The function relates firm returns to the regressors (market
-  index movements, currency fluctuations etc.) using the linear model
-  \sQuote{lm}.  It computes firm exposure for all the regressors in
-  columns of \dQuote{X} and subsequently estimates AMM residuals by
-  purging out variation from the regressand.
+  This function estimates a linear regression model with multiple
+  variables using \sQuote{lm}, stores coefficients as
+  \sQuote{exposures}, and HAC adjusted standard errors as \sQuote{s.exposures}. 
 
-  Function \sQuote{makeX} is used to prepare the explanatory variables
-  (\dQuote{X}) used in the estimation of AMM. The first variable of
-  \dQuote{X} is always the stock market index. Other variables could be
-  currency, bond returns, or any macro-economic indicator for example.
+  This function is the core engine for other functions that estimate
+  AMMs. Each regression is expected in this package to have a minimum of
+  30 observations, a condition that translates into a month of
+  daily data. If the total number of observations is less than 30, the
+  function returns \sQuote{NULL}. 
+  
+  Function \sQuote{makeX} is used to obtain a matrix of regressors used
+  as input for \sQuote{X}. 
 
-  If \dQuote{nlags} is \sQuote{NA} (default), then the function finds
+  If \dQuote{nlags} is \sQuote{NULL}, then the function finds
   the best lag structure using the AIC(n).
 
-  \sQuote{lmAMM} calls the \code{stats::lm} to do the
-  OLS. \sQuote{print} function on an object of \sQuote{class}
+  \sQuote{lmAMM} calls \code{stats::lm} to estimate the linear model.
+  \sQuote{print} function on an object of \sQuote{class}
   \dQuote{amm} can be used to see the call (formula) to \code{lm}.
 }
 
-\value{The function returns an object of \sQuote{class} \dQuote{amm}.
+\value{The function returns an object of \sQuote{class}
+  \dQuote{amm}; \sQuote{NULL} if \code{nrow(firm.returns) < 30}.
 
   Function \sQuote{summary} is provided to print a summary of
   results. \sQuote{print} prints the coefficients and exposures of the
   analysis. \sQuote{plot} plots the model residuals and firm returns.
 
   An object of class \dQuote{amm} is a \sQuote{list} containing the
-  output of \code{stats::lm} function which includes \dQuote{residuals},
+  output of \code{stats::lm} (which includes \dQuote{residuals}),
   along with the following components:
 
   \item{exposures}{a \sQuote{numeric} containing exposure estimates for
     the firm.}
 
-  \item{s.exposures}{a \sQuote{numeric} containing the HAC adjusted
+  \item{s.exposures}{a \sQuote{numeric} containing HAC adjusted
     standard error of the exposures estimated for the firm.}
 
   \item{nlags}{shows the lag length provided by user.}
@@ -88,6 +91,7 @@ X <- makeX(market.returns,
           verbose = FALSE)
 
 a <- lmAMM(firm.returns, X, nlags = 0, verbose = FALSE)
+
 print(a)
 }
 

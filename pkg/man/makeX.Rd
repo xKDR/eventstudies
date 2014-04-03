@@ -1,10 +1,10 @@
 \name{makeX}
 \alias{makeX}
 
-\title{Prepare explanatory variables for computation of Augmented Market
+\title{Prepare regressors for computation of Augmented Market
   Models}
 
-\description{\sQuote{makeX} is used to prepare explanatory variables for
+\description{\sQuote{makeX} is used to prepare regressors for
   computation of Augmented Market Models. It can be used to create a
   matrix of explanatory variables in the form specified by the user for
   estimation of AMM.}
@@ -22,43 +22,55 @@ makeX(market.returns,
 \arguments{
 
   \item{market.returns}{a univariate timeseries object of \sQuote{class}
-    \pkg{zoo}. It is generally fixed to the stock market index.}
+    \pkg{zoo}. In market models, this is normally the returns of a
+    stock market index.}
 
-  \item{others}{a \pkg{zoo} matrix with other regressors of interest in the
-    AMM. This could be currency, bond returns, foreign flows, or any
-    other variable.}
+  \item{others}{a \pkg{zoo} matrix of other regressors for the multiple
+  regression model.}
 
   \item{switch.to.innov}{a \sQuote{logical} vector with an element for
     each column in \dQuote{others} specifying whether to switch the
-    column from raw values to AR residuals. Default is \sQuote{TRUE} for
-    all the columns.}
+    column from raw values to auto-regressive residuals. Default is \sQuote{TRUE} for
+    all the columns. See \sQuote{Details}.}
 
   \item{market.returns.purge}{a \sQuote{logical} indicating
   whether to purge the effects of \dQuote{others} from
-  \dQuote{market.returns}.}
+  \dQuote{market.returns}. See \sQuote{Details}.}
 
- \item{nlags}{The number of lag terms present in this model explaining
-   \dQuote{market.returns} using all these \dQuote{others}.}
+ \item{nlags}{ a integer specifying the number of lags required when
+   \sQuote{market.returns.purge} is \sQuote{TRUE}.}
 
- \item{dates}{Specified break dates as \sQuote{Date} object.}
+ \item{dates}{ a \sQuote{Date} vector, default set to \sQuote{NULL},
+ specifying breaks. See \sQuote{Details}.} 
 
- \item{verbose}{Whether detailed output is required. Default is
-   \sQuote{FALSE}.}
+ \item{verbose}{ a \sQuote{logical} value, with the default being
+   \sQuote{FALSE}, specifying whether detailed output is required.} 
+
 }
 
-\details{ Augmented market model (AMM) purges out the variation of market returns and variable of interest as specified in \sQuote{others}, from the dependent variable. This function creates the regressors for the AMM model using market returns and \sQuote{others}. 
+\details{
+  This function prepares the regressors of interest for the purpose of
+  running aumgmented market models.
 
+  The \sQuote{logical} vector \sQuote{switch.to.innov} is applicable
+  only to the regressors in \sQuote{others} matrix and not to the time
+  series vector in \sQuote{market.returns}. 
+  
+  When \sQuote{market.returns.purge} is \sQuote{TRUE}, residuals from a
+  regression of \sQuote{market.returns} on \sQuote{others} is
+  obtained. If \sQuote{dates} are provided, this regression is done
+  within sub-periods as identified by the \sQuote{dates} vector. When
+  \sQuote{dates} is set to default value of \sQuote{NULL}, the start and
+  end points of \sQuote{market.returns} is taken as the period for
+  estimation. 
 }
 
 \section{Warning}{The input data should not contain \sQuote{NA}s, as is
-  required by the \dQuote{lm} function to compute linear estimates. Please use
+  required by the \dQuote{lm} function to estimate a linear regression. Please use
   \sQuote{na.omit} before feeding data into this function.}
   
 
-\value{This function generates a user specified matrix of explanatory
-  variables that will be further used in running Augmented market
-  models.}
-
+\value{a time-series object of regressors is returned.}
 
 \author{Ajay Shah, Vimal Balasubramaniam}
 

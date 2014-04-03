@@ -37,7 +37,7 @@ phys2eventtime <- function(z, events, width=10) {
     return(list(result=remapped, outcome="success"))
   }
   
-  answer <- apply(events, 1, timeshift)
+  answer <- apply(events, 1, timeshift) #this thing loops on num events
   answer <- unlist(answer, recursive = FALSE)
   rownums <- grep("outcome", names(answer))
   outcomes <- as.character(do.call("c", answer[rownums]))

@@ -1,14 +1,15 @@
 \name{ees}
 \alias{ees}
 
-\title{
-Extreme events study analysis: Summary statistics
+\title{ Summary statistics of extreme events }
+
+\description{
+  This function generates summary statistics for identification and
+  analysis of extreme events. 
 }
 
-\description{ This function generates summary statistics table from Patnaik, Shah and Singh (2013), using a univariate time series.}
-
 \usage{
-ees(input, prob.value)
+   ees(input, prob.value)
 }
 
 \arguments{

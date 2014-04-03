@@ -19,7 +19,7 @@ subperiod.lmAMM(firm.returns,
 }
 
 \arguments{
-  \item{firm.returns}{a \sQuote{numeric} vector of data for one
+  \item{firm.returns}{a \sQuote{zoo} vector of data for one
     regressor (firm).
   }
 

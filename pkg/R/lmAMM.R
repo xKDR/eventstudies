@@ -2,7 +2,7 @@
 ARinnovations <- function(x) {
   stopifnot(NCOL(x) == 1)
   dt <- NULL
-  if (class(x) == "zoo") {
+  if (any(c("xts","zoo") %in% class(x))) {
     dt <- index(x)
     x <- as.numeric(x)
   }
@@ -127,7 +127,7 @@ makeX <- function(market.returns, others,
 }
 
 ## One regressor, one period AMM estimation
-lmAMM <- function(firm.returns, X, nlags=NA, verbose=FALSE) {
+lmAMM <- function(firm.returns, X, nlags=NULL, verbose=FALSE) {
   do.ols <- function(nlags) {
     tmp <- cbind(firm.returns, X[,1]) # Assume 1st is stock index, and no lags are required there.
     labels <- c("firm.returns","market.returns")
@@ -148,13 +148,14 @@ lmAMM <- function(firm.returns, X, nlags=NA, verbose=FALSE) {
     lm(firm.returns ~ ., data=as.data.frame(tmp))
   }
 
-  if (is.na(nlags)) {
-    if (verbose) {cat("Trying to find the best lag structure...\n")}
+  if (is.null(nlags)) {
+    if(verbose) {cat("Trying to find the best lag structure...\n")}
     bestlag <- 0
     bestm <- NULL
     bestAIC <- Inf
     for (trylag in 0:min(10,log10(length(firm.returns)))) {
       thism <- do.ols(trylag)
+      if (is.null(m)) {return(NULL)}
       thisAIC <- AIC(thism, k=log(length(thism$fitted.values)))
       if (verbose) {cat(trylag, " lags, SBC = ", thisAIC, "\n")}
       if (thisAIC < bestAIC) {
@@ -346,5 +347,3 @@ plot.amm <- function(x, ...){
   legend("topleft",legend=c("AMM residual","Firm returns"),lty=1:2, lwd=2,
          col=c("indian red", "navy blue"), bty='n')
 }
-
-

@@ -28,6 +28,9 @@ data(StockPriceReturns)
 data(NiftyIndex)
 er.result <- excessReturn(firm.returns = StockPriceReturns,
 			  market.returns = NiftyIndex)
+output <- merge(er.result$Infosys,StockPriceReturns$Infosys,NiftyIndex,all=FALSE)
+colnames(output) <- c("excess.return","raw.returns","nifty.returns")
+tail(output) 
 }
 
 \keyword{excessReturn}

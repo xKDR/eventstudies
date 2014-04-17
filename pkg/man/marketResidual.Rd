@@ -26,6 +26,9 @@ data(NiftyIndex)
 
 mm.result <- marketResidual(firm.returns = StockPriceReturns,
                             market.returns = NiftyIndex)
+output <- merge(mm.result$Infosys,StockPriceReturns$Infosys,NiftyIndex,all=FALSE)
+colnames(output) <- c("market.residual","raw.returns","nifty.returns")
+tail(output) 
 
 }
 

@@ -21,6 +21,11 @@ remap.cumsum(z, is.pc = FALSE, base = 0)
   \item{base}{an integer specifying the base for cumulative sum.}
 }
 
+\details{This function remaps a time series into ints cumulative summation.
+	 Function assigns first value as zero in the event window (-width) before cumulating the values.     
+	    
+}
+
 \value{A \pkg{zoo} object with the cumulative summation for each series.
 }
 
@@ -37,5 +42,8 @@ es.results <- phys2eventtime(z = StockPriceReturns,
                              width = 5)
 es.w <- window(es.results$z.e, start = -5, end = +5)
 eventtime <- remap.cumsum(es.w, is.pc = FALSE, base = 0)
+check.output <- cbind(es.w[,1],eventtime[,1])
+colnames(check.output) <- c("abnormal.returns","cumulative.abnormal.returns")
+check.output
 head(eventtime[,1:5])
 }

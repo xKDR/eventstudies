@@ -55,10 +55,14 @@ inference.wilcox(es.w,
 \examples{
 data(StockPriceReturns)
 data(SplitDates)
+## Converting physical dates to event time frame
 es.results <- phys2eventtime(z = StockPriceReturns,
                              events = SplitDates,
                              width = 5)
 es.w <- window(es.results$z.e, start = -5, end = +5)
+
+## Cumulating event window
 eventtime <- remap.cumsum(es.w, is.pc = FALSE, base = 0)
+## Constructing confidence interval using wilcoxon inference strategy
 inference.wilcox(es.w = eventtime, to.plot = FALSE)
 }

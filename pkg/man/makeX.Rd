@@ -76,10 +76,10 @@ makeX(market.returns,
 
 \examples{
 data("AMMData")
-
 market.returns <- AMMData$index.nifty
 currency.returns <- AMMData$currency.inrusd
 
+## Constructing regressors (independent variables) for AMM
 X <- makeX(market.returns,
            others = currency.returns,
            switch.to.innov = FALSE,

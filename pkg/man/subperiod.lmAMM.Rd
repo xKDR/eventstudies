@@ -72,6 +72,7 @@ firm.returns <- AMMData$Infosys
 market.returns <- AMMData$index.nifty
 currency.returns <- AMMData$currency.inrusd
 
+## Constructing regressors for AMM
 regressors <- makeX(market.returns,
                     others = currency.returns,
                     switch.to.innov = TRUE,

@@ -69,6 +69,7 @@ eesPlot(z,
 \examples{
 library(eventstudies)
 data(EESData)
+## Generating event study plots (using modified event study methodology)
 eesPlot(z = EESData,
         response.series.name = "nifty",
         event.series.name = "sp500",

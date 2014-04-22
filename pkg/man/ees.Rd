@@ -89,11 +89,12 @@
 
 \author{Vikram Bahure}
 
-
 \examples{
 library(eventstudies)
 data(EESData)
-input <- EESData$sp500 ## Input S&P 500 as the univariate series
-output <- ees(input, prob.value = 5) ## Estimate 5\% tails.
+## Input S&P 500 as the univariate series	
+input <- EESData$sp500
+## Constructing summary statistics for 5% tail values (5% on both sides)
+output <- ees(input, prob.value = 5) 
 str(output)
 }

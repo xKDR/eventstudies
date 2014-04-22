@@ -26,10 +26,13 @@
 data(StockPriceReturns)
 data(SplitDates)
 
+## Converting to event time frame
 es.results <- phys2eventtime(z = StockPriceReturns,
                              events = SplitDates,
                              width = 5)
 es.w <- window(es.results$z.e, start = -5, end = +5)
+
+## Reindexing event time (t=0) to 100
 eventtime <- remap.event.reindex(es.w)
 head(eventtime[,1:5])
 }

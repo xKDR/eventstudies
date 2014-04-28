@@ -85,8 +85,9 @@ result <- phys2eventtime(z = StockPriceReturns,
 c.no <- as.numeric(colnames(result$z.e))
 cnames <- SplitDates[c.no[1],]
 phys.output <- as.numeric(result$z.e[as.character(c(-5:5)), as.character(c.no[1])])
-loc <- which(index(StockPriceReturns)%in%SplitDates[c.no[1], "event.when"])
-raw.data <- as.numeric(StockPriceReturns[c((loc-5):(loc+5)), SplitDates[c.no[1], "outcome.unit"]])
+loc <- which(index(StockPriceReturns) \%in\% SplitDates[c.no[1], "event.when"])
+raw.data <- as.numeric(StockPriceReturns[c((loc-5):(loc+5)),
+                       SplitDates[c.no[1], "outcome.unit"]])
 check.output <- cbind(raw.data, phys.output)
 check.output
 }

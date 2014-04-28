@@ -172,5 +172,5 @@ str(firm.exposure)
  using \textit{eventstudy} function. which is presented in
  \textit{eventstudies} vignette.
  
-\bibliographystyle{jss} \bibliography{amm}
+\bibliographystyle{jss} \bibliography{AMM}
 \end{document}

@@ -78,6 +78,8 @@
 
 \examples{
 data("AMMData")
+data(StockPriceReturns)
+data(NiftyIndex)
 
 firm.returns <- AMMData[,"Infosys"]
 market.returns <- AMMData[,"index.nifty"]

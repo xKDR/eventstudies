@@ -236,7 +236,6 @@ es <- eventstudy(firm.returns = AMMData[, "Infosys", drop = FALSE],
                  ## model args
                  market.returns = AMMData[, "index.nifty"],
                  others = AMMData[, "currency.inrusd"],
-                 switch.to.innov = FALSE,
                  market.returns.purge = FALSE
                  )
 str(es)

@@ -37,11 +37,7 @@ eventstudy <- function(firm.returns,
       tmp.res <- zoo(x = tmp, order.by = as.Date(names(tmp)))
     }
     ## Estimating AMM regressors
-    regressors <- makeX(market.returns = extra.var$market.returns,
-                        others = extra.var$others,
-                        switch.to.innov = extra.var$switch.to.innov,
-                        market.returns.purge = extra.var$market.returns.purge,
-                        nlags = extra.var$nlags)
+    regressors <- makeX(...)
     if(NCOL(firm.returns)==1){
       ## One firm
       outputModel <- timeseriesAMM(firm.returns = firm.returns,
@@ -83,6 +79,7 @@ eventstudy <- function(firm.returns,
       attr(outputModel, "dimnames") <- list(NULL, firmNames)
       colnames(outputModel) <- firmNames
   }
+
   es <- phys2eventtime(z = outputModel, events=eventList, width=0)
 
   if (is.null(es$z.e) || length(es$z.e) == 0) {
@@ -151,7 +148,7 @@ print.es <- function(x, ...){
   print(x$eventstudy.output)
   cat("\n","Event outcome has",length(which(x$outcomes=="success")),
       "successful outcomes out of", length(x$outcomes),"events:","\n")
-  x$outcomes
+  print(x$outcomes)
 }
 
 summary.es <- function(object, ...){
@@ -159,6 +156,10 @@ summary.es <- function(object, ...){
 }
 
 plot.es <- function(x, xlab = NULL, ylab = NULL, ...){
+  if (NCOL(x$eventstudy.output) < 3) {
+      cat("Error: No confidence bands available to plot.\n")
+      return(invisible(NULL))
+  }
   big <- max(abs(x$eventstudy.output))
   hilo <- c(-big,big)
   width <- (nrow(x$eventstudy.output)-1)/2

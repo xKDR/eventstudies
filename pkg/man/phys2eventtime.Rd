@@ -72,6 +72,8 @@ phys2eventtime(z, events, width = 10)
   \code{\link{findInterval}}
 }
 
+\author{Ajay Shah, Chirag Anand, Vikram Bahure, Vimal Balasubramaniam}
+
 \examples{
 data(StockPriceReturns)
 data(SplitDates)
@@ -80,10 +82,12 @@ data(SplitDates)
 result <- phys2eventtime(z = StockPriceReturns,
 			 events = SplitDates,
 			 width = 5)
+print(result$z.e[as.character(-3:3)])
+print(result$outcomes)
 
 ## Checking conversion to event time frame for first successful event date
 c.no <- as.numeric(colnames(result$z.e))
-cnames <- SplitDates[c.no[1],]
+cnames <- SplitDates[c.no[1], ]
 phys.output <- as.numeric(result$z.e[as.character(c(-5:5)), as.character(c.no[1])])
 loc <- which(index(StockPriceReturns) \%in\% SplitDates[c.no[1], "event.when"])
 raw.data <- as.numeric(StockPriceReturns[c((loc-5):(loc+5)),

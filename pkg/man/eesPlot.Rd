@@ -66,6 +66,8 @@ eesPlot(z,
   and also available at http://macrofinance.nipfp.org.in/releases/PatnaikShahSingh2013_Foreign_Investors.html
 }
 
+\author{Vikram Bahure, Vimal Balasubramaniam}
+
 \examples{
 library(eventstudies)
 data(EESData)

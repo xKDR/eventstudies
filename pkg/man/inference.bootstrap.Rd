@@ -56,6 +56,8 @@ inference.bootstrap(es.w,
   \code{\link{inference.wilcox}}
 }
 
+\author{Vikram Bahure, Vimal Balasubramaniam}
+
 \examples{
 data(StockPriceReturns)
 data(SplitDates)

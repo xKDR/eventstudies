@@ -87,7 +87,7 @@
 
 }
 
-\author{Vikram Bahure}
+\author{Vikram Bahure, Vimal Balasubramaniam}
 
 \examples{
 library(eventstudies)

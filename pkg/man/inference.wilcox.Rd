@@ -45,7 +45,7 @@ inference.wilcox(es.w,
 \value{A \sQuote{matrix} with 3 columns: the lower confidence interval (CI),
   the mean, and the upper CI which are the result of wilcox inference.}
 
-\author{Vikram Bahure}
+\author{Vikram Bahure, Vimal Balasubramaniam}
 
 \seealso{
   \code{\link{phys2eventtime}}

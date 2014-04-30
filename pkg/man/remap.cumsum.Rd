@@ -33,6 +33,8 @@ remap.cumsum(z, is.pc = FALSE, base = 0)
   \code{\link{phys2eventtime}}
 }
 
+\author{Chirag Anand, Vikram Bahure, Vimal Balasubramaniam}
+
 \examples{
 data(StockPriceReturns)
 data(SplitDates)

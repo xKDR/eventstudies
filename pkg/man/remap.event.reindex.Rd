@@ -22,6 +22,9 @@
 \seealso{
  \code{\link{phys2eventtime}}
 }
+
+\author{Chirag Anand, Vikram Bahure, Vimal Balasubramaniam}
+
 \examples{
 data(StockPriceReturns)
 data(SplitDates)

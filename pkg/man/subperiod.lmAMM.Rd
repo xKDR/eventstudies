@@ -60,7 +60,7 @@ subperiod.lmAMM(firm.returns,
   }
 }
 
-\author{Vimal Balasubramaniam}
+\author{Chirag Anand, Vikram Bahure, Vimal Balasubramaniam}
 
 \seealso{ \code{\link{lmAMM}}}
 

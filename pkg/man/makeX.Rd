@@ -72,7 +72,7 @@ makeX(market.returns,
 
 \value{a time-series object of regressors is returned.}
 
-\author{Ajay Shah, Vimal Balasubramaniam}
+\author{Ajay Shah, Chirag Anand, Vikram Bahure, Vimal Balasubramaniam}
 
 \examples{
 data("AMMData")

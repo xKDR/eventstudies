@@ -188,7 +188,7 @@ eventstudy(firm.returns,
   }
 }
 
-\author{Vikram Bahure}
+\author{Ajay Shah, Chirag Anand, Vikram Bahure, Vimal Balasubramaniam}
 
 \seealso{ \code{\link{lmAMM}},
   \code{\link{marketResidual}},	
@@ -235,8 +235,8 @@ es <- eventstudy(firm.returns = AMMData[, "Infosys", drop = FALSE],
                  inference.strategy = "bootstrap",
                  ## model args
                  market.returns = AMMData[, "index.nifty"],
-                 others = AMMData[, "currency.inrusd"],
-                 market.returns.purge = FALSE
+                 others = AMMData[, c("currency.inrusd", "call.money.rate")],
+                 market.returns.purge = TRUE
                  )
 str(es)
 plot(es)

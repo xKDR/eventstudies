@@ -69,7 +69,7 @@
   \item{nlags}{shows the lag length provided by user.}
 }
 
-\author{Ajay Shah, Vimal Balasubramaniam}
+\author{Ajay Shah, Chirag Anand, Vikram Bahure, Vimal Balasubramaniam}
 
 \seealso{
   \code{\link{makeX}}

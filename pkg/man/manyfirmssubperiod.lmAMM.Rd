@@ -52,7 +52,7 @@ manyfirmssubperiod.lmAMM(firm.returns,
   \dQuote{periodnames}.
 }
 
-\author{Ajay Shah, Vimal Balasubramaniam}
+\author{Chirag Anand, Vikram Bahure, Vimal Balasubramaniam}
 
 \seealso{
 \code{\link{lmAMM}}

@@ -94,15 +94,17 @@ X <- makeX(market.returns,
 
 ## Augmented market model residual
 amm.result <- lmAMM(firm.returns, X, nlags = 0, verbose = FALSE)
-names(amm.result)
+plot(amm.result)
+
 amm.residual <- residuals(amm.result)
 amm.residual <- zoo(amm.residual,as.Date(names(amm.residual)))
 
 ## Checking output: Comparing augmented market model residual, raw returns, nifty returns
 output <- merge(amm.residual, StockPriceReturns$Infosys, NiftyIndex,
-                all=FALSE)
-colnames(output) <- c("amm.residual", "raw.returns", "nifty.returns")
-tail(output) 
+                all = FALSE)
+colnames(output) <- c("AMM Residual", "Raw Returns", "Nifty Returns")
+tail(output)
+plot(output)
 }
 
 \keyword{lmAMM}

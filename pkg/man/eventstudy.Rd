@@ -4,7 +4,7 @@
 \title{Event study analysis}
 
 \description{
-  \sQuote{eventstudy} provides a easy interface that integrates all
+  \sQuote{eventstudy} provides an easy interface that integrates all
   functionalities of package \pkg{eventstudies} to undertake event study
   analysis. It allows the user to specify the type of data adjustment
   to be done (using the augmented market model functionalities of the
@@ -30,10 +30,9 @@ eventstudy(firm.returns,
   }
 
   \item{eventList}{
-    a \code{data.frame} of two columns with event dates (with the column
-    name \dQuote{event.when}) and column names
-    of the \sQuote{response} series from \sQuote{firm.returns} (with the
-    column name \dQuote{outcome.unit}. 
+    a \code{data.frame} of two columns with event dates (colname:
+    \dQuote{event.when}) and column names of the \sQuote{response}
+    series from \sQuote{firm.returns} (colname \dQuote{outcome.unit}).
   }
 
   \item{width}{an \sQuote{integer} of length 1 that specifies a
@@ -218,6 +217,30 @@ es <- eventstudy(firm.returns = StockPriceReturns,
                  inference = TRUE,
                  inference.strategy = "bootstrap")
 str(es)
+plot(es)
+
+## Event study using Augment Market Model
+data("AMMData")
+events <- data.frame(outcome.unit = "Infosys",
+                     event.when = c("2012-03-01", "2012-04-01"),
+                     stringsAsFactors = FALSE)
+
+es <- eventstudy(firm.returns = AMMData[, "Infosys", drop = FALSE],
+                 eventList = events,
+                 width = 10,
+                 type = "lmAMM",
+                 to.remap = TRUE,
+                 remap = "cumsum",
+                 inference = TRUE,
+                 inference.strategy = "bootstrap",
+                 ## model args
+                 market.returns = AMMData[, "index.nifty"],
+                 others = AMMData[, "currency.inrusd"],
+                 switch.to.innov = FALSE,
+                 market.returns.purge = FALSE
+                 )
+str(es)
+plot(es)
 }
 
 \keyword{eventstudy}

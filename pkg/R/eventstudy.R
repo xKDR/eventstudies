@@ -11,7 +11,7 @@ eventstudy <- function(firm.returns,
                                         # type = "marketResidual", "excessReturn", "AMM", "None"
   ## arguments to the model
   extra.var <- list(...)
-
+  
   if (type == "None" && !is.null(firm.returns)) {
     outputModel <- firm.returns
   }
@@ -23,6 +23,11 @@ eventstudy <- function(firm.returns,
 ### Run models
   ## AMM
   if (type == "lmAMM") {
+    if (is.null(ncol(firm.returns))) {
+        stop("firm.returns should be a zoo series with at least one column. Use '[' with 'drop = FALSE'.")
+    }
+    firmNames <- colnames(firm.returns)
+
     ## AMM residual to time series
     timeseriesAMM <- function(firm.returns, X, verbose = FALSE, nlags = 1) {
       tmp <- resid(lmAMM(firm.returns = firm.returns,
@@ -53,7 +58,8 @@ eventstudy <- function(firm.returns,
                                           verbose = FALSE,
                                           nlags = 1)
                           })
-      outputModel <- do.call("merge",tmp.resid)
+      outputModel <- zoo(tmp.resid,
+                         order.by = as.Date(rownames(tmp.resid)))
     }
   } ## end AMM
 
@@ -71,7 +77,13 @@ eventstudy <- function(firm.returns,
   index(outputModel) <- as.Date(index(outputModel))
     
 ### Convert to event frame
-  es <- phys2eventtime(z=outputModel, events=eventList, width=0)
+  ## change the dimensions if there is only one firm
+  if (is.null(ncol(outputModel))) {
+      attr(outputModel, "dim") <- c(length(outputModel), 1)
+      attr(outputModel, "dimnames") <- list(NULL, firmNames)
+      colnames(outputModel) <- firmNames
+  }
+  es <- phys2eventtime(z = outputModel, events=eventList, width=0)
 
   if (is.null(es$z.e) || length(es$z.e) == 0) {
     es.w <- NULL

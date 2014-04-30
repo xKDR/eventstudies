@@ -337,13 +337,24 @@ print.amm <- function(x, ...){
   print.default(x$exposures)
 }
 
-plot.amm <- function(x, ...){
+plot.amm <- function(x, xlab = NULL, ylab = NULL, ...){
   tmp.x <- zoo(as.numeric(resid(x)), as.Date(names(resid(x))))
   tmp.f <- zoo(x$model$firm.returns, index(tmp.x))
   tmp <- merge(tmp.x,tmp.f)
   colnames(tmp) <- c("amm.residuals","firm.returns")
-  plot(tmp, screen=1, lty=1:2, lwd=2, col=c("indian red", "navy blue"),ylab="",
-       xlab="")
-  legend("topleft",legend=c("AMM residual","Firm returns"),lty=1:2, lwd=2,
+
+  ## assign own labels if they're missing
+  if (is.null(ylab)) {
+      ylab <- paste0("AMM residuals")
+  }
+
+  if (is.null(xlab)) {
+      xlab <- ""
+  }
+
+  plot(tmp, screen=1, lty=1:2, lwd=2, col=c("indian red", "navy blue"),
+       ylab = ylab, xlab = xlab, ...)
+
+  legend("topleft",legend=c("AMM residual","Firm returns"), lty=1:2, lwd=2,
          col=c("indian red", "navy blue"), bty='n')
 }

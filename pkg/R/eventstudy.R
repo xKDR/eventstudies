@@ -147,11 +147,32 @@ summary.es <- function(object, ...){
   object$outcomes
 }
 
-plot.es <- function(x, ...){
+plot.es <- function(x, xlab = NULL, ylab = NULL, ...){
   big <- max(abs(x$eventstudy.output))
   hilo <- c(-big,big)
   width <- (nrow(x$eventstudy.output)-1)/2
-  plot(-width:width, x$eventstudy.output[,2], type="l", lwd=2, ylim=hilo, ...)
+
+  ## assign own labels if they're missing
+  if (is.null(ylab)) {
+      if (x$remap == "cumsum") {
+          remapLabel <- "Cum."
+      } else if (x$remap == "cumprod") {
+          remapLabel <- "Cum. product"
+      } else if (x$remap == "reindex") {
+          remapLabel <- "Re-index"
+      } else {
+          remapLabel <- ""
+      }
+      ylab <- paste0("(", remapLabel, ")", " change in response series (%)")
+  }
+
+  if (is.null(xlab)) {
+      xlab <- "Event time"
+  }
+
+  plot(-width:width, x$eventstudy.output[,2], type="l", lwd=2, ylim=hilo,
+       xlab = xlab, ylab = ylab, ...)
+
   points(-width:width, x$eventstudy.output[,2])
   lines(-width:width, x$eventstudy.output[,"2.5%"],
         lwd=1, lty=2, ...)

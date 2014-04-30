@@ -144,19 +144,18 @@ eventstudy <- function(firm.returns,
 #########################
 ## Functions for class es
 #########################
+
 print.es <- function(x, ...){
-  cat("The", x$inference, "inference output for CI and",
-      colnames(x$eventstudy.output)[2], "response:", "\n")
-  print.default(x$eventstudy.output)
+  cat("Event study", colnames(x$eventstudy.output)[2], "response with",
+      x$inference, "inference for CI:\n")
+  print(x$eventstudy.output)
+  cat("\n","Event outcome has",length(which(x$outcomes=="success")),
+      "successful outcomes out of", length(x$outcomes),"events:","\n")
+  x$outcomes
 }
 
 summary.es <- function(object, ...){
-  cat("Event study", colnames(object$eventstudy.output)[2], "response with",
-      object$inference, "inference for CI:\n")
-  print(object$eventstudy.output)
-  cat("\n","Event outcome has",length(which(object$outcomes=="success")),
-      "successful outcomes out of", length(object$outcomes),"events:","\n")
-  object$outcomes
+    print.es(object, ...)
 }
 
 plot.es <- function(x, xlab = NULL, ylab = NULL, ...){

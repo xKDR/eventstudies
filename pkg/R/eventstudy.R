@@ -19,15 +19,16 @@ eventstudy <- function(firm.returns,
   if (is.levels == TRUE) {
     firm.returns <- diff(log(firm.returns)) * 100
   }
-  
+
+  ## handle single series
+  if (is.null(ncol(firm.returns))) {
+      stop("firm.returns should be a zoo series with at least one column. Use '[' with 'drop = FALSE'.")
+  }
+  firmNames <- colnames(firm.returns)
+
 ### Run models
   ## AMM
   if (type == "lmAMM") {
-    if (is.null(ncol(firm.returns))) {
-        stop("firm.returns should be a zoo series with at least one column. Use '[' with 'drop = FALSE'.")
-    }
-    firmNames <- colnames(firm.returns)
-
     ## AMM residual to time series
     timeseriesAMM <- function(firm.returns, X, verbose = FALSE, nlags = 1) {
       tmp <- resid(lmAMM(firm.returns = firm.returns,

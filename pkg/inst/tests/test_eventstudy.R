@@ -57,5 +57,14 @@ expect_that(a, equals(structure(list(z.e = structure(c(NA, NA, NA, NA, 285.325,
                                          "wdatamissing", "wrongspan"),
                                        class = "factor")),
                                 .Names = c("z.e", "outcomes" ))))
+
+## Check the previous date
+cat("\nTesting handling of missing data on event date: ")
+eventdate <- "2004-01-10"
+eventdate_output <- "2004-01-09"
+eventslist <- data.frame(outcome.unit = "ITC", event.when = eventdate,
+                         stringsAsFactors = FALSE)
+a <- phys2eventtime(p, eventslist, width = 2)
+expect_that(as.numeric(a$z.e["0",]),
+            equals(as.numeric(p$ITC[as.Date(eventdate_output), ])))
 })
-## TODO: check for missing data on event time, it should pick up data on the last available timestamp.

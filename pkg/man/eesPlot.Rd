@@ -58,12 +58,13 @@ eesPlot(z,
   defined on the event series.}
 
 \references{
-  Ila Patnaik, Nirvikar Singh and Ajay Shah (2013).
-  Foreign Investors under stress: Evidence from
-  India. \emph{International Finance}, \bold{16(2)}, 213-244.
-  URL
-  http://onlinelibrary.wiley.com/doi/10.1111/j.1468-2362.2013.12032.x/abstract
-  and also available at http://macrofinance.nipfp.org.in/releases/PatnaikShahSingh2013_Foreign_Investors.html
+  \cite{Ila Patnaik, Nirvikar Singh and Ajay Shah (2013).
+    Foreign Investors under stress: Evidence from
+    India.
+    International Finance, 16(2), 213-244.
+    \link{http://onlinelibrary.wiley.com/doi/10.1111/j.1468-2362.2013.12032.x/abstract}
+    \link{http://macrofinance.nipfp.org.in/releases/PatnaikShahSingh2013_Foreign_Investors.html}
+  }
 }
 
 \author{Vikram Bahure, Vimal Balasubramaniam}

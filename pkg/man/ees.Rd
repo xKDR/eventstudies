@@ -73,18 +73,18 @@
 }
 
 \references{
-  Ila Patnaik, Nirvikar Singh and Ajay Shah (2013).
-  Foreign Investors under stress: Evidence from
-  India. \emph{International Finance}, \bold{16(2)}, 213-244.
-  URL
-  http://onlinelibrary.wiley.com/doi/10.1111/j.1468-2362.2013.12032.x/abstract
-  and also available at http://macrofinance.nipfp.org.in/releases/PatnaikShahSingh2013_Foreign_Investors.html
+  \cite{Ila Patnaik, Nirvikar Singh and Ajay Shah (2013).
+    Foreign Investors under stress: Evidence from
+    India.
+    International Finance, 16(2), 213-244.
+    \link{http://onlinelibrary.wiley.com/doi/10.1111/j.1468-2362.2013.12032.x/abstract}
+    \link{http://macrofinance.nipfp.org.in/releases/PatnaikShahSingh2013_Foreign_Investors.html}
+  }
 
   To convert number to words, code uses function
   \href{http://finzi.psych.upenn.edu/R/Rhelp02a/archive/46843.html}{\dQuote{numbers2words}}
   by \href{http://socserv.mcmaster.ca/jfox/}{John Fox} and
   \dQuote{deprintize} function by \href{http://mbq.me/}{Miron Kursa}.
-
 }
 
 \author{Vikram Bahure, Vimal Balasubramaniam}
@@ -92,9 +92,9 @@
 \examples{
 library(eventstudies)
 data(EESData)
-## Input S&P 500 as the univariate series	
+## Input S&P 500 as the univariate series
 input <- EESData$sp500
 ## Constructing summary statistics for 5% tail values (5% on both sides)
-output <- ees(input, prob.value = 5) 
+output <- ees(input, prob.value = 5)
 str(output)
 }

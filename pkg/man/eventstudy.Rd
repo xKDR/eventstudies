@@ -1,7 +1,7 @@
 \name{eventstudy}
 \alias{eventstudy}
 
-\title{Event study analysis}
+\title{Perform event study analysis}
 
 \description{
   \sQuote{eventstudy} provides an easy interface that integrates all

@@ -2,7 +2,7 @@
 \alias{inference.wilcox}
 
 \title{
-  Wilcox inference for event study analysis
+  Wilcox inference for event study estimator
 }
 
 \description{

@@ -1,7 +1,7 @@
 \name{manyfirmssubperiod.lmAMM}
 \alias{manyfirmssubperiod.lmAMM}
 
-\title{Estimate exposure for many regressands over multiple periods.}
+\title{Estimate exposure for many regressands over multiple periods}
 
 \description{\code{\link{manyfirmssubperiod.lmAMM}} estimates exposure
   for many regressands over a set of regressors obtained by using

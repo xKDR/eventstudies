@@ -2,7 +2,7 @@
 \alias{remap.event.reindex}
 
 \title{
-  Reindex value within event window
+  Re-index value within event window
 }
 
 \description{

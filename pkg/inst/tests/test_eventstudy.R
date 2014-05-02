@@ -58,3 +58,4 @@ expect_that(a, equals(structure(list(z.e = structure(c(NA, NA, NA, NA, 285.325,
                                        class = "factor")),
                                 .Names = c("z.e", "outcomes" ))))
 })
+## TODO: check for missing data on event time, it should pick up data on the last available timestamp.

@@ -1,9 +1,9 @@
 \name{eventstudies-package}
-\alias{eventstudies}
+\alias{eventstudies-package}
 \docType{package}
 
 \title{
-  An R package for conducting event studies.
+  eventstudies: R package for conducting event studies
 }
 
 \description{

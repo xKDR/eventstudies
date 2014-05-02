@@ -27,6 +27,27 @@ test_that("test.interfaces", {
     expect_that(expected_outcomes, equals(test_es$outcomes))
     expect_is(test_es, "es")
 
+### None
+    cat("Checking no model output: ")
+    expected_mean <- c(0, -0.197406699931557, -0.804299958306487,
+                       0.0135570496689663, -0.418062964428412,
+                       0.904144365357373, -0.806779427723603)
+    expected_outcomes <- c("success", "success")
+
+    test_events <- data.frame(outcome.unit = "ONGC",
+                              event.when = c("2011-08-01", "2010-05-14"),
+                              stringsAsFactors = FALSE)
+    test_returns<- StockPriceReturns[complete.cases(StockPriceReturns$ONGC), "ONGC",
+                                     drop = FALSE]
+    test_es <- eventstudy(firm.returns = test_returns,
+                          eventList = test_events,
+                          width = 3,
+                          type = "None")
+
+    expect_that(expected_mean, equals(test_es$eventstudy.output[, "Mean"]))
+    expect_that(expected_outcomes, equals(test_es$outcomes))
+    expect_is(test_es, "es")
+
 ### AMM interface
     cat("Checking AMM interface: ")
     expected_mean <-  c(0, 0.135927645042554, -0.600457594252805, 0.631525565290171,
@@ -152,3 +173,17 @@ test_that("test.interfaces", {
     expect_false(isTRUE(all.equal(test_es, test_es_inference)))
 
 })                                       # end test_that()
+
+test_that("test.arguments", {
+    load("test_StockPriceReturns.rda")
+
+    cat("Checking single series handling: ")
+    test_events <- data.frame(outcome.unit = "ONGC",
+                              event.when = c("2011-08-01", "2010-05-14"),
+                              stringsAsFactors = FALSE)
+    test_returns<- StockPriceReturns$ONGC
+    expect_error(eventstudy(firm.returns = test_returns,
+                            eventList = test_events,
+                            width = 3,
+                            type = "None"))
+})

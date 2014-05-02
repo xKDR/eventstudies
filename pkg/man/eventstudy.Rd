@@ -221,11 +221,11 @@ plot(es)
 
 ## Event study using Augment Market Model
 data("AMMData")
-events <- data.frame(outcome.unit = "Infosys",
+events <- data.frame(outcome.unit = c("Infosys", "TCS"),
                      event.when = c("2012-04-01", "2012-06-01"),
                      stringsAsFactors = FALSE)
 
-es <- eventstudy(firm.returns = AMMData[, "Infosys", drop = FALSE],
+es <- eventstudy(firm.returns = AMMData[, c("Infosys", "TCS")],
                  eventList = events,
                  width = 10,
                  type = "lmAMM",

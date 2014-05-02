@@ -60,10 +60,9 @@ eesPlot(z,
 \references{
   \cite{Ila Patnaik, Nirvikar Singh and Ajay Shah (2013).
     Foreign Investors under stress: Evidence from
-    India.
-    International Finance, 16(2), 213-244.
-    \link{http://onlinelibrary.wiley.com/doi/10.1111/j.1468-2362.2013.12032.x/abstract}
-    \link{http://macrofinance.nipfp.org.in/releases/PatnaikShahSingh2013_Foreign_Investors.html}
+    India. International Finance, 16(2), 213-244.
+    \url{http://onlinelibrary.wiley.com/doi/10.1111/j.1468-2362.2013.12032.x/abstract}
+    \url{http://macrofinance.nipfp.org.in/releases/PatnaikShahSingh2013_Foreign_Investors.html}
   }
 }
 

@@ -7,7 +7,7 @@
   \sQuote{eventstudy} provides an easy interface that integrates all
   functionalities of package \pkg{eventstudies} to undertake event study
   analysis. It allows the user to specify the type of data adjustment
-  to be done (using the augmented market model functionalities of the
+  to be done (using market model functionalities of the
   package) and then an inference strategy of choice.
 }
 
@@ -123,8 +123,8 @@ eventstudy(firm.returns,
   \dQuote{type} argument. See section on \sQuote{Model arguments} for
   more details.
 
-  The argument \sQuote{width} in \code{\link{phys2eventtime}} has been
-  set to zero.
+  \code{\link{phys2eventtime}} is called with \sQuote{width} set to
+  zero when called from this function.
 }
 
 \section{\bold{Model arguments}}{

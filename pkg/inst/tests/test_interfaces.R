@@ -4,7 +4,7 @@ test_that("test.interfaces", {
     load("test_SplitDates.rda")
     load("test_StockPriceReturns.rda")
     load("test_NiftyIndex.rda")
-    load("test_usdinr.rda")
+    load("test_USDINR.rda")
 
 ### Basic event study with default args (market residuals)
     cat("Checking market residuals interface: ")
@@ -96,7 +96,7 @@ test_that("test.interfaces", {
                           to.remap = TRUE,
                           remap = "cumsum")
 
-    expect_error(expect_that(test_es, equals(test_es_remap)))
+    expect_false(isTRUE(all.equal(test_es, test_es_remap)))
 
     ## cumprod
     test_es <- eventstudy(firm.returns = test_returns,
@@ -113,7 +113,7 @@ test_that("test.interfaces", {
                           to.remap = TRUE,
                           remap = "cumprod")
 
-    expect_error(expect_that(test_es, equals(test_es_remap)))
+    expect_false(isTRUE(all.equal(test_es, test_es_remap)))
 
 ### Inference
     cat("Checking inference interface: ")
@@ -132,7 +132,7 @@ test_that("test.interfaces", {
                           inference = FALSE,
                           inference.strategy = "bootstrap")
 
-    expect_error(expect_that(test_es_inference, equals(test_es)))
+    expect_false(isTRUE(all.equal(test_es, test_es_inference)))
 
     ## wilcoxon
     test_es_inference <- eventstudy(firm.returns = test_returns,
@@ -149,4 +149,6 @@ test_that("test.interfaces", {
                           inference = FALSE,
                           inference.strategy = "wilcoxon")
 
-    expect_error(expect_that(test_es_inference, equals(test_es)))
+    expect_false(isTRUE(all.equal(test_es, test_es_inference)))
+
+})                                       # end test_that()

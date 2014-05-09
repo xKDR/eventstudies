@@ -67,12 +67,10 @@ subperiod.lmAMM(firm.returns,
 \examples{ 
 data("AMMData")
 
-## Create RHS before running subperiod.lmAMM()
 firm.returns <- AMMData$Infosys
 market.returns <- AMMData$index.nifty
 currency.returns <- AMMData$currency.inrusd
 
-## Constructing regressors for AMM
 regressors <- makeX(market.returns,
                     others = currency.returns,
                     switch.to.innov = TRUE,
@@ -81,7 +79,6 @@ regressors <- makeX(market.returns,
                     dates = as.Date(c("2012-02-01","2013-01-01","2014-01-20")),
                     verbose = FALSE)
 
-## Run AMM for one firm across different periods
 res <- subperiod.lmAMM(firm.returns,
                        X = regressors,
                        nlags = 1,

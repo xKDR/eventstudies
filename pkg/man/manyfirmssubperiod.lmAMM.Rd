@@ -59,16 +59,12 @@ manyfirmssubperiod.lmAMM(firm.returns,
 }
 
 \examples{
-
-## Running manyfirmssubperiod.lmAMM() involves as many steps as working
-## with onefirmAMM.
 data("AMMData")
 
 firm.returns <- AMMData[, c("Infosys","TCS")]
 market.returns <- AMMData[, "index.nifty"]
 currency.returns <- AMMData[, "currency.inrusd"]
 
-## Creating X for AMM estimation using makeX function
 X <- makeX(market.returns,
            others = currency.returns,
            nlags = 1,
@@ -77,7 +73,6 @@ X <- makeX(market.returns,
            verbose = FALSE,
 	   dates = as.Date(c("2012-02-01", "2013-01-01", "2014-01-20")))
 
-## Estimating exposure
 res <- manyfirmssubperiod.lmAMM(firm.returns = firm.returns,
                                 X = X,
                                 lags = 1,

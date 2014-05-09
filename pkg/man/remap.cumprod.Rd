@@ -37,19 +37,16 @@
 data(StockPriceReturns)
 data(SplitDates)
 
-## Converting to event time frame
 es.results <- phys2eventtime(z = StockPriceReturns,
                              events = SplitDates,
                              width = 5)
 es.w <- window(es.results$z.e, start = -5, end = +5)
 
-## Cumulating (geometric product) event window output
 eventtime <- remap.cumprod(es.w,
                            is.pc = TRUE,
                            is.returns = TRUE,
                            base = 100)
 
-## Comparing abnormal returns (AR) and cumulative (geometric) abnormal returns (CAR)
 check.output <- cbind(es.w[,1], eventtime[,1])
 colnames(check.output) <- c("abnormal.returns", "cumulative.abnormal.returns")
 check.output

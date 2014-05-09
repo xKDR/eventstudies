@@ -78,7 +78,6 @@ phys2eventtime(z, events, width = 10)
 data(StockPriceReturns)
 data(SplitDates)
 
-## Converting physical dates to event time
 result <- phys2eventtime(z = StockPriceReturns,
 			 events = SplitDates,
 			 width = 5)

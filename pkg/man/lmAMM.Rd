@@ -85,14 +85,12 @@ firm.returns <- AMMData[,"Infosys"]
 market.returns <- AMMData[,"index.nifty"]
 currency.returns <- AMMData[,"currency.inrusd"]
 
-## Creating regressors for AMM estimation using makeX function
 X <- makeX(market.returns,
           others = currency.returns,
           switch.to.innov = FALSE,
           market.returns.purge = FALSE,
           verbose = FALSE)
 
-## Augmented market model residual
 amm.result <- lmAMM(firm.returns, X, nlags = 0, verbose = FALSE)
 plot(amm.result)
 

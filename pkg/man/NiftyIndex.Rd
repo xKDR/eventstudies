@@ -4,14 +4,11 @@
 
 \title{NSE Nifty index from 2004 to 2012}
 
-\description{A sample time series of Nifty index return from 1990 to
-  2012.}
+\description{Time series of Nifty index return (in per cent) from 1990
+  to 2012.}
 
 \usage{data(NiftyIndex)}
 
-\format{\pkg{zoo}}
+\author{Vikram Bahure}
 
-\examples{
-data(NiftyIndex)
-}
-\keyword{datasets}
+\keyword{NiftyIndex}

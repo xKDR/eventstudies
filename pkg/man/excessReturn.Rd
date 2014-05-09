@@ -27,7 +27,6 @@
 data(StockPriceReturns)
 data(NiftyIndex)
 
-## Excess return
 er.result <- excessReturn(firm.returns = StockPriceReturns,
 			  market.returns = NiftyIndex)
 

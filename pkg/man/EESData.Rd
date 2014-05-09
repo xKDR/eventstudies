@@ -1,18 +1,15 @@
 \name{EESData}
-
-\docType{data}
-
 \alias{EESData}
+\docType{data}
 
 \title{Returns data used for extreme events analysis}
 
-\description{A daily time series object for S&P 500 and the NIFTY Index.}
+\description{This data set is used to demonstrate extreme events study
+  functionality of the package. It contains daily returns data (in per
+  cent) of S&P 500 and the NIFTY Index.}
 
 \usage{data(EESData)}
 
-\format{\code{zoo}}
+\author{Chirag Anand}
 
-\examples{
-    data(EESData)
-}
 \keyword{datasets}

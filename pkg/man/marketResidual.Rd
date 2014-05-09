@@ -24,7 +24,6 @@
 data(StockPriceReturns)
 data(NiftyIndex)
 
-## Market model residual
 mm.result <- marketResidual(firm.returns = StockPriceReturns,
                             market.returns = NiftyIndex)
 

@@ -202,8 +202,6 @@ eventstudy(firm.returns,
 }
 
 \examples{ 
-## Performing event study
-library(eventstudies)
 data("StockPriceReturns")
 data("SplitDates")
 

@@ -1,12 +1,10 @@
 \name{SplitDates}
-
+\alias{SplitDates}
 \docType{data}
 
-\alias{SplitDates}
+\title{Data set of events used to perform event study analysis}
 
-\title{Sample data containing set of events to perform eventstudy analysis.}
-
-\description{ This data set contains stock split event dates for the index
+\description{This data set contains stock split event dates for the index
   constituents of the Bombay Stock Exchange index (SENSEX). The data
   format follows the required format in the function
   \code{phys2eventtime}, with two columns 'outcome.unit' (firm name) and
@@ -14,9 +12,6 @@
 
 \usage{data(SplitDates)}
 
-\format{\code{data.frame}}
+\author{Vikram Bahure}
 
-\examples{
-    data(SplitDates)
-}
 \keyword{datasets}

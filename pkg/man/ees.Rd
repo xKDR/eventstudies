@@ -80,21 +80,12 @@
     \url{http://onlinelibrary.wiley.com/doi/10.1111/j.1468-2362.2013.12032.x/abstract}
     \url{http://macrofinance.nipfp.org.in/releases/PatnaikShahSingh2013_Foreign_Investors.html}
   }
-
-  To convert number to words, code uses function
-  \href{http://finzi.psych.upenn.edu/R/Rhelp02a/archive/46843.html}{\dQuote{numbers2words}}
-  by \href{http://socserv.mcmaster.ca/jfox/}{John Fox} and
-  \dQuote{deprintize} function by \href{http://mbq.me/}{Miron Kursa}.
 }
 
 \author{Vikram Bahure, Vimal Balasubramaniam}
 
 \examples{
-library(eventstudies)
 data(EESData)
-## Input S&P 500 as the univariate series
-input <- EESData$sp500
-## Constructing summary statistics for 5% tail values (5% on both sides)
-output <- ees(input, prob.value = 5)
-str(output)
+r <- ees(EESData$sp500, prob.value = 5)
+str(r, max.level = 2)
 }

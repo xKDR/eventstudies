@@ -8,12 +8,13 @@ eventstudy <- function(firm.returns,
                        inference = TRUE,
                        inference.strategy = "bootstrap",
                        ...) {
-                                        # type = "marketResidual", "excessReturn", "AMM", "None"
-  ## arguments to the model
-  extra.var <- list(...)
   
   if (type == "None" && !is.null(firm.returns)) {
     outputModel <- firm.returns
+    if (length(list(...)) != 0) {
+        warning(deparse("type"), " = ", deparse("None"),
+                " does not take extra arguments, ignoring them.")
+    }
   }
 
   if (is.levels == TRUE) {

@@ -31,7 +31,7 @@
 #     - Clustered, Un-clustered and Both
 #------------------------------------------------------------------
 # NOTE:
-summary.ees <- function(input,prob.value){
+summary.ees <- function(input){
   no.var <- NCOL(input)
 
   #-----------------------------------------
@@ -59,13 +59,13 @@ summary.ees <- function(input,prob.value){
   event.dist <- attr(input,"extreme.events.distribution")
 
   # Run length distribution
-  runlength <- runlength.dist(input,prob.value)
+  runlength <- runlength.dist(input)
 
   # Quantile extreme values 
-  qnt.values <- quantile.extreme.values(input,prob.value)
+  qnt.values <- quantile.extreme.values(input)
 
   # Yearly distribution of extreme event dates
-  yearly.exevent <- yearly.exevent.dist(input,prob.value)
+  yearly.exevent <- yearly.exevent.dist(input)
 
   #---------------------
   # Compiling the output
@@ -306,6 +306,8 @@ get.clusters.formatted <- function(event.series,
   # Results
   attr(tmp.ts, which = "sumstat") <- sumstat(input = event.series)
   attr(tmp.ts, which = "extreme.events.distribution") <- extreme.events.distribution(input = event.series, gcf.output = tmp.ts, prob.value = probvalue)
+  attr(tmp.ts, which = "probvalue") <- probvalue
+  class(tmp.ts) <- c("ees","zoo")
   return(tmp.ts)
 }
 
@@ -455,7 +457,7 @@ get.event.count <- function(series,
 # OUTPUT:
 # Yearly distribution of extreme events
 #----------------------------
-yearly.exevent.dist <- function(input, prob.value){
+yearly.exevent.dist <- function(input){
   mylist <- list()
   ## Estimating cluster count  
   tmp.res <- yearly.exevent.summary(input)
@@ -509,7 +511,7 @@ yearly.exevent.summary <- function(tmp){
 # OUTPUT:
 # Lower tail and Upper tail quantile values
 #-----------------------------------
-quantile.extreme.values <- function(input, prob.value){
+quantile.extreme.values <- function(input){
   # Creating an empty frame
   lower.tail.qnt.value <- data.frame(matrix(NA,nrow=1,ncol=6))
   upper.tail.qnt.value <- data.frame(matrix(NA,nrow=1,ncol=6))
@@ -561,7 +563,7 @@ quantile.extreme.values <- function(input, prob.value){
 # OUTPUT:
 # Lower tail and Upper tail Run length distribution
 #-----------------------------------
-runlength.dist <- function(input, prob.value){
+runlength.dist <- function(input){
 
   # Finding maximum Run length
   # Seed value

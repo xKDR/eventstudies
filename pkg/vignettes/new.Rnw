@@ -16,7 +16,7 @@
 \end{abstract}
 \SweaveOpts{engine=R,pdf=TRUE}
 
-\section{The standard event study in finance}
+\Section{The standard event study in finance}
 
 In this section, we look at using the eventstudies package for the
 purpose of doing the standard event study using daily returns data in
@@ -158,12 +158,12 @@ improved statistical efficiency as $\textrm{Var}(\epsilon_j) <
 This is invoked by setting `type' to `marketResidual':
 
 <<mm-adjustment>>=
-data(NiftyIndex)
+data(OtherReturns)
 es.mm <- eventstudy(firm.returns = StockPriceReturns,
                     eventList = SplitDates,
                     width = 10,
                     type = "marketResidual",
-                    market.returns=NiftyIndex,
+                    market.returns=OtherReturns$NiftyIndex,
                     to.remap = TRUE,
                     remap = "cumsum",
                     inference = TRUE,

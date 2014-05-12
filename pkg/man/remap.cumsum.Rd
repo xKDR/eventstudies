@@ -45,9 +45,5 @@ es.results <- phys2eventtime(z = StockPriceReturns,
 es.w <- window(es.results$z.e, start = -5, end = +5)
 eventtime <- remap.cumsum(es.w, is.pc = FALSE, base = 0)
 
-## Comparing abnormal returns (AR) and cumulative abnormal returns (CAR)
-check.output <- cbind(es.w[,1], eventtime[,1])
-colnames(check.output) <- c("abnormal.returns", "cumulative.abnormal.returns")
-check.output
-head(eventtime[,1:5])
+print(eventtime[as.character(-3:3), ])
 }

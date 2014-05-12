@@ -77,32 +77,31 @@
 }
 
 \examples{
-data("AMMData")
 data("StockPriceReturns")
-data("NiftyIndex")
+data("OtherReturns")
 
-firm.returns <- AMMData[,"Infosys"]
-market.returns <- AMMData[,"index.nifty"]
-currency.returns <- AMMData[,"currency.inrusd"]
+firm.returns <- StockPriceReturns[, "Infosys"]
+market.returns <- OtherReturns[ ,"NiftyIndex"]
+currency.returns <- OtherReturns[, "INRUSD"]
 
 X <- makeX(market.returns,
-          others = currency.returns,
-          switch.to.innov = FALSE,
-          market.returns.purge = FALSE,
-          verbose = FALSE)
+           others = currency.returns,
+           switch.to.innov = FALSE,
+           market.returns.purge = FALSE,
+           verbose = FALSE)
 
 amm.result <- lmAMM(firm.returns, X, nlags = 0, verbose = FALSE)
 plot(amm.result)
 
 amm.residual <- residuals(amm.result)
-amm.residual <- zoo(amm.residual,as.Date(names(amm.residual)))
+amm.residual <- zoo(amm.residual,
+                    order.by = as.Date(names(amm.residual)))
 
-## Checking output: Comparing augmented market model residual, raw returns, nifty returns
-output <- merge(amm.residual, StockPriceReturns$Infosys, NiftyIndex,
-                all = FALSE)
-colnames(output) <- c("AMM Residual", "Raw Returns", "Nifty Returns")
-tail(output)
-plot(output)
+comparison <- merge(AMMResidual = amm.residual,
+                    Infosys = StockPriceReturns$Infosys,
+                    NiftyIndex =  OtherReturns$NiftyIndex,
+                    all = FALSE)
+plot(comparison)
 }
 
 \keyword{lmAMM}

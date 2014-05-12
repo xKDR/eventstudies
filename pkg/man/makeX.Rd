@@ -75,15 +75,15 @@ makeX(market.returns,
 \author{Ajay Shah, Chirag Anand, Vikram Bahure, Vimal Balasubramaniam}
 
 \examples{
-data("AMMData")
-market.returns <- AMMData$index.nifty
-currency.returns <- AMMData$currency.inrusd
+data("OtherReturns")
+market.returns <- OtherReturns$NiftyIndex
+currency.returns <- OtherReturns$INRUSD
 
 X <- makeX(market.returns,
            others = currency.returns,
            switch.to.innov = FALSE,
            market.returns.purge = FALSE,
            verbose = FALSE)
-head(X)
+head(na.omit(X))
 }
 \keyword{makeX}

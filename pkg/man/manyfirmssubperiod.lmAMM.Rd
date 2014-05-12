@@ -59,11 +59,11 @@ manyfirmssubperiod.lmAMM(firm.returns,
 }
 
 \examples{
-data("AMMData")
+data("OtherReturns")
 
-firm.returns <- AMMData[, c("Infosys","TCS")]
-market.returns <- AMMData[, "index.nifty"]
-currency.returns <- AMMData[, "currency.inrusd"]
+firm.returns <- StockPriceReturns[, c("Infosys","TCS")]
+market.returns <- OtherReturns$NiftyIndex
+currency.returns <- OtherReturns$INRUSD
 
 X <- makeX(market.returns,
            others = currency.returns,

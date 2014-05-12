@@ -218,12 +218,21 @@ str(es)
 plot(es)
 
 ## Event study using Augment Market Model
-data("AMMData")
+data("OtherReturns")
+
 events <- data.frame(outcome.unit = c("Infosys", "TCS"),
                      event.when = c("2012-04-01", "2012-06-01"),
                      stringsAsFactors = FALSE)
 
-es <- eventstudy(firm.returns = AMMData[, c("Infosys", "TCS")],
+ammdata <- merge.zoo(Infosys = StockPriceReturns$Infosys,
+                     TCS = StockPriceReturns$TCS,
+                     NiftyIndex,
+                     INRUSD = OtherReturns$INRUSD,
+                     CallMoneyRate = OtherReturns$CallMoneyRate,
+                     all = FALSE)
+ammdata <- window(ammdata, start = "2012-02-01", end = "2012-12-31")
+
+es <- eventstudy(firm.returns = ammdata[, c("Infosys", "TCS")],
                  eventList = events,
                  width = 10,
                  type = "lmAMM",
@@ -231,9 +240,9 @@ es <- eventstudy(firm.returns = AMMData[, c("Infosys", "TCS")],
                  remap = "cumsum",
                  inference = TRUE,
                  inference.strategy = "bootstrap",
-                 ## model args
-                 market.returns = AMMData[, "index.nifty"],
-                 others = AMMData[, c("currency.inrusd", "call.money.rate")],
+                                                 # model arguments
+                 market.returns = ammdata[, "NiftyIndex"],
+                 others = ammdata[, c("INRUSD", "CallMoneyRate")],
                  market.returns.purge = TRUE
                  )
 str(es)

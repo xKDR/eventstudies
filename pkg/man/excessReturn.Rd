@@ -25,15 +25,15 @@
 
 \examples{ 
 data(StockPriceReturns)
-data(NiftyIndex)
+data(OtherReturns)
 
 er.result <- excessReturn(firm.returns = StockPriceReturns,
-			  market.returns = NiftyIndex)
+			  market.returns = OtherReturns$NiftyIndex)
 
-## Checking output: Comparing excess return, raw returns, nifty returns
-output <- merge(er.result$Infosys, StockPriceReturns$Infosys, NiftyIndex,all=FALSE)
-colnames(output) <- c("excess.return", "raw.returns", "nifty.returns")
-tail(output) 
+tail(merge(excessReturn = er.result$Infosys,
+           Infosys = StockPriceReturns$Infosys,
+           NiftyIndex = OtherReturns$NiftyIndex,
+           all=FALSE))
 }
 
 \keyword{excessReturn}

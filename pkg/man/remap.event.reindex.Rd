@@ -36,5 +36,5 @@ es.w <- window(es.results$z.e, start = -5, end = +5)
 
 eventtime <- remap.event.reindex(es.w)
 
-head(eventtime[, 1:5])
+eventtime[as.character(-3:3), ]
 }

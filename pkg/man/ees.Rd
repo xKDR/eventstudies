@@ -85,7 +85,8 @@
 \author{Vikram Bahure, Vimal Balasubramaniam}
 
 \examples{
-data(EESData)
-r <- ees(EESData$sp500, prob.value = 5)
+data(OtherReturns)
+
+r <- ees(OtherReturns$SP500, prob.value = 5)
 str(r, max.level = 2)
 }

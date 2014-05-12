@@ -69,10 +69,11 @@ eesPlot(z,
 \author{Vikram Bahure, Vimal Balasubramaniam}
 
 \examples{
-data(EESData)
-eesPlot(z = EESData,
-        response.series.name = "nifty",
-        event.series.name = "sp500",
+data("OtherReturns")
+
+eesPlot(z = OtherReturns,
+        response.series.name = OtherReturns$NiftyIndex,
+        event.series.name = OtherReturns$SP500,
         titlestring = "S&P500",
         ylab = "(Cum.) change in NIFTY")
 }

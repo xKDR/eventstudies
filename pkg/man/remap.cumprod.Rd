@@ -47,9 +47,6 @@ eventtime <- remap.cumprod(es.w,
                            is.returns = TRUE,
                            base = 100)
 
-check.output <- cbind(es.w[,1], eventtime[,1])
-colnames(check.output) <- c("abnormal.returns", "cumulative.abnormal.returns")
-check.output
-head(eventtime[,1:5])
+print(eventtime[as.character(-3:3), ])
 }
 

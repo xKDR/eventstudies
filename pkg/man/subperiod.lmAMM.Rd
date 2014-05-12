@@ -64,12 +64,13 @@ subperiod.lmAMM(firm.returns,
 
 \seealso{ \code{\link{lmAMM}}}
 
-\examples{ 
-data("AMMData")
+\examples{
+data("StockPriceReturns")
+data("OtherReturns")
 
-firm.returns <- AMMData$Infosys
-market.returns <- AMMData$index.nifty
-currency.returns <- AMMData$currency.inrusd
+firm.returns <- StockPriceReturns$Infosys
+market.returns <- OtherReturns$NiftyIndex
+currency.returns <- OtherReturns$USDINR
 
 regressors <- makeX(market.returns,
                     others = currency.returns,

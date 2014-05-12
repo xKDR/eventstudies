@@ -21,18 +21,17 @@
 \author{Vikram Bahure}
 
 \examples{ 
-data(StockPriceReturns)
-data(NiftyIndex)
+data("StockPriceReturns")
+data("OtherReturns")
 
 mm.result <- marketResidual(firm.returns = StockPriceReturns,
-                            market.returns = NiftyIndex)
+                            market.returns = OtherReturns$NiftyIndex)
 
-## Checking output: Comparing market model residual, raw returns, nifty returns
-output <- merge(mm.result$Infosys, StockPriceReturns$Infosys, NiftyIndex, 
-                all=FALSE)
-colnames(output) <- c("market.residual", "raw.returns", "nifty.returns")
-tail(output) 
-
+comparison <- merge(MarketResidual = mm.result$Infosys,
+                    Infosys = StockPriceReturns$Infosys,
+                    NiftyIndex = OtherReturns$NiftyIndex,
+                    all = FALSE)
+plot(comparison)
 }
 
 \keyword{marketResidual}

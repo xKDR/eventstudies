@@ -1,0 +1,204 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{graphicx}
+\usepackage{a4wide}
+\usepackage[colorlinks,linkcolor=blue,citecolor=red]{hyperref}
+\usepackage{natbib}
+\usepackage{float}
+\usepackage{tikz}
+\usepackage{parskip}
+\usepackage{amsmath}
+\title{Introduction to the \textbf{eventstudies} package in R}
+\author{Ajay Shah}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+\SweaveOpts{engine=R,pdf=TRUE}
+
+\section{The standard event study in finance}
+
+In this section, we look at using the eventstudies package for the
+purpose of doing the standard event study using daily returns data in
+financial economics. This is a workhorse application of event
+studies. The treatment here assumes knowledge of event studies
+\citep{Corrado2011}.
+
+To conduct an event study, you must have a list of firms with
+associated dates, and you must have returns data for these
+firms. These dates must be stored as a simple data frame. To
+illustrate this, we use the object `SplitDates' in the package which
+is used for doing examples.
+
+<<show-the-events,results=verbatim>>=
+library(eventstudies)
+data(SplitDates)                        # The sample
+str(SplitDates)                         # Just a data frame
+head(SplitDates)
+@ 
+
+The representation of dates is a data frame with two columns. The
+first column is the name of the unit of observation which experienced
+the event. The second column is the event date.
+
+The second thing that is required for doing an event study is data for
+stock price returns for all the firms. The sample dataset supplied in
+the package is named `StockPriceReturns':
+
+<<show-the-events,results=verbatim>>=
+data(StockPriceReturns)                 # The sample
+str(StockPriceReturns)                  # A zoo object
+head(StockPriceReturns,3)               # Time series of dates and returns.
+@ 
+
+The StockPriceReturns object is thus a zoo object which is a time
+series of daily returns. These are measured in per cent, i.e. a value
+of +4 is returns of +4\%. The zoo object has many columns of returns
+data, one for each unit of observation which, in this case, is a
+firm. The column name of the zoo object must match the firm name
+(i.e. the name of the unit of observation) in the list of events.
+
+The package gracefully handles the three kinds of problems encountered
+with real world data: (a) a firm in the returns where there is no
+event, (b) a firm with an event where returns data is lacking and (c)
+a stream of missing data in the returns data surrounding the event
+date.
+
+With this in hand, we are ready to run our first event study, using
+raw returns:
+
+<<no-adjustment>>=
+es <- eventstudy(firm.returns = StockPriceReturns,
+                 eventList = SplitDates,
+                 width = 10,
+                 type = "None",
+                 to.remap = TRUE,
+                 remap = "cumsum",
+                 inference = TRUE,
+                 inference.strategy = "bootstrap")
+@ 
+
+This runs an event study using events listed in SplitDates, and using
+returns data for the firms in StockPriceReturns. An event window of 10
+days is analysed.
+
+Event studies with returns data typically do some kind of adjustment
+of the returns data in order to reduce variance. In order to keep
+things simple, in this first event study, we are doing no adjustment,
+which is done by setting `type' to ``None''.
+
+While daily returns data has been supplied, the standard event study
+deals with cumulated returns. In order to achieve this, we set
+to.remap to TRUE and we ask that this remapping be done using cumsum.
+
+Finally, we come to inference strategy. We instruct eventstudy to do
+inference and ask for bootstrap inference.
+
+Let us peek and poke at the object `es' that is returned. 
+
+<<the-es-object,results=verbatim>>=
+class(es)
+str(es)
+@ 
+
+The object returned by eventstudy is of class `es'. It is a list with
+five components. Three of these are just a record of the way
+eventstudy() was run: the inference procedure adopted (bootstrap
+inference in this case), the window width (10 in this case) and the
+method used for mapping the data (cumsum). The two new things are
+`outcomes' and `eventstudy.output'.
+
+The vector `outcomes' shows the disposition of each event in the
+events table. There are 22 rows in SplitDates, hence there will be 22
+elements in the vector `outcomes'. In this vector, `success' denotes a
+successful use of the event. When an event cannot be used properly,
+various error codes are supplied. E.g. `unitmissing' is reported when
+the events table shows an event for a unit of observation where
+returns data is not observed.
+
+\begin{figure}
+\begin{center}
+<<plot-es,fig=TRUE,width=4,height=2.5>>=
+par(mai=c(.8,.8,.2,.2))
+plot(es, cex.axis=.7, cex.lab=.7)
+@ 
+\end{center}
+\caption{Plot method applied to es object}\label{f:esplot1}
+\end{figure}
+
+% TODO: The x label should be "Event time (days)" and should
+% automatically handle other situations like weeks or months or microseconds.
+% The y label is much too long.
+
+Plot and print methods for the class `es' are supplied. The standard
+plot is illustrated in Figure \ref{f:esplot1}. In this case, we see
+the 95\% confidence interval is above 0 and below 0 and in no case can
+the null of no-effect, compared with the starting date (10 days before
+the stock split date), be rejected.
+
+In this first example, raw stock market returns was utilised in the
+event study. It is important to emphasise that the event study is a
+statistically valid tool even under these circumstances. Averaging
+across multiple events isolates the event-related
+fluctuations. However, there is a loss of statistical efficiency that
+comes from fluctuations of stock prices that can have nothing to do
+with firm level news. In order to increase efficiency, we resort to
+adjustment of the returns data.
+
+The standard methodology in the literature is to use a market
+model. This estimates a time-series regression $r_{jt} = \alpha_j +
+\beta_j r_{Mt} + \epsilon_{jt}$ where $r_{jt}$ is returns for firm $j$
+on date $t$, and $r_{Mt}$ is returns on the market index on date
+$t$. The market index captures market-wide fluctuations, which have
+nothing to do with firm-specific factors. The event study is then
+conducted with the cumulated $\epsilon_{jt}$ time series. This yields
+improved statistical efficiency as $\textrm{Var}(\epsilon_j) <
+\textrm{Var}(r_j)$.
+
+This is invoked by setting `type' to `marketResidual':
+
+<<mm-adjustment>>=
+data(NiftyIndex)
+es.mm <- eventstudy(firm.returns = StockPriceReturns,
+                    eventList = SplitDates,
+                    width = 10,
+                    type = "marketResidual",
+                    market.returns=NiftyIndex,
+                    to.remap = TRUE,
+                    remap = "cumsum",
+                    inference = TRUE,
+                    inference.strategy = "bootstrap")
+@ 
+
+In addition to setting `type' to `marketResidual', we are now required
+to supply data for the market index, $r_{Mt}$. In the above example,
+this is the data object NiftyIndex supplied in the package. This is
+just a zoo vector with daily returns of the stock market index.
+
+\begin{figure}
+\begin{center}
+<<plot-es-mm,fig=TRUE,width=4,height=2.5>>=
+par(mai=c(.8,.8,.2,.2))
+plot(es.mm, cex.axis=.7, cex.lab=.7)
+@ 
+\end{center}
+\caption{Adjustment using the market model}\label{f:esplotmm}
+\end{figure}
+
+A comparison of the range of the $y$ axis in Figure \ref{f:esplot1}
+versus that seen in Figure \ref{f:esplotmm} shows the substantial
+improvement in statistical efficiency that was obtained by market
+model adjustment.
+
+We close our treatment of the standard finance event study with one
+step forward on further reducing the variance of $\epsilon$: by doing
+an `augmented market model' regression with more than one explanatory
+variable.
+
+\newpage
+\bibliographystyle{jss} \bibliography{es}
+
+\end{document}
+
+
+lmAMM

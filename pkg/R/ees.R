@@ -675,92 +675,109 @@ numbers2words <- function(x){
 #                width = width of event window for event study plot
 #           prob.value = Probability value for which extreme events is determined
 #-------------------------
-eesPlot <- function(z, response.series.name,
-                    event.series.name,
-                    titlestring, ylab, width=5,
-                    prob.value=5){
-  #-----------------
-  # Get event dates
-  #-----------------
-  # Get both clustered and unclustered dates
-  e.s <- z[,event.series.name]
-  r.s <- z[,response.series.name]
-  data.use <- get.clusters.formatted(event.series=e.s,
-                                      response.series=r.s,
-                                      probvalue=prob.value,
-                                      event.value="nonreturns",
-                                      response.value="nonreturns")
 
-  # Get only unclustered data
-  data.frmt <- data.use[which(data.use$cluster.pattern==1),]
-  data.frmt2 <- data.use[which(data.use$cluster.pattern!=0),]
+######################
+## Extreme event dates
+######################
+## Input:  get.clusters.formatted (GCF) output
+## Output: Extreme Event dates for normal and purged data
+extremeDates <- function(input){
+  ##-----------------
+  ## Get event dates
+  ##-----------------
+  ## Get only unclustered data
+  data.only.cluster <- input[which(input$cluster.pattern==1),]
+  data.no.cluster <- input[which(input$cluster.pattern!=0),]
 
-  # get dates for bigdays and baddays
-  baddays.normal <- index(data.frmt[which(data.frmt[,"left.tail"]==1)])
-  bigdays.normal <- index(data.frmt[which(data.frmt[,"right.tail"]==1)])
-  baddays.purged <- index(data.frmt2[which(data.frmt2[,"left.tail"]==1)])
-  bigdays.purged <- index(data.frmt2[which(data.frmt2[,"right.tail"]==1)])
+  ## get dates for bigdays and baddays
+  days.bad.normal <- index(data.only.cluster[which(data.only.cluster[,"left.tail"]==1)])
+  days.good.normal <- index(data.only.cluster[which(data.only.cluster[,"right.tail"]==1)])
+  days.bad.purged <- index(data.no.cluster[which(data.no.cluster[,"left.tail"]==1)])
+  days.good.purged <- index(data.no.cluster[which(data.no.cluster[,"right.tail"]==1)])
+  ## Event list
+  events.good.normal <- data.frame(outcome.unit=rep("response.series",
+                                     length(days.good.normal)),
+                                   event.when=days.good.normal)
+  events.bad.normal <- data.frame(outcome.unit=rep("response.series",
+                                     length(days.bad.normal)),
+                                   event.when=days.bad.normal)
+  events.good.purged <- data.frame(outcome.unit=rep("response.series",
+                                     length(days.good.purged)),
+                                   event.when=days.good.purged)
+  events.bad.purged <- data.frame(outcome.unit=rep("response.series",
+                                     length(days.bad.purged)),
+                                   event.when=days.bad.purged)
+  dates <- list(events.good.normal=events.good.normal,
+                events.bad.normal=events.bad.normal,
+                events.good.purged=events.good.purged,
+                events.bad.purged=events.bad.purged)
+  for(i in 1:length(dates)){dates[[i]][,1] <- as.character(dates[[i]][,1])}
+  return(dates)
+}
 
-  d.good.normal <- bigdays.normal
-  d.bad.normal <- baddays.normal
-  d.good.purged <- bigdays.purged
-  d.bad.purged <- baddays.purged
-  
-  # ES for normal returns
-  es.good.normal <- corecomp(data.use,d.good.normal,
-                             "response.series",width)
-  es.bad.normal <- corecomp(data.use,d.bad.normal,
-                            "response.series",width)
-  
-  # ES for purged returns
-  es.good.purged <- corecomp(data.use,d.good.purged,
-                             "response.series",width)
-  es.bad.purged <- corecomp(data.use,d.bad.purged,
-                            "response.series",width)
-  
+##----------------------
+## Getting ees inference
+##----------------------
+## Event study plot for EES (extreme event studies)
+## Input: Output of GCF
+eesInference <- function(input, eventLists, to.remap, remap, width,
+                         inference = TRUE, inference.strategy = "bootstrap"){
+  inf <- list()
+  ## Computing inference
+  ## Normal
+                                        # Good days
+  inf$good.normal <- eventstudy(input, eventList=eventLists$events.good.normal,
+                                type="None", to.remap=to.remap,
+                                remap=remap, width=width, inference=inference,
+                                inference.strategy=inference.strategy)
+                                        # Bad days
+  inf$bad.normal <- eventstudy(input, eventList=eventLists$events.bad.normal,
+                                type="None", to.remap=to.remap,
+                                remap=remap, width=width, inference=inference,
+                                inference.strategy=inference.strategy)
+  ## Purged
+                                          # Good days
+  inf$good.purged <- eventstudy(input, eventList=eventLists$events.good.purged,
+                                type="None", to.remap=to.remap,
+                                remap=remap, width=width, inference=inference,
+                                inference.strategy=inference.strategy)
+                                            # Bad days
+  inf$bad.purged <- eventstudy(input, eventList=eventLists$events.bad.purged,
+                                type="None", to.remap=to.remap,
+                                remap=remap, width=width, inference=inference,
+                                inference.strategy=inference.strategy)
+
+  class(inf) <- "ees"
+  return(inf)
+}
+
+plot.ees <- function(x, xlab = NULL, ...){
+  ## assign own labels if they're missing
+  if (is.null(xlab)) {
+      xlab <- "Event time"
+  }
+  ## Inference
+  es.good.normal <- x$good.normal$eventstudy.output
+  es.bad.normal <- x$bad.normal$eventstudy.output
+  es.good.purged <- x$good.purged$eventstudy.output
+  es.bad.purged <- x$bad.purged$eventstudy.output
+                                        # Width
+  width <- (NROW(x[[1]]$eventstudy.output)-1)/2
+  ##---------------
+  ## Plotting graph
+  ##---------------
   big.normal <- max(abs(cbind(es.good.normal,es.bad.normal)))
   big.purged <- max(abs(cbind(es.good.purged,es.bad.purged)))
   big <- max(big.normal,big.purged)
-  hilo1 <- c(-big,big)
-  
-  #---------------
-  # Plotting graph
-  plot.es.graph.both(es.good.normal,es.bad.normal,
-                     es.good.purged,es.bad.purged,
-                     width,titlestring,ylab)
-}
-#--------------------------
-# Eventstudy analysis
-# -using eventstudy package
-#--------------------------
-corecomp <- function(z,dlist,seriesname,width) {
-  events <- data.frame(outcome.unit=rep(seriesname, length(dlist)), event.when=dlist)
-  es.results <- phys2eventtime(z, events, width=0)
-  es.w <- window(es.results$z.e, start=-width, end=+width)
-  # Replaing NA's with zeroes
-  es.w[is.na(es.w)] <- 0
-  es.w <- remap.cumsum(es.w, is.pc=FALSE, base=0)
-  inference.bootstrap(es.w,to.plot=FALSE)
-}
- 
-#----------------------------------
-# Plotting graph in es.error.metric
-#----------------------------------
-plot.es.graph.both <- function(es.good.normal,es.bad.normal,
-                               es.good.purged,es.bad.purged,
-                               width,titlestring,ylab){
-  big.normal <- max(abs(cbind(es.good.normal,es.bad.normal)))
-  big.purged <- max(abs(cbind(es.good.purged,es.bad.purged)))
-  big <- max(big.normal,big.purged)
-  hilo1 <- c(-big,big)
+  ylim.max <- c(-big,big)
 
   # Plotting graph
   par(mfrow=c(1,2))
   
   # Plot very good days
-  plot(-width:width, es.good.normal[,2], type="l", lwd=2, ylim=hilo1, col="red",
-       xlab="Event time (days)", ylab=ylab,
-       main=paste("Very good", " (by ", titlestring, ")", sep=""))
+  plot(-width:width, es.good.normal[,2], type="l", lwd=2,
+       ylim=ylim.max, col="red", xlab=xlab,
+       main="Very good days", ...)       
   lines(-width:width, es.good.purged[,2], lwd=2, lty=1,type="l", col="orange")
   points(-width:width, es.good.normal[,2], pch=19,col="red")
   points(-width:width, es.good.purged[,2], pch=25,col="orange")
@@ -779,9 +796,9 @@ plot.es.graph.both <- function(es.good.normal,es.bad.normal,
          col=c("red","orange"),lty=c(1,1),bty="n")
     
   # Plot very bad days
-  plot(-width:width, es.bad.normal[,2], type="l", lwd=2, ylim=hilo1, col="red",
-       xlab="Event time (days)", ylab=ylab,
-       main=paste("Very bad", " (by ", titlestring, ")", sep=""))
+  plot(-width:width, es.bad.normal[,2], type="l", lwd=2,
+       ylim=ylim.max, col="red", xlab=xlab,
+       main = "Very bad days",...)
   lines(-width:width, es.bad.purged[,2], lwd=2, lty=1,type="l", col="orange")
   points(-width:width, es.bad.normal[,2], pch=19,col="red")
   points(-width:width, es.bad.purged[,2], pch=25,col="orange")

@@ -1,5 +1,6 @@
 export(eventstudy, inference.bootstrap, inference.wilcox, phys2eventtime,
-       remap.cumsum, remap.cumprod, remap.event.reindex, ees, eesPlot)
+       remap.cumsum, remap.cumprod, remap.event.reindex, eesSummary, eesDates, 
+	eesInference)
 
 export(marketResidual,
        excessReturn)
@@ -15,5 +16,6 @@ S3method(print, es)
 
 S3method(plot, amm)
 S3method(plot, es)
+S3method(plot, ees)
 
 import(boot,sandwich,testthat,xts,zoo)

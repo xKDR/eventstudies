@@ -31,7 +31,7 @@
 #     - Clustered, Un-clustered and Both
 #------------------------------------------------------------------
 # NOTE:
-summary.ees <- function(x, ...){
+eesSummary <- function(x, ...){
   no.var <- NCOL(input)
 
   #---------------------
@@ -681,7 +681,7 @@ numbers2words <- function(x){
 ######################
 ## Input:  get.clusters.formatted (GCF) output
 ## Output: Extreme Event dates for normal and purged data
-extremeDates <- function(input){
+eesDates <- function(input){
   ##-----------------
   ## Get event dates
   ##-----------------
@@ -720,6 +720,7 @@ extremeDates <- function(input){
 ##----------------------
 ## Event study plot for EES (extreme event studies)
 ## Input: Output of GCF
+## eventLists: Output of eesDates
 eesInference <- function(input, eventLists, to.remap, remap, width,
                          inference = TRUE, inference.strategy = "bootstrap"){
   inf <- list()

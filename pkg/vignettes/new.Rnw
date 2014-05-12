@@ -16,7 +16,7 @@
 \end{abstract}
 \SweaveOpts{engine=R,pdf=TRUE}
 
-\Section{The standard event study in finance}
+\section{The standard event study in finance}
 
 In this section, we look at using the eventstudies package for the
 purpose of doing the standard event study using daily returns data in
@@ -59,10 +59,10 @@ firm. The column name of the zoo object must match the firm name
 (i.e. the name of the unit of observation) in the list of events.
 
 The package gracefully handles the three kinds of problems encountered
-with real world data: (a) a firm in the returns where there is no
-event, (b) a firm with an event where returns data is lacking and (c)
-a stream of missing data in the returns data surrounding the event
-date.
+with real world data: (a) a firm where returns is observed but there
+is no event, (b) a firm with an event where returns data is lacking
+and (c) a stream of missing data in the returns data surrounding the
+event date.
 
 With this in hand, we are ready to run our first event study, using
 raw returns:
@@ -163,17 +163,19 @@ es.mm <- eventstudy(firm.returns = StockPriceReturns,
                     eventList = SplitDates,
                     width = 10,
                     type = "marketResidual",
-                    market.returns=OtherReturns$NiftyIndex,
                     to.remap = TRUE,
                     remap = "cumsum",
                     inference = TRUE,
-                    inference.strategy = "bootstrap")
+                    inference.strategy = "bootstrap",
+                    market.returns=OtherReturns$NiftyIndex
+                    )
 @ 
 
 In addition to setting `type' to `marketResidual', we are now required
 to supply data for the market index, $r_{Mt}$. In the above example,
-this is the data object NiftyIndex supplied in the package. This is
-just a zoo vector with daily returns of the stock market index.
+this is the data object NiftyIndex supplied from the OtherReturns data
+object in the package. This is just a zoo vector with daily returns of
+the stock market index.
 
 \begin{figure}
 \begin{center}
@@ -191,14 +193,67 @@ improvement in statistical efficiency that was obtained by market
 model adjustment.
 
 We close our treatment of the standard finance event study with one
-step forward on further reducing the variance of $\epsilon$: by doing
+step forward on further reducing $\textrm{Var}(\epsilon)$ : by doing
 an `augmented market model' regression with more than one explanatory
-variable.
+variable. The augmented market model uses regressions like:
+
+\[
+r_{jt} = \alpha_j + \beta_1,j r_{M1,t} + \beta_2,j r_{M2,t}
+           \epsilon_{jt}
+\]
+
+where in addition to the market index $r_{M1,t}$, there is an
+additional explanatory variable $r_{M2,t}$. One natural candidate is
+the returns on the exchange rate, but there are many other candidates.
+
+An extensive literature has worked out the unique problems of
+econometrics that need to be addressed in doing augmented market
+models. The package uses the synthesis of this literature as presented
+in \citet{patnaik2010amm}.\footnote{The source code for augmented
+  market models in the package is derived from the source code written
+  for \citet{patnaik2010amm}.}
+
+To repeat the stock splits event study using augmented market models,
+we use the incantation:
+
+<<amm-adjustment>>=
+es.amm <- eventstudy(firm.returns = StockPriceReturns,
+                    eventList = SplitDates,
+                    width = 10,
+                    type = "lmAMM",
+                    to.remap = TRUE,
+                    remap = "cumsum",
+                    inference = TRUE,
+                    inference.strategy = "bootstrap",
+                    market.returns=OtherReturns$NiftyIndex,
+                    others=OtherReturns$USDINR,
+                    market.returns.purge=TRUE
+                    )
+@ 
+
+Here the additional regressor on the augmented market model is the
+returns on the exchange rate, which is the slot USDINR in
+OtherReturns. The full capabilities for doing augmented market models
+from \citet{patnaik2010amm} are available. These are documented
+elsewhere. For the present moment, we will use the feature
+market.returns.purge without explaining it.
+
+Let us look at the gains in statistical efficiency across the three
+variants of the event study. We will use the width of the confidence
+interval at date 0 as a measure of efficiency.
+
+<<efficiency-comparison,results=verbatim>>=
+tmp <- rbind(es$eventstudy.output[10,], es.mm$eventstudy.output[10,])[,c(1,3)]
+rownames(tmp) <- c("None","MM")
+tmp[,2]-tmp[,1]
+@ 
+
+This shows a sharp reduction in the width of the bootstrap 95\%
+confidence interval from None to MM adjustment. Over and above this, a
+small gain is obtained when going from MM adjustment to AMM
+adjustment.
 
 \newpage
 \bibliographystyle{jss} \bibliography{es}
 
 \end{document}
-
-
-lmAMM

@@ -31,29 +31,16 @@
 #     - Clustered, Un-clustered and Both
 #------------------------------------------------------------------
 # NOTE:
-summary.ees <- function(input){
+summary.ees <- function(x, ...){
   no.var <- NCOL(input)
 
-  #-----------------------------------------
-  # Event series: Clustered and un-clustered
-  #-----------------------------------------
-  tail.events <- input[which(input$left.tail==1 | input$right.tail==1),]
-  clustered.tail.events <- input[which(input$cluster.pattern>1),]
-  unclustered.tail.events <- input[-which(input$cluster.pattern>1),]
-  # Left tail data
-  left.tail.clustered <- clustered.tail.events[which(clustered.tail.events$left.tail==1),c("event.series","cluster.pattern")]
-  left.tail.unclustered <- unclustered.tail.events[which(unclustered.tail.events$left.tail==1),c("event.series","cluster.pattern")]
-  left.all <- tail.events[which(tail.events$left.tail==1),c("event.series","cluster.pattern")]
-  # Right tail data
-  right.tail.clustered <- clustered.tail.events[which(clustered.tail.events$right.tail==1),c("event.series","cluster.pattern")]
-  right.tail.unclustered <- unclustered.tail.events[which(unclustered.tail.events$right.tail==1),c("event.series","cluster.pattern")]
-  right.all <- tail.events[which(tail.events$right.tail==1),c("event.series","cluster.pattern")]
-  
   #---------------------
   # Extreme event output
   #---------------------
   # Summary statistics
   summ.st <- attr(input,"sumstat")
+  colnames(summ.st) <- NULL
+  summ.st <- t(summ.st)
 
   # Distribtution of events
   event.dist <- attr(input,"extreme.events.distribution")
@@ -63,7 +50,7 @@ summary.ees <- function(input){
 
   # Quantile extreme values 
   qnt.values <- quantile.extreme.values(input)
-
+  
   # Yearly distribution of extreme event dates
   yearly.exevent <- yearly.exevent.dist(input)
 
@@ -73,21 +60,15 @@ summary.ees <- function(input){
   output <- lower.tail <- upper.tail <- list()
   # Compiling lower tail and upper tail separately
   # Lower tail
-  lower.tail$data <- list(left.all,left.tail.clustered,
-                          left.tail.unclustered)
-  names(lower.tail$data) <- c("All","Clustered","Unclustered")
   lower.tail$extreme.event.distribution <- event.dist$lower.tail
   lower.tail$runlength <- runlength$lower.tail
   lower.tail$quantile.values <- qnt.values$lower.tail
-  lower.tail$yearly.extreme.event <- yearly.exevent$lower.tail
+  lower.tail$yearly.extreme.event <- round(t(yearly.exevent$lower.tail),2)
   # Upper tail
-  upper.tail$data <- list(right.all,right.tail.clustered,
-                          right.tail.unclustered)
-  names(upper.tail$data) <- c("All","Clustered","Unclustered")
   upper.tail$extreme.event.distribution <- event.dist$upper.tail
   upper.tail$runlength <- runlength$upper.tail
   upper.tail$quantile.values <- qnt.values$upper.tail
-  upper.tail$yearly.extreme.event <- yearly.exevent$upper.tail
+  upper.tail$yearly.extreme.event <- round(t(yearly.exevent$upper.tail),2)
   # Output
   output$data.summary <- summ.st
   output$lower.tail <- lower.tail
@@ -487,8 +468,8 @@ yearly.exevent.summary <- function(tmp){
   tmp.good.y <- merge(tmp.good.y,apply.yearly(xts(tmp.good[,1]),function(x)median(x,na.rm=T)))
     index(tmp.good.y) <- as.yearmon(as.Date(substr(index(tmp.good.y),1,4),"%Y"))
   tmp.res <- merge(tmp.bad.y,tmp.good.y)
-  colnames(tmp.res) <- c("number.lowertail","median.lowertail",
-                         "number.uppertail","median.uppertail")
+  colnames(tmp.res) <- c("total.events.l","median.value.l",
+                         "total.events.u","median.value.u")
   output <- as.data.frame(tmp.res)
   cn <- rownames(output)
   rownames(output) <- sapply(rownames(output),

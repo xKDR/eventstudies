@@ -6,10 +6,7 @@
 
 #----------------------------------------------------------------
 # INPUT:
-# 'input'     : Data series for which extreme events are 
-#               to be identified. More than one series 
-#               is permissble. The 'input' should be in time
-#               series format.
+# 'input'     : Output of get.clusters.formatted
 # 'prob.value': This is the tail value for which event is
 #               to be defined. For eg: prob.value=5 will
 #               consider 5% tail on both sides
@@ -34,37 +31,15 @@
 #     - Clustered, Un-clustered and Both
 #------------------------------------------------------------------
 # NOTE:
-ees <- function(input,prob.value){
+summary.ees <- function(input,prob.value){
   no.var <- NCOL(input)
-
-  #------------------------------------------------
-  # Breaking the function if any input is not given
-  #------------------------------------------------
-  # For one variable
-  # If class of data is not time series
-  class.input <- class(input)%in%c("xts","zoo")
-  if(class.input==FALSE){
-    stop("Input data is not in time series format. Valid 'input' should be of class xts and zoo")
-  }
-  
-  # Converting an xts object to zoo series
-  input.class <- length(which(class(input)%in%"xts"))
-  if(length(input.class)==1){
-    input <- zoo(input)
-  }
 
   #-----------------------------------------
   # Event series: Clustered and un-clustered
   #-----------------------------------------
-  tmp <- get.clusters.formatted(event.series=input,
-                                response.series=input,
-                                probvalue=prob.value,
-                                event.value="nonreturns",
-                                response.value="nonreturns")
-  
-  tail.events <- tmp[which(tmp$left.tail==1 | tmp$right.tail==1),]
-  clustered.tail.events <- tmp[which(tmp$cluster.pattern>1),]
-  unclustered.tail.events <- tmp[-which(tmp$cluster.pattern>1),]
+  tail.events <- input[which(input$left.tail==1 | input$right.tail==1),]
+  clustered.tail.events <- input[which(input$cluster.pattern>1),]
+  unclustered.tail.events <- input[-which(input$cluster.pattern>1),]
   # Left tail data
   left.tail.clustered <- clustered.tail.events[which(clustered.tail.events$left.tail==1),c("event.series","cluster.pattern")]
   left.tail.unclustered <- unclustered.tail.events[which(unclustered.tail.events$left.tail==1),c("event.series","cluster.pattern")]
@@ -78,10 +53,10 @@ ees <- function(input,prob.value){
   # Extreme event output
   #---------------------
   # Summary statistics
-  summ.st <- sumstat(input)
+  summ.st <- attr(input,"sumstat")
 
   # Distribtution of events
-  event.dist <- extreme.events.distribution(input,prob.value)
+  event.dist <- attr(input,"extreme.events.distribution")
 
   # Run length distribution
   runlength <- runlength.dist(input,prob.value)
@@ -221,8 +196,8 @@ identify.mixedclusters <- function(m,j){
 get.clusters.formatted <- function(event.series,
                                    response.series,
                                    probvalue=5,
-                                   event.value="returns",
-                                   response.value="returns"){
+                                   event.value="nonreturns",
+                                   response.value="nonreturns"){
    # Getting levels in event format
   tmp <- gen.data(event.series,
                   probvalue=probvalue,
@@ -329,6 +304,8 @@ get.clusters.formatted <- function(event.series,
                         "response.series","cluster.pattern")
 
   # Results
+  attr(tmp.ts, which = "sumstat") <- sumstat(input = event.series)
+  attr(tmp.ts, which = "extreme.events.distribution") <- extreme.events.distribution(input = event.series, gcf.output = tmp.ts, prob.value = probvalue)
   return(tmp.ts)
 }
 
@@ -370,13 +347,107 @@ sumstat <- function(input){
   return(tmp)
 }
 
+#############################
+# Getting event segregation
+# - clustered and unclustered
+#############################
+#----------------------------
+# INPUT:
+# 'input': Data series for which event cluster distribution
+#        is to be calculated;
+# Note: The input series expects the input to be in levels not in returns,
+#       if the some the inputs are already in return formats one has to
+#       use the other variable 'already.return.series'
+# 'already.return.series': column name is to be given which already has
+#       return series in the data-set
+# 'prob.value': Probility value for which tail is to be constructed this
+#       value is equivalent to one side tail for eg. if prob.value=5
+#       then we have values of 5% tail on both sides
+# Functions used: get.event.count()
+# OUTPUT:
+# Distribution of extreme events
+#----------------------------
+
+extreme.events.distribution <- function(input, gcf.output, prob.value){
+  # Creating an empty frame
+  no.var <- NCOL(input)
+  lower.tail.dist <- data.frame(matrix(NA,nrow=no.var,ncol=6))
+  upper.tail.dist <- data.frame(matrix(NA,nrow=no.var,ncol=6))
+  colnames(lower.tail.dist) <- c("Unclustered","Used clusters",
+                                 "Removed clusters","Total clusters",
+                                 "Total","Total used clusters")
+  rownames(lower.tail.dist) <- colnames(input)
+  colnames(upper.tail.dist) <- c("Unclustered","Used clusters",
+                                 "Removed clusters","Total clusters",
+                                 "Total","Total used clusters")
+  rownames(upper.tail.dist) <- colnames(input)
+  # Estimating cluster count
+  #--------------
+  # Cluster count
+  #--------------
+  # Non-returns (if it is already in return format)
+  tmp <- get.event.count(input, gcf.output, probvalue=prob.value,
+                         value="nonreturns")
+  lower.tail.dist  <- tmp[1,]
+  upper.tail.dist  <- tmp[2,]
+
+  #-----------------------------
+  # Naming the tail distribution
+  #-----------------------------
+  mylist <- list(lower.tail.dist,upper.tail.dist)
+  names(mylist) <- c("lower.tail", "upper.tail")
+  return(mylist)
+}
+
+# Functions used in event count calculation
+get.event.count <- function(series,
+                            probvalue=5,
+                            gcf.output,
+                            value="returns"){
+  # Extracting dataset
+  tmp.old <- gen.data(series,probvalue,value)
+  cp <- gcf.output[,"cluster.pattern"]
+  lvl <- as.numeric(levels(as.factor(cp)))
+  lvl.use <- lvl[which(lvl>1)]
+  # Calculating Total events
+  tot.ev.l <- length(which(tmp.old[,"left.tail"]==1))
+  tot.ev.r <- length(which(tmp.old[,"right.tail"]==1))
+  # Calculating Unclustered events
+  un.clstr.l <- length(which(gcf.output[,"left.tail"]==1 &
+                             gcf.output[,"cluster.pattern"]==1))
+  un.clstr.r <- length(which(gcf.output[,"right.tail"]==1 &
+                             gcf.output[,"cluster.pattern"]==1))
+  # Calculating Used clusters
+  us.cl.l <- us.cl.r <- NULL
+  for(i in 1:length(lvl.use)){
+    tmp1 <- length(which(gcf.output[,"cluster.pattern"]==lvl.use[i] &
+                         gcf.output[,"left.tail"]==1))*lvl.use[i]
+    tmp2 <- length(which(gcf.output[,"cluster.pattern"]==lvl.use[i] &
+                         gcf.output[,"right.tail"]==1))*lvl.use[i]
+    us.cl.l <- sum(us.cl.l,tmp1,na.rm=TRUE)
+    us.cl.r <- sum(us.cl.r,tmp2,na.rm=TRUE)
+  }
+
+  # Making a table
+  tb <- data.frame(matrix(NA,2,6))
+  colnames(tb) <- c("unclustered.events","used.clustered.events","removed.clustered.events","total.clustered.events","total.events","total.used.events")
+  rownames(tb) <- c("lower","upper")
+  tb[,"total.events"] <- c(tot.ev.l,tot.ev.r)
+  tb[,"unclustered.events"] <- c(un.clstr.l,un.clstr.r)
+  tb[,"used.clustered.events"] <- c(us.cl.l,us.cl.r)
+  tb[,"total.used.events"] <- tb$unclustered.events+tb$used.clustered.events
+  tb[,"total.clustered.events"] <- tb$total.events-tb$unclustered.events
+  tb[,"removed.clustered.events"] <- tb$total.clustered.events-tb$used.clustered.events
+
+  return(tb)
+}
+
 ######################
 # Yearly summary stats
 ######################
 #----------------------------
 # INPUT:
-# 'input': Data series for which event cluster distribution
-#        is to be calculated;
+# 'input': Output from get.clusters.formatted function
 # 'prob.value': Probility value for which tail is to be constructed this
 #       value is equivalent to one side tail for eg. if prob.value=5
 #       then we have values of 5% tail on both sides
@@ -385,28 +456,17 @@ sumstat <- function(input){
 # Yearly distribution of extreme events
 #----------------------------
 yearly.exevent.dist <- function(input, prob.value){
-  no.var <- NCOL(input)
   mylist <- list()
-  # Estimating cluster count
-  #--------------------
-  # Formatting clusters
-  #--------------------
-  tmp <- get.clusters.formatted(event.series=input,
-                                response.series=input,
-                                probvalue=prob.value,
-                                event.value="nonreturns",
-                                response.value="nonreturns")
-
-  tmp.res <- yearly.exevent.summary(tmp)
+  ## Estimating cluster count  
+  tmp.res <- yearly.exevent.summary(input)
   tmp.res[is.na(tmp.res)] <- 0
-  # Left and right tail
+  ## Left and right tail
   lower.tail.yearly.exevent <- tmp.res[,1:2]
   upper.tail.yearly.exevent <- tmp.res[,3:4]
   output <- list()
   output$lower.tail <- lower.tail.yearly.exevent
   output$upper.tail <- upper.tail.yearly.exevent
   mylist <- output
-
   return(mylist)
 }
 
@@ -434,112 +494,12 @@ yearly.exevent.summary <- function(tmp){
   return(output)
 }
 
-#############################
-# Getting event segregation
-# - clustered and unclustered
-#############################
-#----------------------------
-# INPUT:
-# 'input': Data series for which event cluster distribution
-#        is to be calculated;
-# Note: The input series expects the input to be in levels not in returns,
-#       if the some the inputs are already in return formats one has to
-#       use the other variable 'already.return.series'
-# 'already.return.series': column name is to be given which already has
-#       return series in the data-set
-# 'prob.value': Probility value for which tail is to be constructed this
-#       value is equivalent to one side tail for eg. if prob.value=5
-#       then we have values of 5% tail on both sides
-# Functions used: get.event.count()
-# OUTPUT:
-# Distribution of extreme events
-#----------------------------
-
-extreme.events.distribution <- function(input,prob.value){
-  # Creating an empty frame
-  no.var <- NCOL(input)
-  lower.tail.dist <- data.frame(matrix(NA,nrow=no.var,ncol=6))
-  upper.tail.dist <- data.frame(matrix(NA,nrow=no.var,ncol=6))
-  colnames(lower.tail.dist) <- c("Unclustered","Used clusters",
-                                 "Removed clusters","Total clusters",
-                                 "Total","Total used clusters")
-  rownames(lower.tail.dist) <- colnames(input)
-  colnames(upper.tail.dist) <- c("Unclustered","Used clusters",
-                                 "Removed clusters","Total clusters",
-                                 "Total","Total used clusters")
-  rownames(upper.tail.dist) <- colnames(input)
-  # Estimating cluster count
-  #--------------
-  # Cluster count
-  #--------------
-  # Non-returns (if it is already in return format)
-  tmp <- get.event.count(input,probvalue=prob.value,
-                         value="nonreturns")
-  lower.tail.dist  <- tmp[1,]
-  upper.tail.dist  <- tmp[2,]
-
-  #-----------------------------
-  # Naming the tail distribution
-  #-----------------------------
-  mylist <- list(lower.tail.dist,upper.tail.dist)
-  names(mylist) <- c("lower.tail", "upper.tail")
-  return(mylist)
-}
-
-# Functions used in event count calculation
-get.event.count <- function(series,
-                            probvalue=5,
-                            value="returns"){
-  # Extracting dataset
-  tmp.old <- gen.data(series,probvalue,value)
-  tmp <- get.clusters.formatted(event.series=series,
-                                response.series=series,
-                                probvalue,
-                                event.value=value,
-                                response.value=value)
-  
-  cp <- tmp[,"cluster.pattern"]
-  lvl <- as.numeric(levels(as.factor(cp)))
-  lvl.use <- lvl[which(lvl>1)]
-  # Calculating Total events
-  tot.ev.l <- length(which(tmp.old[,"left.tail"]==1))
-  tot.ev.r <- length(which(tmp.old[,"right.tail"]==1))
-  # Calculating Unclustered events
-  un.clstr.l <- length(which(tmp[,"left.tail"]==1 &
-                             tmp[,"cluster.pattern"]==1))
-  un.clstr.r <- length(which(tmp[,"right.tail"]==1 &
-                             tmp[,"cluster.pattern"]==1))
-  # Calculating Used clusters
-  us.cl.l <- us.cl.r <- NULL
-  for(i in 1:length(lvl.use)){
-    tmp1 <- length(which(tmp[,"cluster.pattern"]==lvl.use[i] &
-                         tmp[,"left.tail"]==1))*lvl.use[i]
-    tmp2 <- length(which(tmp[,"cluster.pattern"]==lvl.use[i] &
-                         tmp[,"right.tail"]==1))*lvl.use[i]
-    us.cl.l <- sum(us.cl.l,tmp1,na.rm=TRUE)
-    us.cl.r <- sum(us.cl.r,tmp2,na.rm=TRUE)
-  }
-
-  # Making a table
-  tb <- data.frame(matrix(NA,2,6))
-  colnames(tb) <- c("unclstr","used.clstr","removed.clstr","tot.clstr","tot","tot.used")
-  rownames(tb) <- c("lower","upper")
-  tb[,"tot"] <- c(tot.ev.l,tot.ev.r)
-  tb[,"unclstr"] <- c(un.clstr.l,un.clstr.r)
-  tb[,"used.clstr"] <- c(us.cl.l,us.cl.r)
-  tb[,"tot.used"] <- tb$unclstr+tb$used.clstr
-  tb[,"tot.clstr"] <- tb$tot-tb$unclstr
-  tb[,"removed.clstr"] <- tb$tot.clstr-tb$used.clstr
-
-  return(tb)
-}
-
 ####################################
 # Quantile values for extreme events
 ####################################
 #-----------------------------------
 # INPUT:
-# 'input': Data series in time series format
+# 'input': Output of get.clusters.formatted
 # Note: The input series expects the input to be in levels not in returns,
 #       if the some the inputs are already in return formats one has to
 #       use the other variable 'already.return.series'
@@ -551,9 +511,8 @@ get.event.count <- function(series,
 #-----------------------------------
 quantile.extreme.values <- function(input, prob.value){
   # Creating an empty frame
-  no.var <- NCOL(input)
-  lower.tail.qnt.value <- data.frame(matrix(NA,nrow=no.var,ncol=6))
-  upper.tail.qnt.value <- data.frame(matrix(NA,nrow=no.var,ncol=6))
+  lower.tail.qnt.value <- data.frame(matrix(NA,nrow=1,ncol=6))
+  upper.tail.qnt.value <- data.frame(matrix(NA,nrow=1,ncol=6))
   colnames(lower.tail.qnt.value) <- c("Min","25%","Median","75%","Max",
                                       "Mean")
   rownames(lower.tail.qnt.value) <- "extreme.events"
@@ -561,24 +520,15 @@ quantile.extreme.values <- function(input, prob.value){
                                       "Mean")
   rownames(upper.tail.qnt.value) <- "extreme.events"
   # Estimating cluster count
-  #--------------------
-  # Formatting clusters
-  #--------------------
-  tmp <- get.clusters.formatted(event.series=input,
-                                response.series=input,
-                                probvalue=prob.value,
-                                event.value="nonreturns",
-                                response.value="nonreturns")
-
   # Left tail
-  tmp.left.tail <- tmp[which(tmp$left.tail==1),
+  tmp.left.tail <- input[which(input$left.tail==1),
                        "event.series"]
   df.left <- t(data.frame(quantile(tmp.left.tail,c(0,0.25,0.5,0.75,1))))
   tmp.left <- round(cbind(df.left,mean(tmp.left.tail)),2)
   rownames(tmp.left) <- "extreme.events"
   colnames(tmp.left) <- c("0%","25%","Median","75%","100%","Mean")
   # Right tail
-  tmp.right.tail <- tmp[which(tmp$right.tail==1),
+  tmp.right.tail <- input[which(input$right.tail==1),
                         "event.series"]
   df.right <- t(data.frame(quantile(tmp.right.tail,c(0,0.25,0.5,0.75,1))))
   tmp.right <- round(cbind(df.right,
@@ -613,29 +563,20 @@ quantile.extreme.values <- function(input, prob.value){
 #-----------------------------------
 runlength.dist <- function(input, prob.value){
 
-   # Creating an empty frame
-  no.var <- NCOL(input)
-  
   # Finding maximum Run length
   # Seed value
   max.runlength <- 0 
   #---------------------------
   # Estimating max. Run length
   #---------------------------
-  tmp <- get.clusters.formatted(event.series=input,
-                                response.series=input,
-                                probvalue=prob.value,
-                                event.value="nonreturns",
-                                response.value="nonreturns")
-
-  tmp.runlength <- get.cluster.distribution(tmp,"event.series")
+  tmp.runlength <- get.cluster.distribution(input,"event.series")
   max.runlength <- max(max.runlength,as.numeric(colnames(tmp.runlength)[NCOL(tmp.runlength)]))
   
   # Generating empty frame
   col.names <- seq(2:max.runlength)+1
-  lower.tail.runlength <- data.frame(matrix(NA,nrow=no.var,
+  lower.tail.runlength <- data.frame(matrix(NA,nrow=1,
                                             ncol=length(col.names)))
-  upper.tail.runlength <- data.frame(matrix(NA,nrow=no.var,
+  upper.tail.runlength <- data.frame(matrix(NA,nrow=1,
                                             ncol=length(col.names)))
   colnames(lower.tail.runlength) <- col.names
   rownames(lower.tail.runlength) <- "clustered.events"
@@ -645,7 +586,7 @@ runlength.dist <- function(input, prob.value){
   #----------------------
   # Run length estimation
   #----------------------
-  tmp.res <- get.cluster.distribution(tmp,"event.series")
+  tmp.res <- get.cluster.distribution(input,"event.series")
   for(j in 1:length(colnames(tmp.res))){
     col.number <- colnames(tmp.res)[j]
     lower.tail.runlength[1,col.number] <- tmp.res[1,col.number]

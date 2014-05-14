@@ -146,46 +146,55 @@ eventstudy(firm.returns,
     - nlags \cr
     - dates \cr
     - verbose \cr
+
+    Note: arguments are directly passed to \sQuote{makeX}, see
+    \code{\link{lmAMM}} for more details. \cr
   }
 }
 
 \value{
-  A list with class attribute \dQuote{es} holding the
-  following elements:
+  A list with class attribute \dQuote{es} holding the following
+  elements:
 
-  \item{eventstudy.output}{
-    a \sQuote{matrix} containing mean (bootstrap) or median (with
-    wilcoxon) estimate with confidence interval; \sQuote{NULL} if there
-    are no \dQuote{success} \dQuote{outcomes}.
-  }
+  \itemize{
+    \item{eventstudy.output}{
+      a \sQuote{matrix} containing mean (bootstrap) or median (with
+      wilcoxon) estimate with confidence interval; \sQuote{NULL} if there
+      are no \dQuote{success} \dQuote{outcomes}.
+    }
 
-  \item{outcomes}{a character vector that is the output from
-    \code{\link{phys2eventtime}} containing details of the successful use
-    of an event:
-    
-    \itemize{
-      \item{success: shows the successful use of event date.}
-      \item{wdatamissing: appears when width data is missing around the
-      event. This will not appear when this function is used since the
-      argument \sQuote{width} in \code{\link{phys2eventtime}} is set to zero.}
-      \item{wrongspan: if event date falls outside the range of physical date.}
-      \item{unitmissing: when the unit (firm name) is missing in the event list.}
+    \item{outcomes}{a character vector that is the output from
+      \code{\link{phys2eventtime}} containing details of the successful use
+      of an event:
+      
+      \itemize{
+        \item{success: shows the successful use of event date.}
+        \item{wdatamissing: appears when width data is missing around the
+          event. This will not appear when this function is used since the
+          argument \sQuote{width} in \code{\link{phys2eventtime}} is set to zero.}
+        \item{wrongspan: if event date falls outside the range of physical date.}
+        \item{unitmissing: when the unit (firm name) is missing in the event list.}
+      }
+    }
+
+    \item{inference}{
+      a \sQuote{character} providing information about which inference
+      strategy was utilised to estimate the confidence intervals.
+    }
+
+    \item{width}{
+      a \sQuote{numeric} specifying the window width for event study output.
+    }
+
+    \item{remap}{
+      a \sQuote{character} specifying the remapping technique
+      used. Options are mentioned in \dQuote{remap} argument description.
     }
   }
 
-  \item{inference}{
-    a \sQuote{character} providing information about which inference
-    strategy was utilised to estimate the confidence intervals.
-  }
-
-  \item{width}{
-    a \sQuote{numeric} specifying the window width for event study output.
-  }
-
-  \item{remap}{
-    a \sQuote{character} specifying the remapping technique
-    used. Options are mentioned in \dQuote{remap} argument description.
-  }
+  Function \sQuote{print.es} is provided to print the coefficients and
+  exposures of the analysis. \sQuote{plot.es} is used to plot the model
+  residuals and firm returns.
 }
 
 \author{Ajay Shah, Chirag Anand, Vikram Bahure, Vimal Balasubramaniam}
@@ -217,7 +226,7 @@ es <- eventstudy(firm.returns = StockPriceReturns,
 str(es)
 plot(es)
 
-## Event study using Augment Market Model
+## Event study using Augmented Market Model
 data("OtherReturns")
 
 events <- data.frame(outcome.unit = c("Infosys", "TCS"),
@@ -226,7 +235,7 @@ events <- data.frame(outcome.unit = c("Infosys", "TCS"),
 
 ammdata <- merge.zoo(Infosys = StockPriceReturns$Infosys,
                      TCS = StockPriceReturns$TCS,
-                     NiftyIndex,
+                     NiftyIndex = OtherReturns$NiftyIndex,
                      INRUSD = OtherReturns$INRUSD,
                      CallMoneyRate = OtherReturns$CallMoneyRate,
                      all = FALSE)

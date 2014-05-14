@@ -7,9 +7,6 @@
 #----------------------------------------------------------------
 # INPUT:
 # 'input'     : Output of get.clusters.formatted
-# 'prob.value': This is the tail value for which event is
-#               to be defined. For eg: prob.value=5 will
-#               consider 5% tail on both sides
 #-----------------------------------------------------------------
 # OUTPUT:
 # Result will be in a list of 3 with following tables:
@@ -31,7 +28,8 @@
 #     - Clustered, Un-clustered and Both
 #------------------------------------------------------------------
 # NOTE:
-eesSummary <- function(x, ...){
+## Functions: get.clusters.formatted, eesSummary, eesDates, eesInference, plot.ees
+eesSummary <- function(input){
   no.var <- NCOL(input)
 
   #---------------------
@@ -721,8 +719,10 @@ eesDates <- function(input){
 ## Event study plot for EES (extreme event studies)
 ## Input: Output of GCF
 ## eventLists: Output of eesDates
-eesInference <- function(input, eventLists, to.remap, remap, width,
-                         inference = TRUE, inference.strategy = "bootstrap"){
+eesInference <- function(input, eventLists, to.remap=TRUE, remap="cumsum",
+                         width, inference = TRUE,
+                         inference.strategy = "bootstrap"){
+                         
   inf <- list()
   ## Computing inference
   ## Normal

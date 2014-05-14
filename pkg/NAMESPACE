@@ -1,6 +1,6 @@
 export(eventstudy, inference.bootstrap, inference.wilcox, phys2eventtime,
        remap.cumsum, remap.cumprod, remap.event.reindex, eesSummary, eesDates, 
-	eesInference)
+	eesInference, get.clusters.formatted)
 
 export(marketResidual,
        excessReturn)

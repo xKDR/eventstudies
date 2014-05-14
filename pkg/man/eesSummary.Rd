@@ -1,7 +1,7 @@
 \name{eesSummary}
 \alias{eesSummary}
 
-\title{ Summary statistics of extreme events }
+\title{Summary statistics of extreme events}
 
 \description{
   This function generates summary statistics for identification and
@@ -9,25 +9,16 @@
 }
 
 \usage{
-   eesSummary(input, prob.value)
+   eesSummary(input)
 }
 
-\arguments{
- 
-  \item{input}{a univariate \pkg{zoo} or \pkg{xts} time series object}
-  
-  \item{prob.value}{The value (in percent) on the probability
-    distribution to define a tail event.}
+\arguments{ 
+  \item{input}{an output object of \sQuote{get.clusters.formatted}}
 }
 
 \details{
-  Tail (Rare) events are often the object of interest in finance. These
-  events are defined as those that have a low probability of
-  occurrence. This function identifies such events based on
-  \sQuote{prob.value} mentioned by the user and generates summary
-  statistics about the events. If \sQuote{prob.value} is 2.5\%, events
-  below 2.5\% (lower tail) and above 97.5\% (upper tail) of the
-  distribution are identified as extreme events. 
+  This function generates summary statistics of extreme events,
+  using the tail events as defined in the function \sQuote{get.clusters.formatted}.
 
   Following statistics is generated for both lower and upper tail
   events: 
@@ -87,6 +78,6 @@
 \examples{
 data(OtherReturns)
 
-r <- eesSummary(OtherReturns$SP500, prob.value = 5)
-str(r, max.level = 2)
+ees.summary.tables <- eesSummary(OtherReturns$SP500)
+str(ees.summary.tables, max.level = 2)
 }

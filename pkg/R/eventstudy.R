@@ -49,15 +49,15 @@ eventstudy <- function(firm.returns,
     } else {
       ## More than one firm
                                         # Extracting and merging
-      tmp.resid <- sapply(colnames(firm.returns), function(y)
+      tmp.resid <- lapply(colnames(firm.returns), function(y)
                           {
                             timeseriesAMM(firm.returns = firm.returns[,y],
                                           X = regressors,
                                           verbose = FALSE,
                                           nlags = 1)
                           })
-      outputModel <- zoo(tmp.resid,
-                         order.by = as.Date(rownames(tmp.resid)))
+      names(tmp.resid) <- colnames(firm.returns)
+      outputModel <- do.call(merge.zoo, tmp.resid)
     }
   } ## end AMM
 
@@ -92,6 +92,9 @@ eventstudy <- function(firm.returns,
                                         # Adding column names to event output
     cn.names <- eventList[which(es$outcomes=="success"),1]
   }
+
+  ## replace NAs with 0 as it's returns now
+  es.w <- na.fill(es.w, 0)
 
   if(length(cn.names)==1){
     cat("Event date exists only for",cn.names,"\n")

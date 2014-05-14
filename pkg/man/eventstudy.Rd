@@ -213,6 +213,7 @@ eventstudy(firm.returns,
 \examples{ 
 data("StockPriceReturns")
 data("SplitDates")
+data("OtherReturns")
 
 ## Event study without adjustment
 es <- eventstudy(firm.returns = StockPriceReturns,
@@ -227,21 +228,11 @@ str(es)
 plot(es)
 
 ## Event study using Augmented Market Model
-data("OtherReturns")
-
 events <- data.frame(outcome.unit = c("Infosys", "TCS"),
                      event.when = c("2012-04-01", "2012-06-01"),
                      stringsAsFactors = FALSE)
 
-ammdata <- merge.zoo(Infosys = StockPriceReturns$Infosys,
-                     TCS = StockPriceReturns$TCS,
-                     NiftyIndex = OtherReturns$NiftyIndex,
-                     INRUSD = OtherReturns$INRUSD,
-                     CallMoneyRate = OtherReturns$CallMoneyRate,
-                     all = FALSE)
-ammdata <- window(ammdata, start = "2012-02-01", end = "2012-12-31")
-
-es <- eventstudy(firm.returns = ammdata[, c("Infosys", "TCS")],
+es <- eventstudy(firm.returns = StockPriceReturns,
                  eventList = events,
                  width = 10,
                  type = "lmAMM",
@@ -250,8 +241,8 @@ es <- eventstudy(firm.returns = ammdata[, c("Infosys", "TCS")],
                  inference = TRUE,
                  inference.strategy = "bootstrap",
                                                  # model arguments
-                 market.returns = ammdata[, "NiftyIndex"],
-                 others = ammdata[, c("INRUSD", "CallMoneyRate")],
+                 market.returns = OtherReturns[, "NiftyIndex"],
+                 others = OtherReturns[, c("USDINR", "CallMoneyRate")],
                  market.returns.purge = TRUE
                  )
 str(es)

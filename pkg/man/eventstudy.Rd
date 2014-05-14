@@ -87,6 +87,8 @@ eventstudy(firm.returns,
   series, use \sQuote{[} with \code{drop = FALSE} for subsetting the
   data set. See \code{\link{phys2eventtime}} for more details.
 
+  \sQuote{NA} values in the returns data are converted to \code{0}.
+
   \dQuote{type} currently supports:
   \itemize{
     \item{\dQuote{marketResidual}: uses \code{\link{marketResidual}}
@@ -103,7 +105,8 @@ eventstudy(firm.returns,
   }
   
   Arguments to a model type can be sent inside \sQuote{...}. See
-  \sQuote{Model arguments} section for details on accepted fields.
+  \sQuote{Model arguments} section for details on accepted
+  fields.
 
   \dQuote{remap} can take three values:
   \itemize{
@@ -215,7 +218,7 @@ data("StockPriceReturns")
 data("SplitDates")
 data("OtherReturns")
 
-## Event study without adjustment
+                # Event study without adjustment
 es <- eventstudy(firm.returns = StockPriceReturns,
                  eventList = SplitDates,
                  width = 10,
@@ -227,7 +230,21 @@ es <- eventstudy(firm.returns = StockPriceReturns,
 str(es)
 plot(es)
 
-## Event study using Augmented Market Model
+                # Event study using Market Model
+es <- eventstudy(firm.returns = StockPriceReturns,
+                 eventList = SplitDates,
+                 width = 10,
+                 type = "marketResidual",
+                 to.remap = TRUE,
+                 remap = "cumsum",
+                 inference = TRUE,
+                 inference.strategy = "bootstrap",
+                 market.returns = OtherReturns[, "NiftyIndex"],
+                 )
+str(es)
+plot(es)
+
+                # Event study using Augmented Market Model
 events <- data.frame(outcome.unit = c("Infosys", "TCS"),
                      event.when = c("2012-04-01", "2012-06-01"),
                      stringsAsFactors = FALSE)

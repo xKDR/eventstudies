@@ -4,7 +4,7 @@
 \title{Extreme event study inference estimation}
 
 \description{This function performs event study analysis on extreme event dates 
- 	     (sQuote(eesDates)) and formatted output (\sQuote{get.clusters.formatted})
+ 	     (\sQuote{eesDates}) and formatted output (\sQuote{get.clusters.formatted})
 }
 
 \usage{
@@ -52,7 +52,7 @@
 	dates are obtained from function \sQuote{eesDates}. The function also estimates 
 	confidence interval using different inference strategies 
 	(\sQuote{bootstrap,wilcoxon}). The functionalities are similar to 
-	\sQuote{eventstudy) function without market model adjustment and \sQuote{input} 
+	\sQuote{eventstudy} function without market model adjustment and \sQuote{input} 
 	is output of \sQuote{get.clusters.formatted}, not \sQuote{firm.returns}.
 }
 

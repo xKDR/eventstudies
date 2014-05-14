@@ -89,7 +89,7 @@ which is done by setting `type' to ``None''.
 
 While daily returns data has been supplied, the standard event study
 deals with cumulated returns. In order to achieve this, we set
-to.remap to \code{TRUE} and we ask that this remapping be done using cumsum.
+to.remap to \emph{TRUE} and we ask that this remapping be done using cumsum.
 
 Finally, we come to inference strategy. We instruct eventstudy to do
 inference and ask for bootstrap inference.
@@ -103,7 +103,7 @@ str(es)
 
 The object returned by eventstudy is of class `es'. It is a list with
 five components. Three of these are just a record of the way
-\code{eventstudy()} was run: the inference procedure adopted (bootstrap
+\emph{eventstudy()} was run: the inference procedure adopted (bootstrap
 inference in this case), the window width (10 in this case) and the
 method used for mapping the data (cumsum). The two new things are
 `outcomes' and `eventstudy.output'.
@@ -247,7 +247,7 @@ tmp <- rbind(es$eventstudy.output[10, ],
              es.mm$eventstudy.output[10, ],
              es.amm$eventstudy.output[10, ]
              )[,c(1,3)]
-rownames(tmp) <- c("None","MM", "AMM")
+rownames(tmp) <- c("None", "MM", "AMM")
 print(tmp["MM", ] - tmp["None", ])
 print(tmp["AMM", ] - tmp["None", ])
 @ 

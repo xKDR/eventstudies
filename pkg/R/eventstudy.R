@@ -135,10 +135,14 @@ eventstudy <- function(firm.returns,
     result <- es.w
   }
   if(to.remap==TRUE){remapping <- remap} else {remapping <- "none"}
-    final.result <- list(eventstudy.output=result,
-                         outcomes=as.character(es$outcomes),
-                         inference=inference.strategy,
-                         width=width, remap=remapping)
+
+  final.result <- list(eventstudy.output = result,
+                       outcomes = as.character(es$outcomes))
+
+  attr(final.result, which = "inference") <- inference.strategy
+  attr(final.result, which = "width") <- width
+  attr(final.result, which = "remap") <- remapping
+
   class(final.result) <- "es"
   return(final.result)
 }
@@ -149,7 +153,7 @@ eventstudy <- function(firm.returns,
 
 print.es <- function(x, ...){
   cat("Event study", colnames(x$eventstudy.output)[2], "response with",
-      x$inference, "inference for CI:\n")
+      attr(x, "inference"), "inference for CI:\n")
   print(x$eventstudy.output)
   cat("\n","Event outcome has",length(which(x$outcomes=="success")),
       "successful outcomes out of", length(x$outcomes),"events:","\n")
@@ -171,11 +175,11 @@ plot.es <- function(x, xlab = NULL, ylab = NULL, ...){
 
   ## assign own labels if they're missing
   if (is.null(ylab)) {
-      if (x$remap == "cumsum") {
+      if (attr(x, "remap") == "cumsum") {
           remapLabel <- "Cum."
-      } else if (x$remap == "cumprod") {
+      } else if (attr(x, "remap") == "cumprod") {
           remapLabel <- "Cum. product"
-      } else if (x$remap == "reindex") {
+      } else if (attr(x, "remap") == "reindex") {
           remapLabel <- "Re-index"
       } else {
           remapLabel <- ""

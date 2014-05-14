@@ -3,7 +3,7 @@ context("INR Inference")
 test_that("test.inr.inference", {
 library(eventstudies)
 
-load(system.file("data", "INR.rda",package = "eventstudies"))
+load("test_INR.rda")
 
 inr_returns <- diff(log(INR))[-1]
 
@@ -16,7 +16,7 @@ eventslist <- data.frame(outcome.unit=rep("inr",10),
                            )
                          )
 
-event_time_data <- phys2eventtime(inr_returns,eventslist,width=10)
+event_time_data <- phys2eventtime(inr_returns[, , drop = FALSE] , eventslist,width=10)
 w <- window(event_time_data$z.e,start=-10,end=10)
 
 expect_that(inference.bootstrap(w, to.plot=FALSE)[,2],

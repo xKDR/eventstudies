@@ -3,8 +3,8 @@ context("Market residuals")
 test_that("test.market.residuals", {
 library(eventstudies)
 
-load(system.file("data", "StockPriceReturns.rda", package = "eventstudies"))
-load(system.file("data", "NiftyIndex.rda", package = "eventstudies"))
+load("test_StockPriceReturns.rda")
+load("test_NiftyIndex.rda")
 
 alldata <- merge(StockPriceReturns, NiftyIndex, all = TRUE)
 StockPriceReturns <- alldata[,-which(colnames(alldata) %in% "NiftyIndex")]

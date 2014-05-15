@@ -1,4 +1,5 @@
 \documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{a4wide}
 \usepackage[colorlinks,linkcolor=blue,citecolor=red]{hyperref}
@@ -24,7 +25,7 @@
 
 \section{The standard event study in finance}
 
-In this section, we look at using the eventstudies package for the
+In this section, we look at using the `eventstudies' package for the
 purpose of doing the standard event study using daily returns data in
 financial economics. This is a workhorse application of event
 studies. The treatment here assumes knowledge of event studies
@@ -33,7 +34,7 @@ studies. The treatment here assumes knowledge of event studies
 To conduct an event study, you must have a list of firms with
 associated dates, and you must have returns data for these
 firms. These dates must be stored as a simple data frame. To
-illustrate this, we use the object `SplitDates' in the package which
+illustrate this, we use the object \emph{SplitDates} in the package which
 is used for doing examples.
 
 <<show-the-events,results=verbatim>>=
@@ -49,7 +50,7 @@ the event. The second column is the event date.
 
 The second thing that is required for doing an event study is data for
 stock price returns for all the firms. The sample dataset supplied in
-the package is named `StockPriceReturns':
+the package is named \emph{StockPriceReturns}:
 
 <<show-the-events,results=verbatim>>=
 data(StockPriceReturns)                 # The sample
@@ -57,7 +58,7 @@ str(StockPriceReturns)                  # A zoo object
 head(StockPriceReturns,3)               # Time series of dates and returns.
 @ 
 
-The StockPriceReturns object is thus a zoo object which is a time
+The \emph{StockPriceReturns} object is thus a \emph{zoo} object which is a time
 series of daily returns. These are measured in per cent, i.e. a value
 of +4 is returns of +4\%. The zoo object has many columns of returns
 data, one for each unit of observation which, in this case, is a
@@ -84,21 +85,21 @@ es <- eventstudy(firm.returns = StockPriceReturns,
                  inference.strategy = "bootstrap")
 @ 
 
-This runs an event study using events listed in SplitDates, and using
-returns data for the firms in StockPriceReturns. An event window of 10
+This runs an event study using events listed in \emph{SplitDates}, and using
+returns data for the firms in \emph{StockPriceReturns}. An event window of 10
 days is analysed.
 
 Event studies with returns data typically do some kind of adjustment
 of the returns data in order to reduce variance. In order to keep
 things simple, in this first event study, we are doing no adjustment,
-which is done by setting `type' to ``None''.
+which is done by setting \texttt{type} to ``\texttt{None}''.
 
 While daily returns data has been supplied, the standard event study
 deals with cumulated returns. In order to achieve this, we set
-to.remap to \emph{TRUE} and we ask that this remapping be done using cumsum.
-
+\texttt{to.remap} to \texttt{TRUE} and we ask that this remapping be done using ``\texttt{cumsum}''.
+ 
 Finally, we come to inference strategy. We instruct eventstudy to do
-inference and ask for bootstrap inference.
+inference and ask for ``\texttt{bootstrap}'' inference.
 
 Let us peek and poke at the object `es' that is returned. 
 
@@ -107,18 +108,18 @@ class(es)
 str(es)
 @ 
 
-The object returned by eventstudy is of class `es'. It is a list with
+The object returned by eventstudy is of \texttt{class} `es'. It is a list with
 five components. Three of these are just a record of the way
-\emph{eventstudy()} was run: the inference procedure adopted (bootstrap
+\texttt{eventstudy()} was run: the inference procedure adopted (``\texttt{bootstrap}''
 inference in this case), the window width (10 in this case) and the
-method used for mapping the data (cumsum). The two new things are
-`outcomes' and `eventstudy.output'.
+method used for mapping the data (``\texttt{cumsum}''). The two new things are
+`\texttt{outcomes}' and `\texttt{eventstudy.output}'.
 
-The vector `outcomes' shows the disposition of each event in the
-events table. There are 22 rows in SplitDates, hence there will be 22
-elements in the vector `outcomes'. In this vector, `success' denotes a
+The vector `\texttt{outcomes}' shows the disposition of each event in the
+events table. There are 22 rows in \emph{SplitDates}, hence there will be 22
+elements in the vector `\texttt{outcomes}'. In this vector, ``\texttt{success}'' denotes a
 successful use of the event. When an event cannot be used properly,
-various error codes are supplied. E.g. `unitmissing' is reported when
+various error codes are supplied. E.g. ``\texttt{unitmissing}'' is reported when
 the events table shows an event for a unit of observation where
 returns data is not observed.
 
@@ -161,7 +162,7 @@ conducted with the cumulated $\epsilon_{jt}$ time series. This yields
 improved statistical efficiency as $\textrm{Var}(\epsilon_j) <
 \textrm{Var}(r_j)$.
 
-This is invoked by setting `type' to `marketResidual':
+This is invoked by setting \texttt{type} to ``\texttt{marketResidual}'':
 
 <<mm-adjustment>>=
 data(OtherReturns)
@@ -177,9 +178,9 @@ es.mm <- eventstudy(firm.returns = StockPriceReturns,
                     )
 @ 
 
-In addition to setting `type' to `marketResidual', we are now required
+In addition to setting \texttt{type} to ``\texttt{marketResidual}'', we are now required
 to supply data for the market index, $r_{Mt}$. In the above example,
-this is the data object NiftyIndex supplied from the OtherReturns data
+this is the data object `\texttt{NiftyIndex}' supplied from the \emph{OtherReturns} data
 object in the package. This is just a zoo vector with daily returns of
 the stock market index.
 
@@ -238,11 +239,11 @@ es.amm <- eventstudy(firm.returns = StockPriceReturns,
 @ 
 
 Here the additional regressor on the augmented market model is the
-returns on the exchange rate, which is the slot USDINR in
-OtherReturns. The full capabilities for doing augmented market models
+returns on the exchange rate, which is the slot `\texttt{USDINR}' in
+\emph{OtherReturns}. The full capabilities for doing augmented market models
 from \citet{patnaik2010amm} are available. These are documented
 elsewhere. For the present moment, we will use the feature
-market.returns.purge without explaining it.
+\texttt{market.returns.purge} without explaining it.
 
 Let us look at the gains in statistical efficiency across the three
 variants of the event study. We will use the width of the confidence
@@ -254,12 +255,13 @@ tmp <- rbind(es$eventstudy.output[10, ],
              es.amm$eventstudy.output[10, ]
              )[,c(1,3)]
 rownames(tmp) <- c("None", "MM", "AMM")
+
 print(tmp["MM", ] - tmp["None", ])
 print(tmp["AMM", ] - tmp["None", ])
 @ 
 
 This shows a sharp reduction in the width of the bootstrap 95\%
-confidence interval from None to MM adjustment. Over and above this, a
+confidence interval from ``\texttt{None}'' to MM adjustment. Over and above this, a
 small gain is obtained when going from MM adjustment to AMM
 adjustment.
 

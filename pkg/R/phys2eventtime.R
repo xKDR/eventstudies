@@ -24,16 +24,16 @@ phys2eventtime <- function(z, events, width=10) {
   }
 
   timeshift <- function(x) {
-    firm.present <- match(x[1], colnames(z), nomatch = -1) != -1
+    firm.present <- match(x["name"], colnames(z), nomatch = -1) != -1
     if (!firm.present) {
       return(list(result=NULL, outcome="unitmissing"))
     }
     ## Take previous date if exact data is not found.
-    location <- findInterval(as.Date(x[2]), index(z[, x[1]]))
+    location <- findInterval(as.Date(x["when"]), index(z[, x["name"]]))
     if ((location <= 1) | (location >= length(index(z)))) {
       return(list(result=NULL, outcome="wrongspan"))
     }
-    remapped <- zoo(as.numeric(z[,x[1]]), order.by=(-location+1):(length(z[,x[1]])-location))
+    remapped <- zoo(as.numeric(z[,x["name"]]), order.by=(-location+1):(length(z[,x["name"]])-location))
     return(list(result=remapped, outcome="success"))
   }
   

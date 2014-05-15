@@ -77,7 +77,7 @@ makeX(market.returns,
 \examples{
 data("OtherReturns")
 market.returns <- OtherReturns$NiftyIndex
-currency.returns <- OtherReturns$INRUSD
+currency.returns <- OtherReturns$USDINR
 
 X <- makeX(market.returns,
            others = currency.returns,

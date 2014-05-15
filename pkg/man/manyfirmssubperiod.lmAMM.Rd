@@ -59,11 +59,12 @@ manyfirmssubperiod.lmAMM(firm.returns,
 }
 
 \examples{
+data("StockPriceReturns")
 data("OtherReturns")
 
 firm.returns <- StockPriceReturns[, c("Infosys","TCS")]
 market.returns <- OtherReturns$NiftyIndex
-currency.returns <- OtherReturns$INRUSD
+currency.returns <- OtherReturns$USDINR
 
 X <- makeX(market.returns,
            others = currency.returns,
@@ -71,12 +72,12 @@ X <- makeX(market.returns,
            switch.to.innov = FALSE,
            market.returns.purge = FALSE,
            verbose = FALSE,
-	   dates = as.Date(c("2012-02-01", "2013-01-01", "2014-01-20")))
+	   dates = as.Date(c("2010-07-01", "2011-11-17", "2013-03-29")))
 
 res <- manyfirmssubperiod.lmAMM(firm.returns = firm.returns,
                                 X = X,
                                 lags = 1,
-                                dates = as.Date(c("2012-02-01", "2013-01-01", "2014-01-20")),
+                                dates = as.Date(c("2010-07-01", "2011-11-17", "2013-03-29")),
                                 periodnames = c("P1", "P2"),
                                 verbose = FALSE)
 print(res)

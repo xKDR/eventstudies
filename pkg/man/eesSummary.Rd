@@ -77,7 +77,10 @@
 
 \examples{
 data(OtherReturns)
-
-ees.summary.tables <- eesSummary(OtherReturns$SP500)
+## Formatting extreme event dates
+input <- get.clusters.formatted(event.series = OtherReturns[,"SP500"], 
+      	                        response.series = OtherReturns[,"NiftyIndex"])	
+## Extreme event summary tables
+ees.summary.tables <- eesSummary(input)
 str(ees.summary.tables, max.level = 2)
 }

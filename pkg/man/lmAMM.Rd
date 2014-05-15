@@ -82,7 +82,7 @@ data("OtherReturns")
 
 firm.returns <- StockPriceReturns[, "Infosys"]
 market.returns <- OtherReturns[ ,"NiftyIndex"]
-currency.returns <- OtherReturns[, "INRUSD"]
+currency.returns <- OtherReturns[, "USDINR"]
 
 X <- makeX(market.returns,
            others = currency.returns,
@@ -97,11 +97,11 @@ amm.residual <- residuals(amm.result)
 amm.residual <- zoo(amm.residual,
                     order.by = as.Date(names(amm.residual)))
 
-comparison <- merge(AMMResidual = amm.residual,
+Comparison <- merge(AMMResidual = amm.residual,
                     Infosys = StockPriceReturns$Infosys,
                     NiftyIndex =  OtherReturns$NiftyIndex,
                     all = FALSE)
-plot(comparison)
+plot(Comparison, xlab="")
 }
 
 \keyword{lmAMM}

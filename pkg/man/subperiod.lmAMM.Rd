@@ -77,16 +77,14 @@ regressors <- makeX(market.returns,
                     switch.to.innov = TRUE,
                     market.returns.purge = TRUE,
                     nlags = 1,
-                    dates = as.Date(c("2012-02-01","2013-01-01","2014-01-20")),
+                    dates = as.Date(c("2010-07-01", "2011-11-17", "2013-03-29")),
                     verbose = FALSE)
 
 res <- subperiod.lmAMM(firm.returns,
                        X = regressors,
                        nlags = 1,
                        verbose = FALSE,
-                       dates = as.Date(c("2012-02-01",
-                                         "2013-01-01",
-                                         "2014-01-20")))
+                       dates = as.Date(c("2010-07-01", "2011-11-17", "2013-03-29")))
 str(res)
 }
 \keyword{subperiod.lmAMM}

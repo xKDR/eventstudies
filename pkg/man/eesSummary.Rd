@@ -13,15 +13,15 @@
 }
 
 \arguments{ 
-  \item{input}{an output object of \sQuote{get.clusters.formatted}}
+  \item{input}{object returned by \sQuote{get.clusters.formatted}}
 }
 
-\details{
-  This function generates summary statistics of extreme events,
-  using the tail events as defined in the function \sQuote{get.clusters.formatted}.
+\details{This function generates summary statistics of extreme events,
+  using the tail events as returned by the function
+  \sQuote{get.clusters.formatted}.
 
-  Following statistics is generated for both lower and upper tail
-  events: 
+  Following statistics are generated for both lower and upper tail
+  events:
 
   \itemize{
     \item \sQuote{extreme.event.distribution} provides summary
@@ -47,7 +47,7 @@
 \value{ A \code{list} object containing:
 
   \item{data.summary}{a \sQuote{data.frame} containing summary of
-    the data set minimum, maximum, inter-quartile range, mean, median,
+    the minimum, maximum, inter-quartile range, mean, median,
     standard deviation and quantile values at 5\%, 25\%, 75\% and 95\%.}
 
   \item{lower.tail}{a \sQuote{list} that contains

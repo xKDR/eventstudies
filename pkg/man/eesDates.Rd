@@ -56,9 +56,9 @@
 \examples{
 data(OtherReturns)
 ## Formatting extreme event dates
-input <- get.clusters.formatted(event.series = OthersReturns[,"SP500"], 
-      	                        response.series = OtherReturns[,"NiftyIndex"],
-				prob.value=5)
+input <- get.clusters.formatted(event.series = OtherReturns[,"SP500"], 
+      	                response.series = OtherReturns[,"NiftyIndex"])
+
 ## Extracting event dates
 event.lists <- eesDates(input)
 str(event.dates, max.level = 2)

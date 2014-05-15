@@ -8,8 +8,8 @@
 }
 
 \usage{
-   eesInference(input, eventLists, to.remap = TRUE, remap = "cumsum", inference = "TRUE",
-   		inference.strategy = "bootstrap")
+   eesInference(input, eventLists, width, to.remap = TRUE, remap = "cumsum", 
+   		inference = "TRUE", inference.strategy = "bootstrap")
 }
 
 \arguments{
@@ -21,6 +21,11 @@
 	an output object of \sQuote{eesDates}, which provides event list 
 	for normal and purged events
 	}
+
+	\item{width}{
+	an \sQuote{integer} of length 1 that specifies a
+    	symmetric event window around the event date.
+  	}
 
 	\item{to.remap}{
 	\sQuote{logical}, indicating whether or not to remap
@@ -43,7 +48,8 @@
     	inference strategy to be used for estimating the confidence
     	interval. Presently, two methods are available: \dQuote{bootstrap}
     	and \dQuote{wilcox}. The default setting is \sQuote{bootstrap}.
-  	}
+  	}	
+
 }
 
 \details{
@@ -100,14 +106,13 @@
 \examples{
 data(OtherReturns)
 ## Formatting extreme event dates
-input <- get.clusters.formatted(event.series = OthersReturns[,"SP500"], 
-      	                        response.series = OtherReturns[,"NiftyIndex"],
-				prob.value=5)
+input <- get.clusters.formatted(event.series = OtherReturns[,"SP500"], 
+      	                        response.series = OtherReturns[,"NiftyIndex"])	
 
 ## Extracting event dates
 event.lists <- eesDates(input)
 
 ## Performing event study analysis and computing inference
-inf <- eesInference(input = input, eventLists = event.lists)
+inf <- eesInference(input = input, eventLists = event.lists, width = 5)
 str(inf, max.level = 2)
 }

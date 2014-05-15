@@ -719,8 +719,8 @@ eesDates <- function(input){
 ## Event study plot for EES (extreme event studies)
 ## Input: Output of GCF
 ## eventLists: Output of eesDates
-eesInference <- function(input, eventLists, to.remap=TRUE, remap="cumsum",
-                         width, inference = TRUE,
+eesInference <- function(input, eventLists, width, to.remap=TRUE, 
+                         remap="cumsum", inference = TRUE,
                          inference.strategy = "bootstrap"){
                          
   inf <- list()

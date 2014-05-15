@@ -76,6 +76,8 @@
 \examples{
 data(OtherReturns)
 
-gcf <- get.clusters.formatted(OtherReturns$SP500, prob.value = 5)
+gcf <- get.clusters.formatted(event.series = OtherReturns$SP500, 
+       			      response.series = OtherReturns$NiftyIndex)
+       			      
 str(gcf, max.level = 2)
 }

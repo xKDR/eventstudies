@@ -8,372 +8,256 @@
 \usepackage{parskip}
 \usepackage{amsmath}
 \title{Introduction to the \textbf{eventstudies} package in R}
-\author{Vikram Bahure \and Vimal Balasubramaniam \and Ajay Shah\thanks{We thank
-    Chirag Anand for valuable inputs in the creation of this vignette.}} 
+\author{Ajay Shah}
 \begin{document}
-% \VignetteIndexEntry{eventstudies: A package with functionality to do Event Studies} 
-% \VignetteDepends{} 
-% \VignetteKeywords{eventstudies} 
-% \VignettePackage{eventstudies}
 \maketitle
 
 \begin{abstract}
-  Event study analysis is an important tool in the econometric
-  analysis of an event and its impact on a measured
-  outcome. Although widely used in finance, it is a generic tool
-  that can be used in other disciplines as well. There is, however,
-  no single repository to undertake such an analysis with
-  R. \texttt{eventstudies} provides the toolbox to carry out an
-  event-study analysis. It contains functions to transform data
-  into the event-time frame and procedures for statistical
-  inference. In this vignette, we provide an example from the field of finance and
-  utilise the rich features of this package.
 \end{abstract}
-
 \SweaveOpts{engine=R,pdf=TRUE}
 
-\section{Introduction}
+\section{The standard event study in finance}
 
-Event study methodology has been primarily used to evaluate the impact of specific events on the value of a firm. The typical procedure for conducting an event study involves
-\citep{MacKinlay1997}:
-\begin{enumerate}
-\item Defining the event of interest and the event window. The event window should be larger than the specific period of interest.
-\item Determining a measure of abnormal returns, the most common being the \textit{constant mean return model} and the \textit{market model}. This is important to disentangle the effects on stock prices of information that is specific to the firm under question (e.g. stock split announcement) and information that is likely to affect all stock prices (e.g. interest rates).
-\item Analysis of firm returns on or after the event date.
-\end{enumerate}
+In this section, we look at using the eventstudies package for the
+purpose of doing the standard event study using daily returns data in
+financial economics. This is a workhorse application of event
+studies. The treatment here assumes knowledge of event studies
+\citep{Corrado2011}.
 
-The \textbf{eventstudies} package brings together the various aspects of an event study analysis in one package. It provides for functions to calculate returns, transform data into event-time, and inference procedures. All functions in this package are implemented in the R system for statistical computing. The package, and R are available at no cost under the terms of the general public license (GPL) from the comprehensive R archive network (CRAN, \texttt{http://CRAN.R-project.org}).
+To conduct an event study, you must have a list of firms with
+associated dates, and you must have returns data for these
+firms. These dates must be stored as a simple data frame. To
+illustrate this, we use the object `SplitDates' in the package which
+is used for doing examples.
 
-This paper is organised as follows. A skeletal event study model is presented in Section \ref{s:model}. Section \ref{s:approach} discusses the software approach used in this package. Section \ref{s:example} shows an example.
+<<show-the-events,results=verbatim>>=
+library(eventstudies)
+data(SplitDates)                        # The sample
+str(SplitDates)                         # Just a data frame
+head(SplitDates)
+@ 
 
-\section{Skeletal event study model} \label{s:model}
+The representation of dates is a data frame with two columns. The
+first column is the name of the unit of observation which experienced
+the event. The second column is the event date.
 
-In this section, we present a model to evaluate the impact of stock splits on returns \citep{Corrado2011}.
+The second thing that is required for doing an event study is data for
+stock price returns for all the firms. The sample dataset supplied in
+the package is named `StockPriceReturns':
 
-Let day $0$ identify the stock split date under scrutiny and let days t = $...,-3,-2,-1$ represent trading days leading up to the event. If the return on the firm with the stock split $R_o$ is statistically large compared to returns on previous dates, we may conclude that the stock split event had a significant price impact.
+<<show-the-events,results=verbatim>>=
+data(StockPriceReturns)                 # The sample
+str(StockPriceReturns)                  # A zoo object
+head(StockPriceReturns,3)               # Time series of dates and returns.
+@ 
 
-To disentangle the impact of the stock split on the returns of the firm from general market-wide information, we use the market-model to adjust the event-date return, thus removing the influence of market information.
+The StockPriceReturns object is thus a zoo object which is a time
+series of daily returns. These are measured in per cent, i.e. a value
+of +4 is returns of +4\%. The zoo object has many columns of returns
+data, one for each unit of observation which, in this case, is a
+firm. The column name of the zoo object must match the firm name
+(i.e. the name of the unit of observation) in the list of events.
 
-The market model is calculated as follows:
+The package gracefully handles the three kinds of problems encountered
+with real world data: (a) a firm where returns is observed but there
+is no event, (b) a firm with an event where returns data is lacking
+and (c) a stream of missing data in the returns data surrounding the
+event date.
 
-\[ R_t = a + b RM_t + e_t \]
+With this in hand, we are ready to run our first event study, using
+raw returns:
 
-The firm-specific return $e_t$ is unrelated to the overall market and has an expected value of zero.  Hence, the expected event date return conditional on the event date market return is
+<<no-adjustment>>=
+es <- eventstudy(firm.returns = StockPriceReturns,
+                 eventList = SplitDates,
+                 width = 10,
+                 type = "None",
+                 to.remap = TRUE,
+                 remap = "cumsum",
+                 inference = TRUE,
+                 inference.strategy = "bootstrap")
+@ 
 
-\[ E(R_0|RM_0) = a + b RM_0 \]
+This runs an event study using events listed in SplitDates, and using
+returns data for the firms in StockPriceReturns. An event window of 10
+days is analysed.
 
-The abnormal return $A_0$ is simply the day-zero firm-specific return $e_0$:
+Event studies with returns data typically do some kind of adjustment
+of the returns data in order to reduce variance. In order to keep
+things simple, in this first event study, we are doing no adjustment,
+which is done by setting `type' to ``None''.
 
-\[ A_0 = R_0- E(R_0|RM_0) = R_0 - a - b RM_0 \]
+While daily returns data has been supplied, the standard event study
+deals with cumulated returns. In order to achieve this, we set
+to.remap to \emph{TRUE} and we ask that this remapping be done using cumsum.
 
-A series of abnormal returns from previous periods are also calculated for comparison, and to determine statistical significance.
+Finally, we come to inference strategy. We instruct eventstudy to do
+inference and ask for bootstrap inference.
 
-\[ A_t = R_t- E(R_t|RM_t) = R_t - a - b RM_t \]
+Let us peek and poke at the object `es' that is returned. 
 
-The event date abnormal return $A_0$ is then assessed for statistical significance relative to the distribution of abnormal returns $A_t$ in the control period. A common assumption used to formulate tests of statistical significance is that abnormal returns are normally distributed. However, such distributional assumptions may not be necessary with non-parametric procedures. For detailed exposition on the theoretical framework of eventstudies, please refer to % Insert Corrado (2011) and Campbell, Lo, McKinlay ``Econometrics of Financial Markets''
+<<the-es-object,results=verbatim>>=
+class(es)
+str(es)
+@ 
 
-\section{Software approach} \label{s:approach}
+The object returned by eventstudy is of class `es'. It is a list with
+five components. Three of these are just a record of the way
+\emph{eventstudy()} was run: the inference procedure adopted (bootstrap
+inference in this case), the window width (10 in this case) and the
+method used for mapping the data (cumsum). The two new things are
+`outcomes' and `eventstudy.output'.
 
-\textbf{eventstudies} offers the following functionalities:
+The vector `outcomes' shows the disposition of each event in the
+events table. There are 22 rows in SplitDates, hence there will be 22
+elements in the vector `outcomes'. In this vector, `success' denotes a
+successful use of the event. When an event cannot be used properly,
+various error codes are supplied. E.g. `unitmissing' is reported when
+the events table shows an event for a unit of observation where
+returns data is not observed.
 
-\begin{itemize}
-\item Models for calculating idiosyncratic returns
-\item Procedures for converting data from physical time into event time
-\item Procedures for inference
-\end{itemize}
-
-\subsection{Models for calculating idiosyncratic returns}
-
-Firm returns can be calculated using the following functions:
-
-\begin{itemize}
-\item \texttt{excessReturn}: estimation of excess returns i.e. $R_j - R_m$ where $R_j$ is the return of firm $j$ and $R_m$ is the market return.
-  
-\item \texttt{marketResidual}: estimation of market model to obtain idiosyncratic firm returns, controlling for the market returns. 
-  
-\item \texttt{lmAMM}: estimation of the augmented market model which provides user the capability to run market models with orthogonalisation and obtain idiosyncratic returns. 
-
-\end{itemize}
-The function \texttt{lmAMM} is a generic function that allows users to
-run an augmented market model (AMM) by using regressors provided by
-\texttt{makeX} function and undertake the analysis of the market model
-in a regression setting and obtain idiosyncratic
-returns. The auxiliary regression that purges the effect of the
-explanatory variables on one another is performed using \texttt{makeX}
-function. \texttt{subpperiod.lmAMM} function allows for a single firm
-AMM analysis for different periods in the sample. While
-\texttt{manyfirmssubperiod.lmAMM}\footnote{User can use this function
-  to perform AMM for more than one firm by providing argument \textit{dates=NULL}} replicates the
-\texttt{subperiod.lmAMM} analysis for more than one firms. 
-
-The output of \texttt{lmAMM} function is an list object of class
-\texttt{amm}. It includes the linear model output along with AMM
-exposure, standard deviation, significance and residuals. These AMM
-residuals are further used in event study analysis.
-
-\subsection{Converting data from physical time into event time}
-
-The conversion of the returns data to event-time, and to cumulate returns is done using the following functions:
-
-\begin{itemize}
-\item \texttt{phys2eventtime}: conversion to an event frame. This requires a time series object of stock price returns (our outcome variable) and a data frame with two columns \textit{outcome.unit} and \textit{event.date}, the firms and the date on which the event occurred respectively.
-   
-\item \texttt{remap.cumsum}: conversion of returns to cumulative returns. The input for this function is the time-series object in event-time that is obtained as the output from \texttt{phys2eventtime}. 
-\end{itemize}
-
-The function \texttt{phys2eventtime} is generic and can handle objects
-of any time frequency, including intra-day high frequency data. While
-\texttt{remap.cumsum} is sufficiently general to be used on any time
-series object for which we would like to obtain cumulative values, in
-this context, the attempt is to cumulate idiosyncratic returns to
-obtain a clear identification of the magnitude and size of the impact
-of an event \citep{brown1985using}.
-
-At this point of analysis, we hold one important data object organised in event-time, where each  column of this object corresponds to the event on the outcome unit, with values before and after the event organised as before and after $-T,-(T-1),...,-3,-2,-1,0,1,2,3,...,T-1,T$. The package, once again, is very general and allows users to decide on the number of time units before and after the event that must be used for statistical inference. 
-
-\subsection{Procedures for inference}  
-
-Procedures for inference include:
-\begin{itemize}
-  
-\item \texttt{inference.wilcox}: estimation of wilcox inference to
-  generate the distribution of cumulative returns series.
-
-\item \texttt{inference.bootstrap}: estimation of bootstrap to
-  generate the distribution of cumulative returns series.
-\end{itemize}
-
-The last stage in the analysis of eventstudies is statistical inference. At present, we have two different inference procedures incorporated into the package. The first of the two, \texttt{inference.wilcox} is a traditional test of inference for eventstudies. The second inference procedure, \texttt{inference.bootstrap} is another non-parametric procedure that exploits the multiplicity of outcome units for which such an event has taken place. For example, a corporate action event such as stock splits may have taken place for many firms (outcome units) at different points in time. This cross-sectional variation in outcome is exploited by the bootstrap inference procedure. 
-
-The inference procedures would generally require no more than the object generated in the second stage of our analysis, for instance, the cumulative returns in event-time (\texttt{es.w}), and will ask whether the user wants a plot of the results using the inference procedure used. 
-
-We intend to expand the suite of inference procedures available for analysis to include the more traditional procedures such as the Patell $t-$test. 
-
-\section{Performing eventstudy analysis: An example}\label{s:example}
-
-In this section, we demonstrate the package with a study of the impact of stock splits on the stock prices of firms. We use the returns series of the thirty index companies, as of 2013, of the Bombay Stock Exchange (BSE), between 2001 and 2013.  We also have stock split dates for each firm since 2000. 
-
-Our data consists of a \textit{zoo} object for stock price returns for the thirty firms. This is our ``outcome variable'' of interest, and is called \textit{StockPriceReturns}. Another zoo object, \textit{NiftyIndex}, contains a time series of market returns. 
-
-<<>>= 
-library(eventstudies) 
-data(StockPriceReturns)
-data(NiftyIndex) 
-str(StockPriceReturns) 
-head(StockPriceReturns[rowSums(is.na((StockPriceReturns)))==3,1:3]) 
-head(NiftyIndex) 
-@
-
-As required by the package, the event date (the dates on which stock splits occured for these 30 firms) for each firm is recorded in \textit{SplitDates} where ``outcome.unit'' is the name of the firm (the column name in ``StockPriceReturns'') and ``event.date'' is when the event took place for that outcome unit. In R, the column ``outcome.unit'' has to be of class ``character'' and ``event.date'' of class ``Date'', as seen below:
-
-<<>>= 
-data(SplitDates) 
-head(SplitDates) 
-data(INR) 
-inrusd <- diff(log(INR))*100
-all.data <- merge(StockPriceReturns,NiftyIndex,inrusd,all=TRUE) 
-StockPriceReturns <- all.data[,-which(colnames(all.data)%in%c("NiftyIndex", "inr"))] 
-NiftyIndex <- all.data$NiftyIndex 
-inrusd <- all.data$inr
-@
-
-\subsection{Calculating idiosyncratic returns}
-
-Calculating returns, though straightforward, can be done in a variety
-of different ways. The function \texttt{excessReturn} calculates the
-excess returns while \texttt{marketResidual} calculates the market
-model. The two inputs are \texttt{firm.returns} and
-\texttt{market.returns}. The results are stored in \texttt{er.result}
-and \texttt{mm.result} respectively. These are the standard
-idiosyncratic return estimation that is possible with this package.
-
-<<>>= # Excess return 
-er.result <- excessReturn(firm.returns = StockPriceReturns, market.returns = NiftyIndex)
-er.result <- er.result[rowSums(is.na(er.result))!=NCOL(er.result),]
-head(er.result[,1:3])
-
-@
-
-<<>>= # Extracting market residual
-mm.result <- marketResidual(firm.returns = StockPriceReturns, market.returns = NiftyIndex)
-mm.result <- mm.result[rowSums(is.na(mm.result))!=NCOL(mm.result),]
-head(mm.result[,1:3])
-
-@
-
-To provide flexibility to users, a general regression framework to
-estimate idiosyncratic returns, the augmented market model, is also
-available. In this case, we would like to purge any currency returns
-from the outcome return of interest, and the \textit{a-priori}
-expectation is that the variance of the residual is reduced in this
-process. In this case, the model requires a time-series of the
-exchange rate along with firm returns and market returns. The complete
-data set consisting of firm returns, market returns and exchange rate
-for the same period\footnote{A balanced data without NAs is preferred}
-is first created.  
-
-The first step is to create regressors using market returns and
-exchange rate using \texttt{makeX} function. The output of
-\texttt{makeX} function is further used in \texttt{lmAMM} along with
-firm returns to compute augmented market model residuals.
-
-% AMM model
-<<>>= # Create RHS before running lmAMM() 
-###################
-## AMM residuals ##
-###################
-## Getting Regressors
-regressors <- makeX(market.returns=NiftyIndex, others=inrusd, 
-                    market.returns.purge=TRUE, nlags=1)
-## AMM residual to time series
-timeseries.lmAMM <- function(firm.returns,X,verbose=FALSE,nlags=1){
-  tmp <- resid(lmAMM(firm.returns,X,nlags))
-  tmp.res <- zoo(tmp,as.Date(names(tmp)))
-}
-## One firm
-amm.result <- timeseries.lmAMM(firm.returns=StockPriceReturns[,1], 
-                            X=regressors, verbose=FALSE, nlags=1)
-
-## More than one firm
-                                        # Extracting and merging
-tmp.resid <- sapply(colnames(StockPriceReturns)[1:3],function(y)
-                    timeseries.lmAMM(firm.returns=StockPriceReturns[,y],
-                                  X=regressors,
-                                  verbose=FALSE,
-                                  nlags=1))
-amm.resid <- do.call("merge",tmp.resid)
-@
-
-\subsection{Conversion to event-time frame}
-
-The conversion from physical time into event time combines the two objects we have constructed till now: \textit{SplitDates} and \textit{StockPriceReturns}. These two objects are input matrices for the function \texttt{phys2eventtime}. With the specification of ``width=5'' in the function, we require phys2eventtime to define a successfull unit entry (an event) in the result as one where there is no missing data for 5 days before and after the event. This is marked as ``success'' in the resulting list object. With data missing, the unit is flagged ``wdatamissing''. In case the event falls outside of the range of physical time provided in the input data, the unit entry will be flagged ``wrongspan'' and if the unit in \textit{SplitDates} is missing in \textit{StockPriceReturns}, we identify these entries as ``unitmissing''. This allows the user to identify successful entries in the sample for an analysis based on event time. In this example, we make use of successful entries in the data and the output object is stored as \textit{es.w}: 
-
-<<>>= 
-es <- phys2eventtime(z=StockPriceReturns, events=SplitDates,
-                     width=5) 
-str(es) 
-es$outcomes 
-es.w <- window(es$z.e, start=-5,end=5) 
-colnames(es.w) <- SplitDates[which(es$outcomes=="success"),1] 
-SplitDates[1,]
-StockPriceReturns[SplitDates[1,2],SplitDates[1,1]] 
-es.w[,1] 
-@
-
-The identification of impact of such an event on returns is better represented with cumulative returns as the outcome variable. We cumulate returns on this (event) time series object, by applying the function \texttt{remap.cumsum}. 
-
-<<>>= 
-es.cs <- remap.cumsum(es.w,is.pc=FALSE,base=0) 
-es.cs[,1] 
-@
-
-The last stage in the analysis of an event-study is that of obtaining statistical confidence with the result by using different statistical inference procedures. 
-
-\subsection{Inference procedures}
-
-While the package is sufficiently generalised to undertake a wide array of inference procedures, at present it contains only two inference procedures: 1/ The bootstrap and 2/ Wilcoxon Rank test. We look at both in turn below: 
-
-\subsubsection{Bootstrap inference}
-We hold an event time object that contains several cross-sectional observations for a single definition of an event: The stock split. At each event time, i.e., $-T,-(T-1),...,0,...,(T-1),T$, we hold observations for 30 stocks. At this point, without any assumption on the distribution of these cross sectional returns, we can generate the sampling distribution for the location estimator (mean in this case) using non-parametric inference procedures. The bootstrap is our primary function in the suite of inference procedures under construction.\footnote{Detailed explanation of the methodology is presented in \citet{PatnaikShahSingh2013}. This specific approach is based on \citet{davison1986efficient}.}
-
-\textit{inference.bootstrap} performs the bootstrap to generate distribution of $\overline{CR}$. The bootstrap generates confidence interval at 2.5 percent and 97.5 percent for the estimate.
-
-<<>>= 
-result <- inference.bootstrap(es.w=es.cs, to.plot=FALSE) 
-print(result)
-@
-
-\begin{figure}[t]
-  \begin{center}
-    \caption{Stock splits event and response of respective stock
-      returns: Bootstrap CI}
-    \setkeys{Gin}{width=0.8\linewidth}
-    \setkeys{Gin}{height=0.8\linewidth} 
-<<fig=TRUE,echo=FALSE>>=
-es.na.btsp <- eventstudy(firm.returns = StockPriceReturns, 
-                    eventList = SplitDates, width = 10, to.remap = TRUE,
-                    remap = "cumsum", inference = TRUE, 
-                    inference.strategy = "bootstrap", type = "None")       
-plot(es.na.btsp)
-@
-  \end{center}
-  \label{fig:one}
+\begin{figure}
+\begin{center}
+<<plot-es,fig=TRUE,width=4,height=2.5>>=
+par(mai=c(.8,.8,.2,.2))
+plot(es, cex.axis=.7, cex.lab=.7)
+@ 
+\end{center}
+\caption{Plot method applied to es object}\label{f:esplot1}
 \end{figure}
 
-\subsubsection{Wilcoxon signed rank test}
-Another non-parametric inference available and is used widely with event study analysis is the Wilcoxon signed rank test. This package provides a wrapper that uses the function \texttt{wilcox.test} in \texttt{stats}. 
+% TODO: The x label should be "Event time (days)" and should
+% automatically handle other situations like weeks or months or microseconds.
+% The y label is much too long.
 
-<<>>= 
-result <- inference.wilcox(es.w=es.cs, to.plot=FALSE) 
-print(result)
-@
+Plot and print methods for the class `es' are supplied. The standard
+plot is illustrated in Figure \ref{f:esplot1}. In this case, we see
+the 95\% confidence interval is above 0 and below 0 and in no case can
+the null of no-effect, compared with the starting date (10 days before
+the stock split date), be rejected.
 
-\begin{figure}[t]
-  \begin{center}
-    \caption{Stock splits event and response of respective stock
-      returns: Wilcoxon CI}
-    \setkeys{Gin}{width=0.8\linewidth}
-    \setkeys{Gin}{height=0.8\linewidth} 
-<<fig=TRUE,echo=FALSE>>=
-es.na.wcx <- eventstudy(firm.returns = StockPriceReturns, 
-                    eventList = SplitDates, width = 10, to.remap = TRUE,
-                    remap = "cumsum", inference = TRUE, 
-                    inference.strategy = "wilcox", type = "None")
-plot(es.na.wcx)
-@
-  \end{center}
-  \label{fig:two}
+In this first example, raw stock market returns was utilised in the
+event study. It is important to emphasise that the event study is a
+statistically valid tool even under these circumstances. Averaging
+across multiple events isolates the event-related
+fluctuations. However, there is a loss of statistical efficiency that
+comes from fluctuations of stock prices that can have nothing to do
+with firm level news. In order to increase efficiency, we resort to
+adjustment of the returns data.
+
+The standard methodology in the literature is to use a market
+model. This estimates a time-series regression $r_{jt} = \alpha_j +
+\beta_j r_{Mt} + \epsilon_{jt}$ where $r_{jt}$ is returns for firm $j$
+on date $t$, and $r_{Mt}$ is returns on the market index on date
+$t$. The market index captures market-wide fluctuations, which have
+nothing to do with firm-specific factors. The event study is then
+conducted with the cumulated $\epsilon_{jt}$ time series. This yields
+improved statistical efficiency as $\textrm{Var}(\epsilon_j) <
+\textrm{Var}(r_j)$.
+
+This is invoked by setting `type' to `marketResidual':
+
+<<mm-adjustment>>=
+data(OtherReturns)
+es.mm <- eventstudy(firm.returns = StockPriceReturns,
+                    eventList = SplitDates,
+                    width = 10,
+                    type = "marketResidual",
+                    to.remap = TRUE,
+                    remap = "cumsum",
+                    inference = TRUE,
+                    inference.strategy = "bootstrap",
+                    market.returns=OtherReturns$NiftyIndex
+                    )
+@ 
+
+In addition to setting `type' to `marketResidual', we are now required
+to supply data for the market index, $r_{Mt}$. In the above example,
+this is the data object NiftyIndex supplied from the OtherReturns data
+object in the package. This is just a zoo vector with daily returns of
+the stock market index.
+
+\begin{figure}
+\begin{center}
+<<plot-es-mm,fig=TRUE,width=4,height=2.5>>=
+par(mai=c(.8,.8,.2,.2))
+plot(es.mm, cex.axis=.7, cex.lab=.7)
+@ 
+\end{center}
+\caption{Adjustment using the market model}\label{f:esplotmm}
 \end{figure}
 
-\subsection{General eventstudy wrapper}
+A comparison of the range of the $y$ axis in Figure \ref{f:esplot1}
+versus that seen in Figure \ref{f:esplotmm} shows the substantial
+improvement in statistical efficiency that was obtained by market
+model adjustment.
 
-While the general framework to perform an eventstudy analysis has been explained with an example in detail, the package also has a wrapper that makes use of all functions explained above to generate the end result for analysis. While this is a quick mechanism to study events that fit this style of analysis, we encourage users to make use of the core functionalities to extend and use this package in ways the wrapper does not capture. Several examples of this wrapper \texttt{eventstudy}, is provided below for convenience:
+We close our treatment of the standard finance event study with one
+step forward on further reducing $\textrm{Var}(\epsilon)$ : by doing
+an `augmented market model' regression with more than one explanatory
+variable. The augmented market model uses regressions like:
 
-<<>>= 
-## Event study without adjustment 
-es.na <- eventstudy(firm.returns = StockPriceReturns, eventList =
-                    SplitDates, width = 10, to.remap = TRUE, 
-                    remap = "cumsum", inference = TRUE, 
-                    inference.strategy = "wilcoxon", type = "None")
-                    
+\[
+r_{jt} = \alpha_j + \beta_1,j r_{M1,t} + \beta_2,j r_{M2,t}
+           \epsilon_{jt}
+\]
 
-## Event study using market residual and bootstrap 
-es.mm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
-                    width = 10, to.remap = TRUE, remap = "cumsum", 
-                    inference = TRUE, inference.strategy = "bootstrap", 
-                    type = "marketResidual", market.returns = NiftyIndex) 
+where in addition to the market index $r_{M1,t}$, there is an
+additional explanatory variable $r_{M2,t}$. One natural candidate is
+the returns on the exchange rate, but there are many other candidates.
 
-## Event study using excess return and bootstrap 
-es.er <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
-                    width = 10, to.remap = TRUE, remap = "cumsum", 
-                    inference = TRUE, inference.strategy = "bootstrap",
-                    type = "excessReturn", market.returns = NiftyIndex)
+An extensive literature has worked out the unique problems of
+econometrics that need to be addressed in doing augmented market
+models. The package uses the synthesis of this literature as presented
+in \citet{patnaik2010amm}.\footnote{The source code for augmented
+  market models in the package is derived from the source code written
+  for \citet{patnaik2010amm}.}
 
-## Event study using augmented market model (AMM) and bootstrap
-es.amm <- eventstudy(firm.returns = StockPriceReturns, eventList = SplitDates, 
-                     width = 10, to.remap = TRUE, remap = "cumsum", 
-                     inference = TRUE, inference.strategy = "bootstrap", 
-                     type = "lmAMM", market.returns = NiftyIndex, 
-                     others=inrusd, verbose=FALSE, 
-                     switch.to.innov=TRUE, market.returns.purge=TRUE, nlags=1)
-print(es.na)
-summary(es.na)
+To repeat the stock splits event study using augmented market models,
+we use the incantation:
 
-@
+<<amm-adjustment>>=
+es.amm <- eventstudy(firm.returns = StockPriceReturns,
+                    eventList = SplitDates,
+                    width = 10,
+                    type = "lmAMM",
+                    to.remap = TRUE,
+                    remap = "cumsum",
+                    inference = TRUE,
+                    inference.strategy = "bootstrap",
+                    market.returns=OtherReturns$NiftyIndex,
+                    others=OtherReturns$USDINR,
+                    market.returns.purge=TRUE
+                    )
+@ 
 
-The analysis of events has a wide array of tools and procedures available in the econometric literature. The objective in this package is to start with a core group of functionalities that deliver the platform for event studies following which we intend to extend and facilitate more inference procedures for use from this package. 
+Here the additional regressor on the augmented market model is the
+returns on the exchange rate, which is the slot USDINR in
+OtherReturns. The full capabilities for doing augmented market models
+from \citet{patnaik2010amm} are available. These are documented
+elsewhere. For the present moment, we will use the feature
+market.returns.purge without explaining it.
 
-\section{Computational details}
-The package code is written in R. It has dependencies to
-zoo
-(\href{http://cran.r-project.org/web/packages/zoo/index.html}{Zeileis
-  2012}) and boot
-(\href{http://cran.r-project.org/web/packages/boot/index.html}{Ripley
-  2013}).  R itself as well as these packages can be obtained from
-\href{http://CRAN.R-project.org/}{CRAN}.
+Let us look at the gains in statistical efficiency across the three
+variants of the event study. We will use the width of the confidence
+interval at date 0 as a measure of efficiency.
 
-% \newpage
-\bibliographystyle{jss} \bibliography{es}
+<<efficiency-comparison,results=verbatim>>=
+tmp <- rbind(es$eventstudy.output[10, ],
+             es.mm$eventstudy.output[10, ],
+             es.amm$eventstudy.output[10, ]
+             )[,c(1,3)]
+rownames(tmp) <- c("None", "MM", "AMM")
+print(tmp["MM", ] - tmp["None", ])
+print(tmp["AMM", ] - tmp["None", ])
+@ 
 
+This shows a sharp reduction in the width of the bootstrap 95\%
+confidence interval from None to MM adjustment. Over and above this, a
+small gain is obtained when going from MM adjustment to AMM
+adjustment.
+
+\newpage
+\bibliographystyle{jss} \bibliography{eventstudies}
 
 \end{document}

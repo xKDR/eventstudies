@@ -693,7 +693,7 @@ eesDates <- function(input){
   days.bad.purged <- index(data.no.cluster[which(data.no.cluster[,"left.tail"]==1)])
   days.good.purged <- index(data.no.cluster[which(data.no.cluster[,"right.tail"]==1)])
   ## Event list
-  events.good.normal <- data.frame(when=rep("response.series",
+  events.good.normal <- data.frame(name=rep("response.series",
                                      length(days.good.normal)),
                                    when=days.good.normal)
   events.bad.normal <- data.frame(name=rep("response.series",

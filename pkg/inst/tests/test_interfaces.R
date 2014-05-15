@@ -7,7 +7,7 @@ test_that("test.interfaces", {
     load("test_USDINR.rda")
 
 ### Basic event study with default args (market residuals)
-    cat("Checking market residuals interface: ")
+    cat("\nChecking market residuals interface: ")
     expected_mean <- c(0, 0.0393985717416213, -0.7458035091065,
                      0.457817077869512, 0.715714066835461, 2.33986420702835,
                      2.37333344340029)
@@ -28,7 +28,7 @@ test_that("test.interfaces", {
     expect_is(test_es, "es")
 
 ### None
-    cat("Checking no model output: ")
+    cat("\nChecking no model output: ")
     expected_mean <- c(0, -0.197406699931557, -0.804299958306487,
                        0.0135570496689663, -0.418062964428412,
                        0.904144365357373, -0.806779427723603)
@@ -49,7 +49,7 @@ test_that("test.interfaces", {
     expect_is(test_es, "es")
 
 ### AMM interface
-    cat("Checking AMM interface: ")
+    cat("\nChecking AMM interface: ")
     expected_mean <-  c(0, 0.135927645042554, -0.600457594252805, 0.631525565290171,
                         0.871423869901684, 2.54741102266723, 2.5989730099384)
 
@@ -73,7 +73,7 @@ test_that("test.interfaces", {
     expect_is(test_es, "es")
 
 ### Excess return
-    cat("Checking excess return interface: ")
+    cat("\nChecking excess return interface: ")
     expected_mean <- c(0, 0.138567158395153, -0.631185954448288, 0.701644918222266,
                        1.15001275036422, 2.88646832315114, 3.32315429568726)
     expected_outcomes <- c("success", "success")
@@ -95,7 +95,7 @@ test_that("test.interfaces", {
     expect_is(test_es, "es")
 
 ### Remapping
-    cat("Checking remapping: ")
+    cat("\nChecking remapping: ")
     test_events <- data.frame(outcome.unit = "ONGC",
                               event.when = c("2011-08-01", "2010-05-14"),
                               stringsAsFactors = FALSE)
@@ -137,7 +137,7 @@ test_that("test.interfaces", {
     expect_false(isTRUE(all.equal(test_es, test_es_remap)))
 
 ### Inference
-    cat("Checking inference interface: ")
+    cat("\nChecking inference interface: ")
     ## bootstrap
     test_es_inference <- eventstudy(firm.returns = test_returns,
                                     eventList = test_events,
@@ -177,7 +177,7 @@ test_that("test.interfaces", {
 test_that("test.arguments", {
     load("test_StockPriceReturns.rda")
 
-    cat("Checking single series handling: ")
+    cat("\nChecking single series handling: ")
     test_events <- data.frame(outcome.unit = "ONGC",
                               event.when = c("2011-08-01", "2010-05-14"),
                               stringsAsFactors = FALSE)

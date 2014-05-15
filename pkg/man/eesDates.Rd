@@ -61,5 +61,5 @@ input <- get.clusters.formatted(event.series = OtherReturns[,"SP500"],
 
 ## Extracting event dates
 event.lists <- eesDates(input)
-str(event.dates, max.level = 2)
+str(event.lists, max.level = 2)
 }

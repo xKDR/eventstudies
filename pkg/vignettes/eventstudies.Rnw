@@ -10,6 +10,12 @@
 \title{Introduction to the \textbf{eventstudies} package in R}
 \author{Ajay Shah}
 \begin{document}
+
+% \VignetteIndexEntry{An R package for conducting event studies and a platform for methodological research on event studies.}
+% \VignetteDepends{}  
+% \VignetteKeywords{eventstudies}  
+% \VignettePackage{eventstudies}
+
 \maketitle
 
 \begin{abstract}

@@ -12,33 +12,34 @@
 }
 
 \arguments{
-	\item{input}{an output object of \sQuote{get.clusters.formatted}}
+  \item{input}{object returned by \sQuote{get.clusters.formatted}}
 }
 
-\details{
-	This function creates event list for extreme event study analysis. The event list 
-	consists of extreme right tail and left tail event dates for clustered and 
-	unclustered data. The \sQuote{normal} set consists of event dates for only 
-	unclustered events and \sQuote{purged} set consists of event dates for unclustered 
-	and clustered both. Unclustered events consists of clean event window with no event 
-	occurring in the event window and clustered events are fused consecutive events 
-	which lie in the same tail.
-}
+\details{ The function creates a list of interesting events extracted
+  from the output of \code{get.clusters.formatted}. The event
+  list can be directly supplied to the \code{eventstudy} function.
+
+  It returns extreme right tail and left tail event dates for clustered
+  and unclustered data. The \sQuote{normal} set consists of event dates
+  for only unclustered events and \sQuote{purged} set consists of event
+  dates for unclustered and clustered both. Unclustered events consist
+  of clean event window with no event occurring in the event window and
+  clustered events are fused consecutive events which lie in the same
+  tail.  }
 
 \value{ 
-	A \code{list} object containing:
-	\item{events.good.normal}{\sQuote{data.frame} containing events list as an input 
-	to \sQuote{eventstudy} function, containing right tail event dates of unclustered
-	events only}
-	\item{events.bad.normal}{\sQuote{data.frame} containing events list as an input 
-	to \sQuote{eventstudy} function, containing left tail event dates of unclustered 
-	events only}
-	\item{events.good.purged}{\sQuote{data.frame} containing events list as an input 
-	to \sQuote{eventstudy} function, containing right tail event dates of unclustered
-	events and unclustered events}
-	\item{events.bad.purged}{\sQuote{data.frame} containing events list as an input 
-	to \sQuote{eventstudy} function, containing left tail event dates of unclustered 
-	and clustered events}
+  A \code{list} object containing:
+  \item{events.good.normal}{\sQuote{data.frame} containing right tail
+  event dates of unclustered events.}
+
+  \item{events.bad.normal}{\sQuote{data.frame} containing left tail
+  event dates of unclustered events.}
+
+  \item{events.good.purged}{\sQuote{data.frame} containing right tail
+  event dates of unclustered events and unclustered events.}
+
+  \item{events.bad.purged}{\sQuote{data.frame} containing left tail
+    event dates of unclustered and clustered events.}
 }
 
 \references{
@@ -55,11 +56,10 @@
 
 \examples{
 data(OtherReturns)
-## Formatting extreme event dates
-input <- get.clusters.formatted(event.series = OtherReturns[,"SP500"], 
-      	                response.series = OtherReturns[,"NiftyIndex"])
 
-## Extracting event dates
-event.lists <- eesDates(input)
-str(event.lists, max.level = 2)
+input <- get.clusters.formatted(event.series = OtherReturns[, "SP500"], 
+      	                response.series = OtherReturns[, "NiftyIndex"])
+
+eventlist <- eesDates(input)
+str(eventlist, max.level = 2)
 }

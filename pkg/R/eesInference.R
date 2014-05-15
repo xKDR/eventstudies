@@ -693,18 +693,18 @@ eesDates <- function(input){
   days.bad.purged <- index(data.no.cluster[which(data.no.cluster[,"left.tail"]==1)])
   days.good.purged <- index(data.no.cluster[which(data.no.cluster[,"right.tail"]==1)])
   ## Event list
-  events.good.normal <- data.frame(outcome.unit=rep("response.series",
+  events.good.normal <- data.frame(when=rep("response.series",
                                      length(days.good.normal)),
-                                   event.when=days.good.normal)
-  events.bad.normal <- data.frame(outcome.unit=rep("response.series",
+                                   when=days.good.normal)
+  events.bad.normal <- data.frame(name=rep("response.series",
                                      length(days.bad.normal)),
-                                   event.when=days.bad.normal)
-  events.good.purged <- data.frame(outcome.unit=rep("response.series",
+                                   when=days.bad.normal)
+  events.good.purged <- data.frame(name=rep("response.series",
                                      length(days.good.purged)),
-                                   event.when=days.good.purged)
-  events.bad.purged <- data.frame(outcome.unit=rep("response.series",
+                                   when=days.good.purged)
+  events.bad.purged <- data.frame(name=rep("response.series",
                                      length(days.bad.purged)),
-                                   event.when=days.bad.purged)
+                                   when=days.bad.purged)
   dates <- list(events.good.normal=events.good.normal,
                 events.bad.normal=events.bad.normal,
                 events.good.purged=events.good.purged,

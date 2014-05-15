@@ -2,8 +2,8 @@
 #   z is a zoo object containing input data. E.g. this could be all the 
 #     prices of a bunch of stocks. The column name is the unit name.
 #   events is a data.frame containing 2 columns. The first column
-#     ("outcome.unit") is the name of the unit. The second column is the date/time
-#     ("event.when") when the event happened.
+#     ("name") is the name of the unit. The second column is the date/time
+#     ("when") when the event happened.
 # For each event, the outcome can be:
 #   unitmissing : a unit named in events isn't in z
 #   wrongspan : the event date isn't placed within the span of data for the unit
@@ -13,9 +13,9 @@
 
 phys2eventtime <- function(z, events, width=10) {
   ## Ensuring class of event matrix
-  events$outcome.unit <- as.character(events$outcome.unit)
-  if(is.factor(events$event.when)) {
-    stop("The column 'event.when' cannot be a factor. Cannot proceed with data manipulation.")
+  events$name <- as.character(events$name)
+  if(is.factor(events$when)) {
+    stop("The column 'when' cannot be a factor. Cannot proceed with data manipulation.")
   }
 
   ## z: physical time matrix. Check dimensions of "z"

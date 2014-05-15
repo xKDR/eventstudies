@@ -14,12 +14,12 @@ p <- structure(c(33.16, 34.0967, 35.3683, 34.46, 34.17, 35.89, 36.19,
                  12426, 12429, 12430, 12431, 12432), class = "Date"),
                  class = "zoo")
 # An example events list
-eventslist <- data.frame(outcome.unit=c("ITC","Reliance","Infosys",
+eventslist <- data.frame(name=c("ITC","Reliance","Infosys",
                            "ITC","Reliance","Junk"),
-                         event.when=as.Date(c(
+                         when=as.Date(c(
                            "2004-01-02", "2004-01-08", "2004-01-14",
                            "2005-01-15", "2004-01-01", "2005-01-01")))
-eventslist$outcome.unit <- as.character(eventslist$outcome.unit)
+eventslist$name <- as.character(eventslist$name)
 
 # What we expect if we don't worry about width --
 rawres <- structure(list(z.e = structure(c(NA, NA, NA, NA, NA, NA,
@@ -62,7 +62,7 @@ expect_that(a, equals(structure(list(z.e = structure(c(NA, NA, NA, NA, 285.325,
 cat("\nTesting handling of missing data on event date: ")
 eventdate <- "2004-01-10"
 eventdate_output <- "2004-01-09"
-eventslist <- data.frame(outcome.unit = "ITC", event.when = eventdate,
+eventslist <- data.frame(name = "ITC", when = eventdate,
                          stringsAsFactors = FALSE)
 a <- phys2eventtime(p, eventslist, width = 2)
 expect_that(as.numeric(a$z.e["0",]),

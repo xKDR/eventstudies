@@ -13,8 +13,8 @@ test_that("test.interfaces", {
                      2.37333344340029)
     expected_outcomes <- c("success", "success")
 
-    test_events <- data.frame(outcome.unit = "ONGC",
-                              event.when = c("2011-08-01", "2010-05-14"),
+    test_events <- data.frame(name = "ONGC",
+                              when = c("2011-08-01", "2010-05-14"),
                               stringsAsFactors = FALSE)
     test_returns<- StockPriceReturns[complete.cases(StockPriceReturns$ONGC), "ONGC",
                                      drop = FALSE]
@@ -34,8 +34,8 @@ test_that("test.interfaces", {
                        0.904144365357373, -0.806779427723603)
     expected_outcomes <- c("success", "success")
 
-    test_events <- data.frame(outcome.unit = "ONGC",
-                              event.when = c("2011-08-01", "2010-05-14"),
+    test_events <- data.frame(name = "ONGC",
+                              when = c("2011-08-01", "2010-05-14"),
                               stringsAsFactors = FALSE)
     test_returns<- StockPriceReturns[complete.cases(StockPriceReturns$ONGC), "ONGC",
                                      drop = FALSE]
@@ -78,7 +78,7 @@ test_that("test.interfaces", {
                        1.15001275036422, 2.88646832315114, 3.32315429568726)
     expected_outcomes <- c("success", "success")
 
-    test_events <- data.frame(outcome.unit = "ONGC",
+    test_events <- data.frame(name = "ONGC",
                               event.when = c("2011-08-01", "2010-05-14"),
                               stringsAsFactors = FALSE)
     test_returns<- StockPriceReturns[complete.cases(StockPriceReturns$ONGC), "ONGC",
@@ -96,7 +96,7 @@ test_that("test.interfaces", {
 
 ### Remapping
     cat("\nChecking remapping: ")
-    test_events <- data.frame(outcome.unit = "ONGC",
+    test_events <- data.frame(name = "ONGC",
                               event.when = c("2011-08-01", "2010-05-14"),
                               stringsAsFactors = FALSE)
     test_returns <- StockPriceReturns[complete.cases(StockPriceReturns$ONGC), "ONGC",
@@ -178,8 +178,8 @@ test_that("test.arguments", {
     load("test_StockPriceReturns.rda")
 
     cat("\nChecking single series handling: ")
-    test_events <- data.frame(outcome.unit = "ONGC",
-                              event.when = c("2011-08-01", "2010-05-14"),
+    test_events <- data.frame(name = "ONGC",
+                              when = c("2011-08-01", "2010-05-14"),
                               stringsAsFactors = FALSE)
     test_returns<- StockPriceReturns$ONGC
     expect_error(eventstudy(firm.returns = test_returns,

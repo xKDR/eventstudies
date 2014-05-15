@@ -29,8 +29,8 @@ phys2eventtime(z, events, width = 10)
 
 \details{
 
-  \dQuote{events} object contains two columns: \dQuote{outcome.unit}
-  consists of names of the event, and \dQuote{event.when} is the
+  \dQuote{events} object contains two columns: \dQuote{name}
+  consists of names of the event, and \dQuote{when} is the
   respective event identifier. For instance, if \sQuote{z} is a matrix
   of class \pkg{xts} with 10 stocks over 300 days, the names of stocks
   in \sQuote{z} is the superset of names for the event and the time

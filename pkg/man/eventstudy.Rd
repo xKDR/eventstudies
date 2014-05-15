@@ -31,8 +31,8 @@ eventstudy(firm.returns,
 
   \item{eventList}{
     a \code{data.frame} of two columns with event dates (colname:
-    \dQuote{event.when}) and column names of the \sQuote{response}
-    series from \sQuote{firm.returns} (colname \dQuote{outcome.unit}).
+    \dQuote{when}) and column names of the \sQuote{response}
+    series from \sQuote{firm.returns} (colname \dQuote{name}).
   }
 
   \item{width}{an \sQuote{integer} of length 1 that specifies a
@@ -245,8 +245,8 @@ str(es)
 plot(es)
 
                 # Event study using Augmented Market Model
-events <- data.frame(outcome.unit = c("Infosys", "TCS"),
-                     event.when = c("2012-04-01", "2012-06-01"),
+events <- data.frame(name = c("Infosys", "TCS"),
+                     when = c("2012-04-01", "2012-06-01"),
                      stringsAsFactors = FALSE)
 
 es <- eventstudy(firm.returns = StockPriceReturns,

@@ -68,7 +68,7 @@
 \value{ Format of event study output is a \sQuote{matrix} containing
   mean or median estimate with confidence interval; \sQuote{NULL} if
   there are no \dQuote{success} \dQuote{outcomes}. See
-  \link{\code{phys2eventtime}} for more details.
+  \code{\link{phys2eventtime}} for more details.
   
   A \sQuote{list} with class attribute \dQuote{ees} holding the
   following four event study output elements:

@@ -155,7 +155,7 @@ lmAMM <- function(firm.returns, X, nlags=NULL, verbose=FALSE) {
     bestAIC <- Inf
     for (trylag in 0:min(10,log10(length(firm.returns)))) {
       thism <- do.ols(trylag)
-      if (is.null(m)) {return(NULL)}
+      if (is.null(thism)) {next}
       thisAIC <- AIC(thism, k=log(length(thism$fitted.values)))
       if (verbose) {cat(trylag, " lags, SBC = ", thisAIC, "\n")}
       if (thisAIC < bestAIC) {
@@ -163,6 +163,9 @@ lmAMM <- function(firm.returns, X, nlags=NULL, verbose=FALSE) {
         bestAIC <- thisAIC
         bestm <- thism
       }
+    }
+    if (is.null(bestm)) {
+        return(NULL)
     }
     nlags <- bestlag
     m <- bestm

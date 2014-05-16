@@ -4,7 +4,7 @@
 \title{Extreme event study inference estimation}
 
 \description{This function performs event study analysis on extreme event dates 
- 	     (\sQuote{eesDates}) and formatted output using
+ 	     (\sQuote{eesDates}) and using formatted output
  	     (\sQuote{get.clusters.formatted})
 }
 

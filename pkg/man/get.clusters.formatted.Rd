@@ -1,7 +1,7 @@
 \name{get.clusters.formatted}
 \alias{get.clusters.formatted}
 
-\title{Get formatted clusters to perform extreme event analysis (ees)}
+\title{Get formatted clusters to perform extreme event study analysis (ees)}
 \description{The functions formats extreme event dates, dealing with
   clusters in the event frame.}
 

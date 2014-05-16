@@ -1,7 +1,7 @@
 \name{eesDates}
 \alias{eesDates}
 
-\title{Event list for extreme event study analysis }
+\title{Get event list for extreme event study analysis}
 
 \description{
   This function creates event list (clustered and unclustered events) for extreme event study analysis.

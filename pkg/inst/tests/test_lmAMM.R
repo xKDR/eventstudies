@@ -70,7 +70,7 @@ test_that("test.lmAMM", {
 ################################################################################
 
 
-  cat("\nDoing Testcases P8")
+  cat("\nDoing Testcases P8\n")
   load("test_y3c3.rda")
 
   NIFTY_INDEX <- y3c3$NIFTY_INDEX

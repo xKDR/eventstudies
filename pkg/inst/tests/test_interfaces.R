@@ -66,7 +66,7 @@ test_that("test.interfaces", {
                           width = 3,
                           type = "lmAMM",
                           market.returns = NiftyIndex[index(USDINR)],
-                          others = test_others)
+                          others = test_others, nlags = 1)
 
     expect_that(expected_mean, equals(test_es$eventstudy.output[, "Mean"]))
     expect_that(expected_outcomes, equals(test_es$outcomes))

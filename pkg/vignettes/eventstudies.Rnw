@@ -238,7 +238,8 @@ es.amm <- eventstudy(firm.returns = StockPriceReturns,
                     inference.strategy = "bootstrap",
                     market.returns=OtherReturns$NiftyIndex,
                     others=OtherReturns$USDINR,
-                    market.returns.purge=TRUE
+                    market.returns.purge=TRUE,
+                    nlags = 1
                     )
 @ 
 

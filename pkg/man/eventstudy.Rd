@@ -160,13 +160,13 @@ eventstudy(firm.returns,
   elements:
 
   \itemize{
-    \item{eventstudy.output:}{
+    \item{\dQuote{eventstudy.output}:}{
       a \sQuote{matrix} containing mean (bootstrap) or median (with
       wilcoxon) estimate with confidence interval; \sQuote{NULL} if there
       are no \dQuote{success} \dQuote{outcomes}.
     }
 
-    \item{outcomes:}{
+    \item{\dQuote{outcomes}:}{
       a character vector that is the output from
       \code{\link{phys2eventtime}} containing details of the successful use
       of an event:
@@ -184,16 +184,16 @@ eventstudy(firm.returns,
 
   The returned object contains input information in other attributes:
   \itemize{
-    \item{inference}{
+    \item{\dQuote{inference}:}{
       a \sQuote{character} providing information about which inference
       strategy was utilised to estimate the confidence intervals.
     }
 
-    \item{width}{
+    \item{\dQuote{width}:}{
       a \sQuote{numeric} specifying the window width for event study output.
     }
 
-    \item{remap}{
+    \item{\dQuote{remap}:}{
       a \sQuote{character} specifying the remapping technique
       used. Options are mentioned in \dQuote{remap} argument description.
     }

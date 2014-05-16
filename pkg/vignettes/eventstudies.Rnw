@@ -113,7 +113,7 @@ str(es)
 @ 
 
 The object returned by eventstudy is of \texttt{class} `es'. It is a list with
-five components. Three of these are just a record of the way
+two components. Three of these are just a record of the way
 \texttt{eventstudy()} was run: the inference procedure adopted (``\texttt{bootstrap}''
 inference in this case), the window width (10 in this case) and the
 method used for mapping the data (``\texttt{cumsum}''). The two new things are

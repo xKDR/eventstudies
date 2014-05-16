@@ -19,8 +19,8 @@
 
 \maketitle
 
-\begin{abstract}
-\end{abstract}
+% \begin{abstract}
+% \end{abstract}
 \SweaveOpts{engine=R,pdf=TRUE}
 
 \section{The standard event study in finance}

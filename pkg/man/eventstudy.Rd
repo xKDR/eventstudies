@@ -264,7 +264,7 @@ es <- eventstudy(firm.returns = StockPriceReturns,
                                                  # model arguments
                  market.returns = OtherReturns[, "NiftyIndex"],
                  others = OtherReturns[, c("USDINR", "CallMoneyRate")],
-                 market.returns.purge = TRUE
+                 market.returns.purge = TRUE, nlags = 1
                  )
 str(es)
 plot(es)

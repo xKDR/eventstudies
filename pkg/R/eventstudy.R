@@ -26,16 +26,18 @@ eventstudy <- function(firm.returns,
       stop("firm.returns should be a zoo series with at least one column. Use '[' with 'drop = FALSE'.")
   }
   firmNames <- colnames(firm.returns)
+  ## Extracting elipsis values
+  extra.var <- list(...)
+  cat("I am here:", extra.var$nlags, "\n")
 
 ### Run models
   ## AMM
   if (type == "lmAMM") {
     ## AMM residual to time series
-    timeseriesAMM <- function(firm.returns, X, verbose = FALSE, nlags = 1) {
+    timeseriesAMM <- function(firm.returns, X, verbose = FALSE) {
       tmp <- resid(lmAMM(firm.returns = firm.returns,
                          X = X,
-                         nlags = nlags,
-                         verbose = FALSE))
+                         verbose = FALSE, nlags = extra.var$nlags))
       tmp.res <- zoo(x = tmp, order.by = as.Date(names(tmp)))
     }
     ## Estimating AMM regressors
@@ -44,8 +46,8 @@ eventstudy <- function(firm.returns,
       ## One firm
       outputModel <- timeseriesAMM(firm.returns = firm.returns,
                                    X = regressors,
-                                   verbose = FALSE,
-                                   nlags = 1)
+                                   verbose = FALSE)
+                                   
     } else {
       ## More than one firm
                                         # Extracting and merging
@@ -53,8 +55,8 @@ eventstudy <- function(firm.returns,
                           {
                             timeseriesAMM(firm.returns = firm.returns[,y],
                                           X = regressors,
-                                          verbose = FALSE,
-                                          nlags = 1)
+                                          verbose = FALSE)
+                                          
                           })
       names(tmp.resid) <- colnames(firm.returns)
       outputModel <- do.call(merge.zoo, tmp.resid)

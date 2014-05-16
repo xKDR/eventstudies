@@ -21,7 +21,7 @@ eventstudy(firm.returns,
            remap = "cumsum",
            inference = TRUE,
            inference.strategy = "bootstrap",
-           ...)
+           model.args = NULL)
 }
 
 \arguments{
@@ -74,7 +74,7 @@ eventstudy(firm.returns,
     and \dQuote{wilcox}.
   }
   
-  \item{...}{
+  \item{model.args}{
     All other arguments to be passed depends on whether \sQuote{type}
     is \dQuote{marketResidual}, \dQuote{excessReturn}, or
     \dQuote{lmAMM}. When \dQuote{None}, no additional arguments will be
@@ -104,7 +104,7 @@ eventstudy(firm.returns,
     \item{\dQuote{None}: does not use any model.}
   }
   
-  Arguments to a model type can be sent inside \sQuote{...}. See
+  Arguments to a model type can be sent inside \sQuote{model.args}. See
   \sQuote{Model arguments} section for details on accepted
   fields.
 
@@ -122,7 +122,7 @@ eventstudy(firm.returns,
   \code{\link{inference.bootstrap}} and \code{\link{inference.wilcox}}
   for more details.
 
-  \sQuote{...} is directly supplied to the model mentioned in the
+  \sQuote{model.args} is directly supplied to the model mentioned in the
   \dQuote{type} argument. See section on \sQuote{Model arguments} for
   more details.
 
@@ -131,7 +131,7 @@ eventstudy(firm.returns,
 }
 
 \section{\bold{Model arguments}}{
-  Each model can take extra arguments (supplied as \sQuote{...}) apart
+  Each model can take extra arguments (supplied as \sQuote{model.args}) apart
   from mandatory ones for finer control over the analysis. Check the
   respective function documentation for definitions. The arguments from
   the relevant functions are listed here:
@@ -146,11 +146,12 @@ eventstudy(firm.returns,
     - others \cr
     - switch.to.innov \cr
     - market.returns.purge \cr
-    - nlags \cr
+    - nlag.makeX \cr
+    - nlag.lmAMM \cr
     - dates \cr
     - verbose \cr
 
-    Note: arguments are directly passed to \sQuote{makeX}, see
+    Note: arguments (except nlag.lmAMM) are directly passed to \sQuote{makeX}, see
     \code{\link{lmAMM}} for more details. \cr
   }
 }
@@ -243,7 +244,9 @@ es <- eventstudy(firm.returns = StockPriceReturns,
                  remap = "cumsum",
                  inference = TRUE,
                  inference.strategy = "bootstrap",
-                 market.returns = OtherReturns[, "NiftyIndex"],
+                 model.args = list(
+                        market.returns = OtherReturns[, "NiftyIndex"]
+                        )
                  )
 str(es)
 plot(es)
@@ -262,9 +265,13 @@ es <- eventstudy(firm.returns = StockPriceReturns,
                  inference = TRUE,
                  inference.strategy = "bootstrap",
                                                  # model arguments
-                 market.returns = OtherReturns[, "NiftyIndex"],
-                 others = OtherReturns[, c("USDINR", "CallMoneyRate")],
-                 market.returns.purge = TRUE, nlags = 1
+                 model.args = list(
+                        market.returns = OtherReturns[, "NiftyIndex"],
+                        others = OtherReturns[, c("USDINR", "CallMoneyRate")],
+                        market.returns.purge = TRUE,
+                        nlag.makeX = 5,
+                        nlag.lmAMM = NULL
+                        )
                  )
 str(es)
 plot(es)

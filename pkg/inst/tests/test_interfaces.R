@@ -21,7 +21,7 @@ test_that("test.interfaces", {
     test_es <- eventstudy(firm.returns = test_returns,
                      eventList = test_events,
                      width = 3,
-                     market.returns = NiftyIndex)
+                     model.args = list(market.returns = NiftyIndex))
 
     expect_that(expected_mean, equals(test_es$eventstudy.output[, "Mean"]))
     expect_that(expected_outcomes, equals(test_es$outcomes))
@@ -65,8 +65,8 @@ test_that("test.interfaces", {
                           eventList = test_events,
                           width = 3,
                           type = "lmAMM",
-                          market.returns = NiftyIndex[index(USDINR)],
-                          others = test_others, nlags = 1)
+                          model.args = list(market.returns = NiftyIndex[index(USDINR)],
+                          others = test_others))
 
     expect_that(expected_mean, equals(test_es$eventstudy.output[, "Mean"]))
     expect_that(expected_outcomes, equals(test_es$outcomes))
@@ -88,7 +88,7 @@ test_that("test.interfaces", {
                           eventList = test_events,
                           width = 3,
                           type = "excessReturn",
-                          market.returns = NiftyIndex)
+                          model.args = list(market.returns = NiftyIndex))
 
     expect_that(expected_mean, equals(test_es$eventstudy.output[, "Mean"]))
     expect_that(expected_outcomes, equals(test_es$outcomes))

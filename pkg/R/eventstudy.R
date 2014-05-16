@@ -7,14 +7,18 @@ eventstudy <- function(firm.returns,
                        remap = "cumsum",
                        inference = TRUE,
                        inference.strategy = "bootstrap",
-                       ...) {
+                       model.args = NULL) {
   
   if (type == "None" && !is.null(firm.returns)) {
     outputModel <- firm.returns
-    if (length(list(...)) != 0) {
+    if (length(model.args) != 0) {
         warning(deparse("type"), " = ", deparse("None"),
                 " does not take extra arguments, ignoring them.")
     }
+  }
+
+  if (type != "None" && is.null(model.args)) {
+      stop("modelArgs cannot be NULL when type is not None.")
   }
 
   if (is.levels == TRUE) {
@@ -26,38 +30,48 @@ eventstudy <- function(firm.returns,
       stop("firm.returns should be a zoo series with at least one column. Use '[' with 'drop = FALSE'.")
   }
   firmNames <- colnames(firm.returns)
-  ## Extracting elipsis values
-  extra.var <- list(...)
-  cat("I am here:", extra.var$nlags, "\n")
 
 ### Run models
   ## AMM
   if (type == "lmAMM") {
-    ## AMM residual to time series
-    timeseriesAMM <- function(firm.returns, X, verbose = FALSE) {
-      tmp <- resid(lmAMM(firm.returns = firm.returns,
-                         X = X,
-                         verbose = FALSE, nlags = extra.var$nlags))
-      tmp.res <- zoo(x = tmp, order.by = as.Date(names(tmp)))
-    }
+
     ## Estimating AMM regressors
-    regressors <- makeX(...)
+    args.makeX <- model.args[names(model.args) %in% formalArgs(makeX)]
+    if (!is.null(model.args$nlag.makeX)) {
+        args.makeX$nlags <- model.args$nlag.makeX
+    }
+    regressors <- do.call(makeX, args.makeX)
+
+    args.lmAMM <- model.args[names(model.args) %in% formalArgs(lmAMM)]
+    args.lmAMM$X <- regressors
+
+    if (!is.null(model.args$nlag.lmAMM)) {
+        args.lmAMM$nlags <- model.args$nlag.lmAMM
+    }
+
     if(NCOL(firm.returns)==1){
       ## One firm
-      outputModel <- timeseriesAMM(firm.returns = firm.returns,
-                                   X = regressors,
-                                   verbose = FALSE)
-                                   
+      args.lmAMM$firm.returns <- firm.returns
+      tmp <- resid(do.call(lmAMM, args.lmAMM))
+      if (is.null(tmp)) {
+          cat("lmAMM() returned NULL\n")
+          return(NULL)
+      }
+      outputModel <- zoo(x = tmp, order.by = as.Date(names(tmp)))
+
     } else {
       ## More than one firm
                                         # Extracting and merging
       tmp.resid <- lapply(colnames(firm.returns), function(y)
                           {
-                            timeseriesAMM(firm.returns = firm.returns[,y],
-                                          X = regressors,
-                                          verbose = FALSE)
-                                          
-                          })
+                            args.lmAMM$firm.returns <- firm.returns[, y]
+                            tmp <- resid(do.call(lmAMM, args.lmAMM))
+                            if (is.null(tmp)) {
+                                cat("lmAMM() returned NULL\n")
+                                return(NULL)
+                            }
+                            return(zoo(x = tmp, order.by = as.Date(names(tmp))))
+                        })
       names(tmp.resid) <- colnames(firm.returns)
       outputModel <- do.call(merge.zoo, tmp.resid)
     }
@@ -65,12 +79,12 @@ eventstudy <- function(firm.returns,
 
   ## marketResidual
   if (type == "marketResidual") {
-    outputModel <- marketResidual(firm.returns, ...)
+    outputModel <- marketResidual(firm.returns, model.args$market.returns)
   }
 
   ## excessReturn
   if (type == "excessReturn") {
-    outputModel <- excessReturn(firm.returns, ...)
+    outputModel <- excessReturn(firm.returns, model.args$market.returns)
   }
   
 ### Converting index outputModel to Date

@@ -7,13 +7,13 @@ load("test_INR.rda")
 
 inr_returns <- diff(log(INR))[-1]
 
-eventslist <- data.frame(name=rep("inr",10),
-                         when=as.Date(c(
+eventslist <- data.frame(when=as.Date(c(
                            "2010-04-20","2010-07-02","2010-07-27",
                            "2010-09-16","2010-11-02","2011-01-25",
                            "2011-03-17","2011-05-03","2011-06-16",
                            "2011-07-26")
-                           )
+                           ),
+                         name=rep("inr",10)
                          )
 
 event_time_data <- phys2eventtime(inr_returns[, , drop = FALSE] , eventslist,width=10)

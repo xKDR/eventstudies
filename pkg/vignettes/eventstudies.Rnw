@@ -178,7 +178,7 @@ es.mm <- eventstudy(firm.returns = StockPriceReturns,
                     remap = "cumsum",
                     inference = TRUE,
                     inference.strategy = "bootstrap",
-                    market.returns=OtherReturns$NiftyIndex
+                    model.args = list(market.returns=OtherReturns$NiftyIndex)
                     )
 @ 
 
@@ -236,12 +236,13 @@ es.amm <- eventstudy(firm.returns = StockPriceReturns,
                     remap = "cumsum",
                     inference = TRUE,
                     inference.strategy = "bootstrap",
-                    market.returns=OtherReturns$NiftyIndex,
-                    others=OtherReturns$USDINR,
-                    market.returns.purge=TRUE,
-                    nlags = 1
+                    model.args = list(
+                        market.returns=OtherReturns$NiftyIndex,
+                        others=OtherReturns$USDINR,
+                        market.returns.purge=TRUE
+                        )
                     )
-@ 
+@
 
 Here the additional regressor on the augmented market model is the
 returns on the exchange rate, which is the slot `\texttt{USDINR}' in

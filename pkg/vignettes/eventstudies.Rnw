@@ -32,10 +32,14 @@ studies. The treatment here assumes knowledge of event studies
 \citep{Corrado2011}.
 
 To conduct an event study, you must have a list of firms with
-associated dates, and you must have returns data for these
-firms. These dates must be stored as a simple data frame. To
-illustrate this, we use the object \emph{SplitDates} in the package which
-is used for doing examples.
+associated dates, and you must have returns data for these firms. In
+order to use the package, you have to place your data into two
+objects, using certain conventions for the dates and certain
+conventions for the returns data.
+
+The dates must be stored as a simple \texttt{data.frame}. To
+illustrate this, we use the object \emph{SplitDates} in the package
+which is used for doing examples.
 
 <<show-the-events,results=verbatim>>=
 library(eventstudies)

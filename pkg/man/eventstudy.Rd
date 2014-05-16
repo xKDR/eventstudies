@@ -160,13 +160,14 @@ eventstudy(firm.returns,
   elements:
 
   \itemize{
-    \item{eventstudy.output}{
+    \item{eventstudy.output:}{
       a \sQuote{matrix} containing mean (bootstrap) or median (with
       wilcoxon) estimate with confidence interval; \sQuote{NULL} if there
       are no \dQuote{success} \dQuote{outcomes}.
     }
 
-    \item{outcomes}{a character vector that is the output from
+    \item{outcomes:}{
+      a character vector that is the output from
       \code{\link{phys2eventtime}} containing details of the successful use
       of an event:
       
@@ -179,7 +180,10 @@ eventstudy(firm.returns,
         \item{unitmissing: when the unit (firm name) is missing in the event list.}
       }
     }
+  }
 
+  The returned object contains input information in other attributes:
+  \itemize{
     \item{inference}{
       a \sQuote{character} providing information about which inference
       strategy was utilised to estimate the confidence intervals.

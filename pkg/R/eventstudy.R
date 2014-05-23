@@ -153,7 +153,7 @@ eventstudy <- function(firm.returns,
   }
   if(to.remap==TRUE){remapping <- remap} else {remapping <- "none"}
 
-  final.result <- list(eventstudy.output = result,
+  final.result <- list(result = result,
                        outcomes = as.character(es$outcomes))
 
   attr(final.result, which = "inference") <- inference.strategy
@@ -169,9 +169,9 @@ eventstudy <- function(firm.returns,
 #########################
 
 print.es <- function(x, ...){
-  cat("Event study", colnames(x$eventstudy.output)[2], "response with",
+  cat("Event study", colnames(x$result)[2], "response with",
       attr(x, "inference"), "inference for CI:\n")
-  print(x$eventstudy.output)
+  print(x$result)
   cat("\n","Event outcome has",length(which(x$outcomes=="success")),
       "successful outcomes out of", length(x$outcomes),"events:","\n")
   print(x$outcomes)
@@ -182,13 +182,13 @@ summary.es <- function(object, ...){
 }
 
 plot.es <- function(x, xlab = NULL, ylab = NULL, ...){
-  if (NCOL(x$eventstudy.output) < 3) {
+  if (NCOL(x$result) < 3) {
       cat("Error: No confidence bands available to plot.\n")
       return(invisible(NULL))
   }
-  big <- max(abs(x$eventstudy.output))
+  big <- max(abs(x$result))
   hilo <- c(-big,big)
-  width <- (nrow(x$eventstudy.output)-1)/2
+  width <- (nrow(x$result)-1)/2
 
   ## assign own labels if they're missing
   if (is.null(ylab)) {
@@ -208,13 +208,13 @@ plot.es <- function(x, xlab = NULL, ylab = NULL, ...){
       xlab <- "Event time"
   }
 
-  plot(-width:width, x$eventstudy.output[,2], type="l", lwd=2, ylim=hilo,
+  plot(-width:width, x$result[,2], type="l", lwd=2, ylim=hilo,
        xlab = xlab, ylab = ylab, ...)
 
-  points(-width:width, x$eventstudy.output[,2])
-  lines(-width:width, x$eventstudy.output[,"2.5%"],
+  points(-width:width, x$result[,2])
+  lines(-width:width, x$result[,"2.5%"],
         lwd=1, lty=2, ...)
-  lines(-width:width, x$eventstudy.output[,"97.5%"],
+  lines(-width:width, x$result[,"97.5%"],
         lwd=1, lty=2, ...)
   abline(h=0,v=0)
 }

@@ -23,7 +23,7 @@ test_that("test.interfaces", {
                      event.window = 3,
                      model.args = list(market.returns = NiftyIndex))
 
-    expect_that(expected_mean, equals(test_es$eventstudy.output[, "Mean"]))
+    expect_that(expected_mean, equals(test_es$result[, "Mean"]))
     expect_that(expected_outcomes, equals(test_es$outcomes))
     expect_is(test_es, "es")
 
@@ -44,7 +44,7 @@ test_that("test.interfaces", {
                           event.window = 3,
                           type = "None")
 
-    expect_that(expected_mean, equals(test_es$eventstudy.output[, "Mean"]))
+    expect_that(expected_mean, equals(test_es$result[, "Mean"]))
     expect_that(expected_outcomes, equals(test_es$outcomes))
     expect_is(test_es, "es")
 
@@ -68,7 +68,7 @@ test_that("test.interfaces", {
                           model.args = list(market.returns = NiftyIndex[index(USDINR)],
                           others = test_others))
 
-    expect_that(expected_mean, equals(test_es$eventstudy.output[, "Mean"]))
+    expect_that(expected_mean, equals(test_es$result[, "Mean"]))
     expect_that(expected_outcomes, equals(test_es$outcomes))
     expect_is(test_es, "es")
 
@@ -90,7 +90,7 @@ test_that("test.interfaces", {
                           type = "excessReturn",
                           model.args = list(market.returns = NiftyIndex))
 
-    expect_that(expected_mean, equals(test_es$eventstudy.output[, "Mean"]))
+    expect_that(expected_mean, equals(test_es$result[, "Mean"]))
     expect_that(expected_outcomes, equals(test_es$outcomes))
     expect_is(test_es, "es")
 

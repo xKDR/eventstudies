@@ -718,8 +718,8 @@ eesDates <- function(input){
 ##----------------------
 ## Event study plot for EES (extreme event studies)
 ## Input: Output of GCF
-## eventLists: Output of eesDates
-eesInference <- function(input, eventLists, width, to.remap=TRUE, 
+## event.lists: Output of eesDates
+eesInference <- function(input, event.lists, event.window, to.remap=TRUE, 
                          remap="cumsum", inference = TRUE,
                          inference.strategy = "bootstrap"){
                          
@@ -727,25 +727,25 @@ eesInference <- function(input, eventLists, width, to.remap=TRUE,
   ## Computing inference
   ## Normal
                                         # Good days
-  inf$good.normal <- eventstudy(input, event.list=eventLists$events.good.normal,
+  inf$good.normal <- eventstudy(input, event.list=event.lists$events.good.normal,
                                 type="None", to.remap=to.remap,
-                                remap=remap, event.window=width, inference=inference,
+                                remap=remap, event.window=event.window, inference=inference,
                                 inference.strategy=inference.strategy)
                                         # Bad days
-  inf$bad.normal <- eventstudy(input, event.list=eventLists$events.bad.normal,
+  inf$bad.normal <- eventstudy(input, event.list=event.lists$events.bad.normal,
                                 type="None", to.remap=to.remap,
-                                remap=remap, event.window=width, inference=inference,
+                                remap=remap, event.window=event.window, inference=inference,
                                 inference.strategy=inference.strategy)
   ## Purged
                                           # Good days
-  inf$good.purged <- eventstudy(input, event.list=eventLists$events.good.purged,
+  inf$good.purged <- eventstudy(input, event.list=event.lists$events.good.purged,
                                 type="None", to.remap=to.remap,
-                                remap=remap, event.window=width, inference=inference,
+                                remap=remap, event.window=event.window, inference=inference,
                                 inference.strategy=inference.strategy)
                                             # Bad days
-  inf$bad.purged <- eventstudy(input, event.list=eventLists$events.bad.purged,
+  inf$bad.purged <- eventstudy(input, event.list=event.lists$events.bad.purged,
                                 type="None", to.remap=to.remap,
-                                remap=remap, event.window=width, inference=inference,
+                                remap=remap, event.window=event.window, inference=inference,
                                 inference.strategy=inference.strategy)
 
   class(inf) <- "ees"

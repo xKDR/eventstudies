@@ -9,7 +9,7 @@
 }
 
 \usage{
-   eesInference(input, eventLists, width, to.remap = TRUE, remap = "cumsum", 
+   eesInference(input, event.lists, event.window, to.remap = TRUE, remap = "cumsum", 
    		inference = "TRUE", inference.strategy = "bootstrap")
 }
 
@@ -19,12 +19,12 @@
   \sQuote{get.clusters.formatted} function.
   }
 
-  \item{eventLists}{
+  \item{event.lists}{
     a \sQuote{list} of normal and purged events as returned by
     \sQuote{eesDates}.
   }
 
-  \item{width}{
+  \item{event.window}{
     an \sQuote{integer} of length 1 that specifies a
     symmetric event window around the event date.
   }
@@ -115,7 +115,7 @@ formattedClusters <- get.clusters.formatted(event.series = OtherReturns[, "SP500
 event.lists <- eesDates(formattedClusters)
 
 inference <- eesInference(input = formattedClusters,
-                          eventLists = event.lists,
-                          width = 5)
+                          event.lists = event.lists,
+                          event.window = 5)
 str(inference, max.level = 2)
 }

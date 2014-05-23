@@ -18,7 +18,7 @@ eventstudy <- function(firm.returns,
   }
 
   if (type != "None" && is.null(model.args)) {
-      stop("modelArgs cannot be NULL when type is not None.")
+      stop("model.args cannot be NULL when type is not None.")
   }
 
   if (is.levels == TRUE) {
@@ -29,6 +29,7 @@ eventstudy <- function(firm.returns,
   if (is.null(ncol(firm.returns))) {
       stop("firm.returns should be a zoo series with at least one column. Use '[' with 'drop = FALSE'.")
   }
+                                        # store firm names for later use
   firmNames <- colnames(firm.returns)
 
 ### Run models

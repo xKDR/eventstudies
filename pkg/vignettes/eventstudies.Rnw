@@ -81,7 +81,7 @@ raw returns:
 <<no-adjustment>>=
 es <- eventstudy(firm.returns = StockPriceReturns,
                  eventList = SplitDates,
-                 width = 10,
+                 event.window = 10,
                  type = "None",
                  to.remap = TRUE,
                  remap = "cumsum",
@@ -172,7 +172,7 @@ This is invoked by setting \texttt{type} to ``\texttt{marketResidual}'':
 data(OtherReturns)
 es.mm <- eventstudy(firm.returns = StockPriceReturns,
                     eventList = SplitDates,
-                    width = 10,
+                    event.window = 10,
                     type = "marketResidual",
                     to.remap = TRUE,
                     remap = "cumsum",
@@ -230,7 +230,7 @@ we use the incantation:
 <<amm-adjustment>>=
 es.amm <- eventstudy(firm.returns = StockPriceReturns,
                     eventList = SplitDates,
-                    width = 10,
+                    event.window = 10,
                     type = "lmAMM",
                     to.remap = TRUE,
                     remap = "cumsum",

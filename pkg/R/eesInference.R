@@ -729,23 +729,23 @@ eesInference <- function(input, eventLists, width, to.remap=TRUE,
                                         # Good days
   inf$good.normal <- eventstudy(input, eventList=eventLists$events.good.normal,
                                 type="None", to.remap=to.remap,
-                                remap=remap, width=width, inference=inference,
+                                remap=remap, event.window=width, inference=inference,
                                 inference.strategy=inference.strategy)
                                         # Bad days
   inf$bad.normal <- eventstudy(input, eventList=eventLists$events.bad.normal,
                                 type="None", to.remap=to.remap,
-                                remap=remap, width=width, inference=inference,
+                                remap=remap, event.window=width, inference=inference,
                                 inference.strategy=inference.strategy)
   ## Purged
                                           # Good days
   inf$good.purged <- eventstudy(input, eventList=eventLists$events.good.purged,
                                 type="None", to.remap=to.remap,
-                                remap=remap, width=width, inference=inference,
+                                remap=remap, event.window=width, inference=inference,
                                 inference.strategy=inference.strategy)
                                             # Bad days
   inf$bad.purged <- eventstudy(input, eventList=eventLists$events.bad.purged,
                                 type="None", to.remap=to.remap,
-                                remap=remap, width=width, inference=inference,
+                                remap=remap, event.window=width, inference=inference,
                                 inference.strategy=inference.strategy)
 
   class(inf) <- "ees"

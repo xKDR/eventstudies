@@ -14,7 +14,7 @@
 \usage{
 eventstudy(firm.returns,
            eventList,
-           width = 10,
+           event.window = 10,
            is.levels =  FALSE,
            type = "marketResidual",
            to.remap = TRUE,
@@ -35,7 +35,7 @@ eventstudy(firm.returns,
     series from \sQuote{firm.returns} (colname \dQuote{name}).
   }
 
-  \item{width}{an \sQuote{integer} of length 1 that specifies a
+  \item{event.window}{an \sQuote{integer} of length 1 that specifies a
     symmetric event window around the event date.
   }
 
@@ -190,7 +190,7 @@ eventstudy(firm.returns,
       strategy was utilised to estimate the confidence intervals.
     }
 
-    \item{\dQuote{width}:}{
+    \item{\dQuote{event.window}:}{
       a \sQuote{numeric} specifying the window width for event study output.
     }
 
@@ -226,7 +226,7 @@ data("OtherReturns")
                 # Event study without adjustment
 es <- eventstudy(firm.returns = StockPriceReturns,
                  eventList = SplitDates,
-                 width = 10,
+                 event.window = 10,
                  type = "None",
                  to.remap = TRUE,
                  remap = "cumsum",
@@ -238,7 +238,7 @@ plot(es)
                 # Event study using Market Model
 es <- eventstudy(firm.returns = StockPriceReturns,
                  eventList = SplitDates,
-                 width = 10,
+                 event.window = 10,
                  type = "marketResidual",
                  to.remap = TRUE,
                  remap = "cumsum",
@@ -258,7 +258,7 @@ events <- data.frame(name = c("Infosys", "TCS"),
 
 es <- eventstudy(firm.returns = StockPriceReturns,
                  eventList = events,
-                 width = 10,
+                 event.window = 10,
                  type = "lmAMM",
                  to.remap = TRUE,
                  remap = "cumsum",

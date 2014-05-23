@@ -1,6 +1,6 @@
 eventstudy <- function(firm.returns,
                        eventList,
-                       width = 10,
+                       event.window = 10,
                        is.levels =  FALSE,
                        type = "marketResidual",
                        to.remap = TRUE,
@@ -104,7 +104,7 @@ eventstudy <- function(firm.returns,
     es.w <- NULL
     cn.names <- character(length = 0)
   } else {
-    es.w <- window(es$z.e, start = -width, end = width)
+    es.w <- window(es$z.e, start = -event.window, end = event.window)
                                         # Adding column names to event output
     cn.names <- eventList[which(es$outcomes=="success"),1]
   }
@@ -156,7 +156,7 @@ eventstudy <- function(firm.returns,
                        outcomes = as.character(es$outcomes))
 
   attr(final.result, which = "inference") <- inference.strategy
-  attr(final.result, which = "width") <- width
+  attr(final.result, which = "event.window") <- event.window
   attr(final.result, which = "remap") <- remapping
 
   class(final.result) <- "es"

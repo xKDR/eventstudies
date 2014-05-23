@@ -20,7 +20,7 @@ test_that("test.interfaces", {
                                      drop = FALSE]
     test_es <- eventstudy(firm.returns = test_returns,
                      eventList = test_events,
-                     width = 3,
+                     event.window = 3,
                      model.args = list(market.returns = NiftyIndex))
 
     expect_that(expected_mean, equals(test_es$eventstudy.output[, "Mean"]))
@@ -41,7 +41,7 @@ test_that("test.interfaces", {
                                      drop = FALSE]
     test_es <- eventstudy(firm.returns = test_returns,
                           eventList = test_events,
-                          width = 3,
+                          event.window = 3,
                           type = "None")
 
     expect_that(expected_mean, equals(test_es$eventstudy.output[, "Mean"]))
@@ -63,7 +63,7 @@ test_that("test.interfaces", {
     test_others <- USDINR
     test_es <- eventstudy(firm.returns = test_returns,
                           eventList = test_events,
-                          width = 3,
+                          event.window = 3,
                           type = "lmAMM",
                           model.args = list(market.returns = NiftyIndex[index(USDINR)],
                           others = test_others))
@@ -86,7 +86,7 @@ test_that("test.interfaces", {
 
     test_es <- eventstudy(firm.returns = test_returns,
                           eventList = test_events,
-                          width = 3,
+                          event.window = 3,
                           type = "excessReturn",
                           model.args = list(market.returns = NiftyIndex))
 
@@ -105,14 +105,14 @@ test_that("test.interfaces", {
     ## cumsum
     test_es <- eventstudy(firm.returns = test_returns,
                           eventList = test_events,
-                          width = 3,
+                          event.window = 3,
                           type = "None",
                           to.remap = FALSE,
                           remap = "cumsum")
 
     test_es_remap <- eventstudy(firm.returns = test_returns,
                           eventList = test_events,
-                          width = 3,
+                          event.window = 3,
                           type = "None",
                           to.remap = TRUE,
                           remap = "cumsum")
@@ -122,14 +122,14 @@ test_that("test.interfaces", {
     ## cumprod
     test_es <- eventstudy(firm.returns = test_returns,
                           eventList = test_events,
-                          width = 3,
+                          event.window = 3,
                           type = "None",
                           to.remap = FALSE,
                           remap = "cumprod")
 
     test_es_remap <- eventstudy(firm.returns = test_returns,
                           eventList = test_events,
-                          width = 3,
+                          event.window = 3,
                           type = "None",
                           to.remap = TRUE,
                           remap = "cumprod")
@@ -141,14 +141,14 @@ test_that("test.interfaces", {
     ## bootstrap
     test_es_inference <- eventstudy(firm.returns = test_returns,
                                     eventList = test_events,
-                                    width = 3,
+                                    event.window = 3,
                                     type = "None",
                                     inference = TRUE,
                                     inference.strategy = "bootstrap")
 
     test_es <- eventstudy(firm.returns = test_returns,
                           eventList = test_events,
-                          width = 3,
+                          event.window = 3,
                           type = "None",
                           inference = FALSE,
                           inference.strategy = "bootstrap")
@@ -158,14 +158,14 @@ test_that("test.interfaces", {
     ## wilcoxon
     test_es_inference <- eventstudy(firm.returns = test_returns,
                                     eventList = test_events,
-                                    width = 3,
+                                    event.window = 3,
                                     type = "None",
                                     inference = TRUE,
                                     inference.strategy = "wilcoxon")
 
     test_es <- eventstudy(firm.returns = test_returns,
                           eventList = test_events,
-                          width = 3,
+                          event.window = 3,
                           type = "None",
                           inference = FALSE,
                           inference.strategy = "wilcoxon")
@@ -184,6 +184,6 @@ test_that("test.arguments", {
     test_returns<- StockPriceReturns$ONGC
     expect_error(eventstudy(firm.returns = test_returns,
                             eventList = test_events,
-                            width = 3,
+                            event.window = 3,
                             type = "None"))
 })

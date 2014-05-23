@@ -1,5 +1,5 @@
 eventstudy <- function(firm.returns,
-                       eventList,
+                       event.list,
                        event.window = 10,
                        is.levels =  FALSE,
                        type = "marketResidual",
@@ -98,7 +98,7 @@ eventstudy <- function(firm.returns,
       colnames(outputModel) <- firmNames
   }
 
-  es <- phys2eventtime(z = outputModel, events=eventList, width=0)
+  es <- phys2eventtime(z = outputModel, events=event.list, width=0)
 
   if (is.null(es$z.e) || length(es$z.e) == 0) {
     es.w <- NULL
@@ -106,7 +106,7 @@ eventstudy <- function(firm.returns,
   } else {
     es.w <- window(es$z.e, start = -event.window, end = event.window)
                                         # Adding column names to event output
-    cn.names <- eventList[which(es$outcomes=="success"),1]
+    cn.names <- event.list[which(es$outcomes=="success"),1]
   }
 
   ## replace NAs with 0 as it's returns now

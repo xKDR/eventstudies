@@ -13,7 +13,7 @@
 
 \usage{
 eventstudy(firm.returns,
-           eventList,
+           event.list,
            event.window = 10,
            is.levels =  FALSE,
            type = "marketResidual",
@@ -29,7 +29,7 @@ eventstudy(firm.returns,
     a \pkg{zoo} matrix of \sQuote{outcome} or \sQuote{response} series. 
   }
 
-  \item{eventList}{
+  \item{event.list}{
     a \code{data.frame} of two columns with event dates (colname:
     \dQuote{when}) and column names of the \sQuote{response}
     series from \sQuote{firm.returns} (colname \dQuote{name}).
@@ -225,7 +225,7 @@ data("OtherReturns")
 
                 # Event study without adjustment
 es <- eventstudy(firm.returns = StockPriceReturns,
-                 eventList = SplitDates,
+                 event.list = SplitDates,
                  event.window = 10,
                  type = "None",
                  to.remap = TRUE,
@@ -237,7 +237,7 @@ plot(es)
 
                 # Event study using Market Model
 es <- eventstudy(firm.returns = StockPriceReturns,
-                 eventList = SplitDates,
+                 event.list = SplitDates,
                  event.window = 10,
                  type = "marketResidual",
                  to.remap = TRUE,
@@ -257,7 +257,7 @@ events <- data.frame(name = c("Infosys", "TCS"),
                      stringsAsFactors = FALSE)
 
 es <- eventstudy(firm.returns = StockPriceReturns,
-                 eventList = events,
+                 event.list = events,
                  event.window = 10,
                  type = "lmAMM",
                  to.remap = TRUE,

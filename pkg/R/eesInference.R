@@ -727,23 +727,23 @@ eesInference <- function(input, eventLists, width, to.remap=TRUE,
   ## Computing inference
   ## Normal
                                         # Good days
-  inf$good.normal <- eventstudy(input, eventList=eventLists$events.good.normal,
+  inf$good.normal <- eventstudy(input, event.list=eventLists$events.good.normal,
                                 type="None", to.remap=to.remap,
                                 remap=remap, event.window=width, inference=inference,
                                 inference.strategy=inference.strategy)
                                         # Bad days
-  inf$bad.normal <- eventstudy(input, eventList=eventLists$events.bad.normal,
+  inf$bad.normal <- eventstudy(input, event.list=eventLists$events.bad.normal,
                                 type="None", to.remap=to.remap,
                                 remap=remap, event.window=width, inference=inference,
                                 inference.strategy=inference.strategy)
   ## Purged
                                           # Good days
-  inf$good.purged <- eventstudy(input, eventList=eventLists$events.good.purged,
+  inf$good.purged <- eventstudy(input, event.list=eventLists$events.good.purged,
                                 type="None", to.remap=to.remap,
                                 remap=remap, event.window=width, inference=inference,
                                 inference.strategy=inference.strategy)
                                             # Bad days
-  inf$bad.purged <- eventstudy(input, eventList=eventLists$events.bad.purged,
+  inf$bad.purged <- eventstudy(input, event.list=eventLists$events.bad.purged,
                                 type="None", to.remap=to.remap,
                                 remap=remap, event.window=width, inference=inference,
                                 inference.strategy=inference.strategy)

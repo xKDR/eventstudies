@@ -37,7 +37,8 @@ phys2eventtime(z, events, width = 10)
   period (i.e., 300 days) will be the superset for defining event dates.
   If an event date does not lie within this period, the function
   approximates to the nearest previous date using
-  \code{\link{findInterval}}.
+  \code{\link{findInterval}}. Note that findInterval assumes the index
+  of \sQuote{z} is non-decreasing.
 
   The argument \dQuote{width} provides the user with an option to define
   successful events as those that have data within a window around the

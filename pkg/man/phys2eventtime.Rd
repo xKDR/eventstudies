@@ -31,14 +31,13 @@ phys2eventtime(z, events, width = 10)
 
   \dQuote{events} object contains two columns: \dQuote{name}
   consists of names of the event, and \dQuote{when} is the
-  respective event identifier. For instance, if \sQuote{z} is a matrix
-  of class \pkg{xts} with 10 stocks over 300 days, the names of stocks
-  in \sQuote{z} is the superset of names for the event and the time
-  period (i.e., 300 days) will be the superset for defining event dates.
+  respective event time. \dQuote{when} should be one of
+  \sQuote{date-time} or \sQuote{Date} classes.
+
   If an event date does not lie within this period, the function
   approximates to the nearest previous date using
-  \code{\link{findInterval}}. Note that findInterval assumes the index
-  of \sQuote{z} is non-decreasing.
+  \code{\link{findInterval}}. Note that \sQuote{findInterval} assumes the
+  index of \sQuote{z} is non-decreasing.
 
   The argument \dQuote{width} provides the user with an option to define
   successful events as those that have data within a window around the

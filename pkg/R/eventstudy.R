@@ -18,7 +18,7 @@ eventstudy <- function(firm.returns,
   }
 
   if (type != "None" && is.null(model.args)) {
-      stop("model.args cannot be NULL when type is not None.")
+      stop("model.args cannot be NULL when 'type' is not 'None'.")
   }
 
   if (is.levels == TRUE) {
@@ -81,11 +81,19 @@ eventstudy <- function(firm.returns,
   ## marketResidual
   if (type == "marketResidual") {
     outputModel <- marketResidual(firm.returns, model.args$market.returns)
+    if (is.null(outputModel)) {
+      cat("Error: marketResidual() returned NULL\n")
+      return(NULL)
+    }
   }
 
   ## excessReturn
   if (type == "excessReturn") {
     outputModel <- excessReturn(firm.returns, model.args$market.returns)
+    if (is.null(outputModel)) {
+      cat("Error: excessReturn() returned NULL\n")
+      return(NULL)
+    }
   }
   
 ### Converting index outputModel to Date

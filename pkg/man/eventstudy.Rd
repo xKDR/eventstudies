@@ -158,7 +158,8 @@ eventstudy(firm.returns,
 
 \value{
   A list with class attribute \dQuote{es} holding the following
-  elements:
+  elements, or \sQuote{NULL} if output from a model function is
+  \sQuote{NULL}:
 
   \itemize{
     \item{\dQuote{eventstudy.output}:}{

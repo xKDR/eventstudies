@@ -60,7 +60,7 @@ expect_that(a, equals(structure(list(z.e = structure(c(NA, NA, NA, NA, 285.325,
 
 ## Check the previous date
 cat("\nTesting handling of missing data on event date: ")
-eventdate <- "2004-01-10"
+eventdate <- as.Date("2004-01-10")
 eventdate_output <- "2004-01-09"
 eventslist <- data.frame(name = "ITC", when = eventdate,
                          stringsAsFactors = FALSE)

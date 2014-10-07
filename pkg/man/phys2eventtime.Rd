@@ -31,8 +31,9 @@ phys2eventtime(z, events, width = 10)
 
   \dQuote{events} object contains two columns: \dQuote{name}
   consists of names of the event, and \dQuote{when} is the
-  respective event time. \dQuote{when} should be one of
-  \sQuote{date-time} or \sQuote{Date} classes.
+  respective event time. \sQuote{class} of \sQuote{index} of \dQuote{z}
+  and \dQuote{when} should be same and one of the \sQuote{date-time} or
+  \sQuote{Date} classes.
 
   If an event date does not lie within this period, the function
   approximates to the nearest previous date using

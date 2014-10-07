@@ -12,36 +12,13 @@
 # A vector of these outcomes is returned.
 
 phys2eventtime <- function(z, events, width=10) {
-  ## Ensuring class of event matrix
-  events$name <- as.character(events$name)
-  if(is.factor(events$when)) {
-    stop("The column 'when' cannot be a factor. Cannot proceed with data manipulation.")
-  }
-
-  ## z: physical time matrix. Check dimensions of "z"
   if (is.null(ncol(z))) {
-    stop(paste(deparse("z"), "should be of class zoo/xts with at least one column."))
+    stop(paste("'z' should be of class zoo/xts with at least one column. Use '[' with drop = FALSE"))
   }
 
-  timeshift <- function(x) {
-    firm.present <- match(x["name"], colnames(z), nomatch = -1) != -1
-    if (!firm.present) {
-      return(list(result=NULL, outcome="unitmissing"))
-    }
-    ## Take previous date if exact data is not found.
-    location <- findInterval(as.Date(x["when"]), index(z[, x["name"]]))
-    if ((location <= 1) | (location >= length(index(z)))) {
-      return(list(result=NULL, outcome="wrongspan"))
-    }
-    remapped <- zoo(as.numeric(z[,x["name"]]), order.by=(-location+1):(length(z[,x["name"]])-location))
-    return(list(result=remapped, outcome="success"))
-  }
-  
-  answer <- apply(events, 1, timeshift) #this thing loops on num events
-  answer <- unlist(answer, recursive = FALSE)
-  rownums <- grep("outcome", names(answer))
-  outcomes <- as.character(do.call("c", answer[rownums]))
-  z.e <- do.call("cbind", answer[rownums[which(answer[rownums] == "success")] - 1])
+  answer <- lapply(1:nrow(events), function(i) timeshift(events[i, ], z))
+  outcomes <- sapply(answer, function(x) x$outcome)
+  z.e <- do.call(cbind, lapply(answer[outcomes == "success"], function(x) x$result))
 
   ## If no successful outcome, return NULL to z.e. 
   if (length(z.e) == 0) {               
@@ -71,4 +48,21 @@ phys2eventtime <- function(z, events, width=10) {
   ## Double check
   stopifnot(sum(outcomes=="success") == NCOL(z.e))
   list(z.e=z.e, outcomes=factor(outcomes))
+}
+
+timeshift <- function(x, z) {
+  firm.present <- x[, "name"] %in% colnames(z)
+  if (!firm.present) {
+    return(list(result=NULL, outcome="unitmissing"))
+  }
+
+  ## Take previous date if exact data is not found.
+  location <- findInterval(x[, "when"], index(z[, x[, "name"]]))
+  if ((location <= 1) | (location >= length(index(z)))) {
+    return(list(result=NULL, outcome="wrongspan"))
+  }
+
+  remapped <- zoo(as.numeric(z[, x[, "name"]]),
+                  order.by = (-location + 1):(length(z[, x[, "name"]]) - location))
+  return(list(result = remapped, outcome = "success"))
 }

@@ -47,3 +47,285 @@ List of things need to be done.
 
 * plot.es
   - "Event study plot capabilities" email on 30th April.
+
+* Ajay's comments
+** On the eesPlot code
+   data.frmt2 <- data.use[which(data.use$cluster.pattern != 0), ]
+
+   Can we please have better variable names.
+
+   hilo1 <- c(-big, big)
+   plot.es.graph.both(es.good.normal, es.bad.normal, es.good.purged,
+   es.bad.purged, width, titlestring, ylab)
+
+   Can we please have better names than hilo1. And, you are making it and
+   not using it.
+
+** Feedback on eesPlot
+   Why do we have eesPlot?
+
+   When I look at the name, I think "Okay, this is a plot function, and
+   why is this not just an S3 plot method". When I see the first one line
+   description on the man page my opinion is confirmed.
+   
+   Then I look deeper and it is absolutely not a plot function! It is a
+   function which figures out a list of events, then runs an event study,
+   and then does a customised plot.
+   
+   We should not have such functions.
+   
+   We should ask the user to run ees() and then run eventstudy() and then
+   use the plot method.
+   
+   Perhaps we should ask the user to do:
+   
+   es.lefttail <- eventstudies(left tail)
+   es.righttail <- eventstudies(right tail)
+   plot(mfrow=c(2,1))
+   plot(es.lefttail, type="blah")
+   plot(es.righttail, type="blah")
+   
+   On an unrelated note, I found it disturbing that the code for
+   eesPlot() does not use ees(). This violates the principle of code
+   reuse. Perhaps we should have the framework where x<-ees() just makes
+   lists of interesting events and then summary(x) generates all those
+   descriptive tables about number of events and run length and so on.
+   
+   Why is the example saying "  ## Generating event study plots (using
+   modified event study methodology)". It looks gauche.
+   
+   There is one spelling mistake in the man page but I've forgotten where
+   it is.
+
+** Feedback on eventstudies::ees
+   1. The entire concept of what we're doing is critically connected
+      to the choice of the event window!!!
+
+   The function and the documentation of the function is silent about
+   this and that's completely wrong.
+
+   Our concept of what's a clean unclustered event is : clean within a
+   stated event window. We never say this. And, it's bad software
+   engineering to hardcode this to a number. This must be an argument to
+   the function.
+
+   2. The title of the function and the first para of the function are
+   quite lame. They say:
+   
+   "This function generates summary statistics for identification and
+   analysis of extreme events.". This mostly leaves me in the dark
+   about what's going on.
+
+   "Tail (Rare) events are often the object of interest in finance.
+   These events are defined as those that have a low probability of
+   occurrence. This function identifies such events based on
+   prob.value mentioned by the user and generates summary
+   statistics about the events. If â€˜prob.valueâ€™ is 2.5%, events
+   below
+   2.5% (lower tail) and above 97.5% (upper tail) of the
+   distribution
+   are identified as extreme events." This makes the function seem
+   like a massive waste of time. Using R we can trivially find the
+   upper tail observations - no new function is required here. If I
+   read this paragraph I would completely lose interest in the
+   package; I would think these lame developers are taking trivial
+   one/two lines of R code and encoding it as a function with a new
+   name - why would I never bother to learn their new API.
+   
+   The entire value added of the code lies in identifying clean
+   unclustered events, stabbing into messy situations by trying to fuse
+   clustered events under certain conditions, and walking away from
+   places where fusing can't be done. None of that is advertised in the
+   man page. The word 'fuse' does not occur anywhere on the man page!
+   
+   3. When I run the example I get a huge messy structure that's no
+   fun. Why not have: 
+   str(output, max.level=2)
+   which is more comprehensible.
+
+   4. Look at
+   
+      library(eventstudies)
+   data(EESData)
+   ## Input S&P 500 as the univariate series
+   input <- EESData$sp500
+   ## Constructing summary statistics for 5% tail values (5% on both
+   sides)
+   output <- ees(input, prob.value = 5)
+   str(output)
+   
+   It looks nicer and more readable as:
+   
+   library(eventstudies)
+   data(EESData)
+   r <- ees(EESData$sp500, prob.value = 5)
+   str(r, max.level=2)
+
+   5. Choose a consistent style. Is there going to be a
+      library(eventstudies) in front of all the examples? This was not
+      there with the others. Why is it here?
+   
+   6. Why are we saying "   To convert number to words, code uses
+      function â€œnumbers2wordsâ€ by
+      John Fox and â€œdeprintizeâ€ function by Miron Kursa.". We are
+      using thousands of functions by others but is this a big deal?
+   
+   7. In
+   
+      $data$Clustered
+      event.series cluster.pattern
+      2000-03-16     2.524452               3
+      2003-03-17     3.904668               2
+
+      Perhaps the word `runlength' is universally understood instead of
+      cluster.pattern
+
+      The word `event.series' is incomprehensible to me.
+
+   8. In : 
+   
+      > output$upper.tail$extreme.event.distribution
+      unclstr used.clstr removed.clstr tot.clstr tot tot.used
+      upper      65          5            32        37 102       70
+
+      The column names are horrible.
+
+      Pick a more rational sequencing where this process unfolds from
+      left to right.
+
+      This table is the heart of the functionality of what's being done and
+      it isn't explained at all in the man page.
+
+      The man page should say that the researcher might like to only
+      study clean unclustered events - in which case he should run with
+      xxx. If he wishes to use the methodology of fusing adjacent events
+      as done in PSS, then additionally we are able to salvage the events
+      xxx.
+
+
+   9. The run length table should be defined as a table showing a
+      column which is the run length and a column which is the number
+      of events which are a run of that length.
+
+   10. Just confirming: In a package vignette we're going to be able
+       to reproduce some key results from the tables of PSS using this
+       function?
+    
+   11. Wouldn't it be neat to draw something graphical with
+       abline(v=xxx, lty=2) where all the extreme events are shown on
+       a picture? With a different colour for fused and for rejected
+       events.
+
+** Feedback on eventstudies package
+
+   First batch.
+
+   - At many places the phrase `eventstudy' is being used when what's
+     required is `event study'.
+
+   - When I say ?AMMData iqt is riddled with mistakes!!!! The man page
+     has four sentences and has more than 1 error per sentence.
+
+  1. The first few words read: "The data series is a daily time-series
+     zoo object. The sample range for the data is from 2012-02-01 to
+     2014-01-31." Why should this be the top priority?
+
+  2. The two sentences after this, which add up to the full man page,
+     contain one grammatical error each.
+
+  3. Nowhere in the man page is the unit mentioned (per cent).
+
+  4. The dataset contains call.money.rate and that's inconsistent with
+     the man page.
+
+  5. The example says library(zoo) which is not required.
+
+Why do we need a special data object named AMMData? Can we not just
+have one single example dataset with daily returns data for firms,
+that is used for the examples involving both event studies and AMM?
+
+If you had to have this in the package (which I doubt), a better
+example is:
+
+  data(AMMData)
+  str(AMMData)
+  tail(AMMData)
+  summary(AMMData)
+
+We in India use too many abbreviations. Let's stick to the phrase
+`augmented market model' instead of overusing the phrase AMM.
+
+
+*** When I say ?EESData I see a section `Format' which is not in ?AMMData.
+
+    The facts on this man page should say that this is a dataset for
+    the purpose of demonstrating the EES functionality (no
+    abbreviations please), and for replicating the results of the PSS
+    paper. It should explain what the data is (daily returns measured
+    in per cent).
+
+    - Why is the example here different from the example for AMMData?
+
+*** The dataset INR introduces a new word `sample' which was not used in the previous two.
+    Can we please have extreme maniacal consistency in all these?
+    As pointed out above, there is duplication between INR being here and
+    it being in AMMData.
+
+*** It is truly wrong to have a MMData data object!!
+    Nothing prevents you from estimating an MM using the data for an AMM.
+    Can we please be more intelligent about all this.
+
+** Collated
+   - bad variable names
+   - eesPlot: make it S3 function
+     - Do: ees(), eventstudy(), plot()
+   - summary.ees()
+   - ees(): event window in the API and the man pages (language + information)
+   - Remove comments from examples, plus cleaning
+   - Example consistency: remove library() calls from examples
+   - Remove unneeded references
+   - ees(): output colnames, output table format (+sequencing)
+   - ees(): reproducibility of PSS in the vignette
+   - plot.ees()
+   - Spell check
+   - Use "event study" instead of "eventstudy"
+   - Man pages: AMMData: grammatical errors, language, units,
+     consistent sections, call.money.rate
+   - EESData: say about PSS
+   - Avoid abbreviations
+   - Get rid of MMData, INR dataset
+   - lmAMM example
+   - phys2eventtime example
+   - Spell check
+
+* New comments
+** eventstudy()
+   # - outcome.unit and event.when need to be changed
+  # - put MM example before AMM
+  # - fix the vignette code and the code formatting
+  # - make the args to the es function return as attribs
+  - one series in eventstudy.Rd
+  # - mention about summary and plot in eventstudy.Rd
+  # - Fix the AMM example, make it simpler
+  # - Make the currency dates same as StockPriceReturns
+  - Check for this condition: lmAMM(): less than 30 observations: NULL
+  - XXX: nlags in timeseriesAMM()
+  - Estimation period: document the period of data which we are taking
+    up to the start of the event window (2 years for daily data)
+    - TODO: A set of rules for taking the estimation period for
+      different frequencies.
+
+** lmAMM()
+   # - TODO: Put in AMM comparison results into the eventstudy vignette.
+   - TODO: Document step by step procedure of using AMM to do eventstudy().
+   # - Put 0 in place of NA in the data objects (stock returns and
+   #   currency returns).
+
+** What should be done in the future:
+   a. Event study with economic data (e.g. country) which is not returns
+   data. No cumulation.
+
+   b. Thorough explanation of AMM.
+
+   c. Extreme events.
+

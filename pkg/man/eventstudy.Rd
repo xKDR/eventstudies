@@ -126,8 +126,8 @@ eventstudy(firm.returns,
   \dQuote{type} argument. See section on \sQuote{Model arguments} for
   more details.
 
-  \code{\link{phys2eventtime}} is called with \sQuote{width} set to
-  zero when called from this function.
+  Note: \code{\link{phys2eventtime}} is called with \sQuote{width} set
+  to 0 when called from this function.
 }
 
 \section{\bold{Model arguments}}{
@@ -177,7 +177,7 @@ eventstudy(firm.returns,
         \item{success: shows the successful use of event date.}
         \item{wdatamissing: appears when width data is missing around the
           event. This will not appear when this function is used since the
-          argument \sQuote{width} in \code{\link{phys2eventtime}} is set to zero.}
+          argument \sQuote{width} in \code{\link{phys2eventtime}} is set to 0.}
         \item{wrongspan: if event date falls outside the range of physical date.}
         \item{unitmissing: when the unit (firm name) is missing in the event list.}
       }
@@ -254,7 +254,7 @@ plot(es)
 
                 # Event study using Augmented Market Model
 events <- data.frame(name = c("Infosys", "TCS"),
-                     when = c("2012-04-01", "2012-06-01"),
+                     when = as.Date(c("2012-04-01", "2012-06-01")),
                      stringsAsFactors = FALSE)
 
 es <- eventstudy(firm.returns = StockPriceReturns,

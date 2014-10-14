@@ -67,4 +67,12 @@ eventslist <- data.frame(name = "ITC", when = eventdate,
 a <- phys2eventtime(p, eventslist, width = 2)
 expect_that(as.numeric(a$z.e["0",]),
             equals(as.numeric(p$ITC[as.Date(eventdate_output), ])))
+
+
+## events$when should be a time-based class
+cat("\nTesting class of events$when: ")
+eventdate <- "2004-01-09"
+eventslist <- data.frame(name = "ITC", when = eventdate,
+                         stringsAsFactors = FALSE)
+expect_error(a <- phys2eventtime(p, eventslist, width = 2), regexp = "events\\$when.*class.*$")
 })

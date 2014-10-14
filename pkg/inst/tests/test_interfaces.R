@@ -35,7 +35,7 @@ test_that("test.interfaces", {
     expected_outcomes <- c("success", "success")
 
     test_events <- data.frame(name = "ONGC",
-                              when = c("2011-08-01", "2010-05-14"),
+                              when = as.Date(c("2011-08-01", "2010-05-14")),
                               stringsAsFactors = FALSE)
     test_returns<- StockPriceReturns[complete.cases(StockPriceReturns$ONGC), "ONGC",
                                      drop = FALSE]
@@ -56,7 +56,7 @@ test_that("test.interfaces", {
     expected_outcomes <- c("success", "success")
 
     test_events <- data.frame(name = "ONGC",
-                              when = c("2011-08-01", "2010-05-14"),
+                              when = as.Date(c("2011-08-01", "2010-05-14")),
                               stringsAsFactors = FALSE)
     test_returns<- StockPriceReturns[complete.cases(StockPriceReturns$ONGC), "ONGC",
                                      drop = FALSE]
@@ -79,7 +79,7 @@ test_that("test.interfaces", {
     expected_outcomes <- c("success", "success")
 
     test_events <- data.frame(name = "ONGC",
-                              when = c("2011-08-01", "2010-05-14"),
+                              when = as.Date(c("2011-08-01", "2010-05-14")),
                               stringsAsFactors = FALSE)
     test_returns<- StockPriceReturns[complete.cases(StockPriceReturns$ONGC), "ONGC",
                                      drop = FALSE]
@@ -97,7 +97,7 @@ test_that("test.interfaces", {
 ### Remapping
     cat("\nChecking remapping: ")
     test_events <- data.frame(name = "ONGC",
-                              when = c("2011-08-01", "2010-05-14"),
+                              when = as.Date(c("2011-08-01", "2010-05-14")),
                               stringsAsFactors = FALSE)
     test_returns <- StockPriceReturns[complete.cases(StockPriceReturns$ONGC), "ONGC",
                                       drop = FALSE]

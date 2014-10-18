@@ -29,8 +29,12 @@ eventstudy <- function(firm.returns,
   if (is.null(ncol(firm.returns))) {
       stop("firm.returns should be a zoo series with at least one column. Use '[' with 'drop = FALSE'.")
   }
-                                        # store firm names for later use
-  firmNames <- colnames(firm.returns)
+
+  stopifnot(!is.null(remap))
+
+                                        # compute estimation and event period
+  ## :DOC: event period starts from event time + 1
+  event.period <- as.character((-event.window + 1):event.window) #XXX
 
 ### Run models
   ## AMM
@@ -78,16 +82,58 @@ eventstudy <- function(firm.returns,
     }
   } ## end AMM
 
-  ## marketResidual
-  if (type == "marketResidual") {
-    outputModel <- marketResidual(firm.returns, model.args$market.returns)
-    if (is.null(outputModel)) {
-      cat("Error: marketResidual() returned NULL\n")
-      return(NULL)
-    }
-  }
+### marketModel
+  if (type == "marketModel") {
+    cat("preparing paramters\n")
+    prepare.returns(event.list = event.list,
+                    event.window = event.window,
+                    list(firm.returns = firm.returns, market.returns = model.args$market.returns))
 
-  ## excessReturn
+    if (all(outcomes != "success")) {
+      ## skip everything
+      to.remap = FALSE
+      inference = FALSE
+    } else {
+      outputModel <- lapply(1:NCOL(firm.returns.eventtime$z.e), function(col) {
+      cat("col", col, "\n")
+      ## :DOC: convert market.returns to eventtime so that we can use
+      ## model easily on estimation period and event period
+      market.returns.event.list <- data.frame(name = "market.returns",
+                                              when = firm.returns.eventtime$events[col])
+                                        # these returns also need to be converted to event time
+      market.returns <- other.returns[, "market.returns"]
+      if (is.null(ncol(market.returns))) {
+        attr(market.returns, which = "dim") <- c(length(market.returns) , 1)
+        attr(market.returns, which = "dimnames") <- list(NULL, "market.returns")
+      }
+      market.returns.eventtime <- phys2eventtime(z = market.returns,
+                                                 events = market.returns.event.list,
+                                                 width = 0) # width doesn't matter for this
+      colnames(market.returns.eventtime$z.e) <- colnames(firm.returns.eventtime$z.e)[col]
+
+      model <- marketModel(firm.returns.eventtime$z.e[estimation.period, col],
+                           market.returns.eventtime$z.e[estimation.period, ])
+
+      abnormal.returns <- firm.returns.eventtime$z.e[event.period, col] -
+          model$coefficients[1] - (model$coefficients[2] * market.returns.eventtime$z.e[event.period, ])
+
+      return(abnormal.returns)
+      })
+
+      if (is.null(outputModel)) {
+        cat("Error: marketModel() returned NULL\n")
+        return(NULL)
+      }
+
+      if (length(outputModel) != 1) {
+        outputModel <- do.call(cbind, outputModel)
+        names(outputModel) <- colnames(firm.returns.eventtime$z.e)
+      }
+    } ## END else
+  } ## END marketModel
+
+
+### excessReturn
   if (type == "excessReturn") {
     outputModel <- excessReturn(firm.returns, model.args$market.returns)
     if (is.null(outputModel)) {
@@ -95,53 +141,28 @@ eventstudy <- function(firm.returns,
       return(NULL)
     }
   }
-  
-### Converting index outputModel to Date
-  index(outputModel) <- as.Date(index(outputModel))
-    
-### Convert to event frame
-  ## change the dimensions if there is only one firm
-  if (is.null(ncol(outputModel))) {
-      attr(outputModel, "dim") <- c(length(outputModel), 1)
-      attr(outputModel, "dimnames") <- list(NULL, firmNames)
-      colnames(outputModel) <- firmNames
-  }
 
-  es <- phys2eventtime(z = outputModel, events=event.list, width=0)
 
-  if (is.null(es$z.e) || length(es$z.e) == 0) {
-    es.w <- NULL
-    cn.names <- character(length = 0)
-  } else {
-    es.w <- window(es$z.e, start = -event.window, end = event.window)
-                                        # Adding column names to event output
-    cn.names <- event.list[which(es$outcomes=="success"),1]
-  }
-
-  ## replace NAs with 0 as it's returns now
-  es.w <- na.fill(es.w, 0)
-
-  if(length(cn.names)==1){
-    cat("Event date exists only for",cn.names,"\n")
+  if(NCOL(outputModel) == 1) {
+    name <- event.list[outcomes == "success", "name"]
+    event.number <- rownames(event.list[outcomes == "success", ])
+    cat("Event date exists only for", name,"\n")
+    attr(outputModel, which = "dim") <- c(1 , 1)
+    attr(outputModel, which = "dimnames") <- list(NULL, event.number)
     if (inference == TRUE) {
-      warning("No inference strategy for one column","\n")
+      warning("No inference strategy for single successful event.","\n")
       inference <- FALSE
     }
-  } else if (length(cn.names) == 0) {
-    ## skip everything
-    to.remap = FALSE
-    inference = FALSE
-  } else {
-    colnames(es.w) <- cn.names
-  } 
-  
+  }
+
+
 ### Remapping event frame
   if (to.remap == TRUE) {
     es.w <- switch(remap,
-                   cumsum = remap.cumsum(es.w, is.pc = FALSE, base = 0),
-                   cumprod = remap.cumprod(es.w, is.pc = TRUE,
+                   cumsum = remap.cumsum(outputModel, is.pc = FALSE, base = 0),
+                   cumprod = remap.cumprod(outputModel, is.pc = TRUE,
                      is.returns = TRUE, base = 100),
-                   reindex = remap.event.reindex(es.w)
+                   reindex = remap.event.reindex(outputModel)
                    )
   }
   
@@ -157,12 +178,12 @@ eventstudy <- function(firm.returns,
     }
   } else {
     ## Providing event frame as default output
-    result <- es.w
+    result <- outputModel
   }
   if(to.remap==TRUE){remapping <- remap} else {remapping <- "none"}
 
   final.result <- list(result = result,
-                       outcomes = as.character(es$outcomes))
+                       outcomes = as.character(outcomes))
 
   attr(final.result, which = "inference") <- inference.strategy
   attr(final.result, which = "event.window") <- event.window
@@ -170,6 +191,35 @@ eventstudy <- function(firm.returns,
 
   class(final.result) <- "es"
   return(final.result)
+}
+
+## return values:
+## 1. other.returns: data.frame
+## 2. firm.returns.eventtime: data.frame
+## 3. outcomes: vector
+## 4. estimation.period: vector
+prepare.returns <- function(event.list, event.window, ...) {
+  returns <- unlist(list(...), recursive = FALSE)
+
+  ## :DOC:to pick out the common dates of data. can't work on event
+  ## time if the dates of data do not match before converting to
+  ## event time.
+  returns.zoo <- do.call(merge.zoo, append(returns, values = list(all = TRUE, fill = NA)))
+
+  other.returns.names <- names(returns)[-match("firm.returns", names(returns))]
+  other.returns <- returns.zoo[, other.returns.names]
+  assign("other.returns", value = other.returns, envir = parent.frame())
+
+  returns.zoo <- returns.zoo[, -match(other.returns.names, colnames(returns.zoo))]
+  firm.returns.eventtime <- phys2eventtime(z = returns.zoo, events = event.list, width = event.window)
+  firm.returns.eventtime$z.e <- na.fill(firm.returns.eventtime$z.e, 0) # :DOC
+  assign("firm.returns.eventtime", value = firm.returns.eventtime, envir = parent.frame())
+  assign("outcomes", value = firm.returns.eventtime$outcomes, envir = parent.frame())
+
+  ## :DOC: estimation period goes till event time (inclusive)
+  assign("estimation.period",
+         value = as.character(index(firm.returns.eventtime$z.e)[1]:(-event.window)),
+         envir = parent.frame())
 }
 
 #########################

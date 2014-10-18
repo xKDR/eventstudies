@@ -29,6 +29,9 @@ phys2eventtime <- function(z, events, width=10) {
   }
 
   colnames(z.e) <- which(outcomes == "success")
+  ## :DOC
+  events.attrib <- do.call(c, lapply(answer[outcomes == "success"], function(x) x$event))
+  ## class(events.attrib) <- class(events$when)
 
   ## Information verification within 'width'
   ##   :: Will not be executed with width = 0
@@ -46,11 +49,13 @@ phys2eventtime <- function(z, events, width=10) {
     }
     if (any(outcomes == "wdatamissing")) {
       z.e <- z.e[, -badcolumns]
+      events.attrib <- events.attrib[-badcolumns]
     }
   }
+
   ## Double check
   stopifnot(sum(outcomes=="success") == NCOL(z.e))
-  list(z.e=z.e, outcomes=factor(outcomes))
+  list(z.e=z.e, outcomes=factor(outcomes), events = events.attrib) # :DOC: events.attrib
 }
 
 timeshift <- function(x, z) {
@@ -67,5 +72,5 @@ timeshift <- function(x, z) {
 
   remapped <- zoo(as.numeric(z[, x[, "name"]]),
                   order.by = (-location + 1):(length(z[, x[, "name"]]) - location))
-  return(list(result = remapped, outcome = "success"))
+  return(list(result = remapped, outcome = "success", event = index(z)[location]))
 }

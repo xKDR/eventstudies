@@ -53,6 +53,10 @@ phys2eventtime <- function(z, events, width=10) {
     }
   }
 
+  if (NCOL(z.e) == 0) {
+    return(list(z.e = NULL, outcomes = factor(outcomes)))
+  }
+
   ## Double check
   stopifnot(sum(outcomes=="success") == NCOL(z.e))
   list(z.e=z.e, outcomes=factor(outcomes), events = events.attrib) # :DOC: events.attrib

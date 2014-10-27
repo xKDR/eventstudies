@@ -34,7 +34,7 @@ eventstudy <- function(firm.returns,
 
                                         # compute estimation and event period
   ## :DOC: event period starts from event time + 1
-  event.period <- as.character((-event.window + 1):event.window) #XXX
+  event.period <- as.character((-event.window + 1):event.window)
 
 ### Run models
   ## AMM
@@ -89,35 +89,24 @@ eventstudy <- function(firm.returns,
                     event.window = event.window,
                     list(firm.returns = firm.returns, market.returns = model.args$market.returns))
 
+    outcomes <- unique(sapply(returns.zoo, '[[', "outcomes"))
+
     if (all(outcomes != "success")) {
-      ## skip everything
       to.remap = FALSE
       inference = FALSE
     } else {
-      outputModel <- lapply(1:NCOL(firm.returns.eventtime$z.e), function(col) {
-      cat("col", col, "\n")
-      ## :DOC: convert market.returns to eventtime so that we can use
-      ## model easily on estimation period and event period
-      market.returns.event.list <- data.frame(name = "market.returns",
-                                              when = firm.returns.eventtime$events[col])
-                                        # these returns also need to be converted to event time
-      market.returns <- other.returns[, "market.returns"]
-      if (is.null(ncol(market.returns))) {
-        attr(market.returns, which = "dim") <- c(length(market.returns) , 1)
-        attr(market.returns, which = "dimnames") <- list(NULL, "market.returns")
-      }
-      market.returns.eventtime <- phys2eventtime(z = market.returns,
-                                                 events = market.returns.event.list,
-                                                 width = 0) # width doesn't matter for this
-      colnames(market.returns.eventtime$z.e) <- colnames(firm.returns.eventtime$z.e)[col]
+      outputModel <- lapply(returns.zoo, function(firm) {
+        if (is.null(firm$z.e)) {
+          return(NULL)
+        }
+        estimation.period <- attributes(firm)[["estimation.period"]]
+        model <- marketModel(firm$z.e[estimation.period, "firm.returns"],
+                             firm$z.e[estimation.period, "market.returns"])
 
-      model <- marketModel(firm.returns.eventtime$z.e[estimation.period, col],
-                           market.returns.eventtime$z.e[estimation.period, ])
+        abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients[1] -
+          (model$coefficients[2] * firm$z.e[event.period, "market.returns"])
 
-      abnormal.returns <- firm.returns.eventtime$z.e[event.period, col] -
-          model$coefficients[1] - (model$coefficients[2] * market.returns.eventtime$z.e[event.period, ])
-
-      return(abnormal.returns)
+        return(abnormal.returns)
       })
 
       if (is.null(outputModel)) {
@@ -125,11 +114,9 @@ eventstudy <- function(firm.returns,
         return(NULL)
       }
 
-      if (length(outputModel) != 1) {
-        outputModel <- do.call(cbind, outputModel)
-        names(outputModel) <- colnames(firm.returns.eventtime$z.e)
-      }
-    } ## END else
+      outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
+    }
+
   } ## END marketModel
 
 
@@ -200,27 +187,58 @@ eventstudy <- function(firm.returns,
 ## 4. estimation.period: vector
 prepare.returns <- function(event.list, event.window, ...) {
   returns <- unlist(list(...), recursive = FALSE)
-
-  ## :DOC:to pick out the common dates of data. can't work on event
-  ## time if the dates of data do not match before converting to
-  ## event time.
-  returns.zoo <- do.call(merge.zoo, append(returns, values = list(all = TRUE, fill = NA)))
-
   other.returns.names <- names(returns)[-match("firm.returns", names(returns))]
-  other.returns <- returns.zoo[, other.returns.names]
-  assign("other.returns", value = other.returns, envir = parent.frame())
 
-  returns.zoo <- returns.zoo[, -match(other.returns.names, colnames(returns.zoo))]
-  firm.returns.eventtime <- phys2eventtime(z = returns.zoo, events = event.list, width = event.window)
-  firm.returns.eventtime$z.e <- na.fill(firm.returns.eventtime$z.e, 0) # :DOC
-  assign("firm.returns.eventtime", value = firm.returns.eventtime, envir = parent.frame())
-  assign("outcomes", value = firm.returns.eventtime$outcomes, envir = parent.frame())
+  returns.zoo <- lapply(1:nrow(event.list), function(i) {
+    cat("i:", i, "\n")
+    firm.name <- event.list[i, "name"]
+                                        # take only firms for which data is present
+    if (any(!firm.name %in% colnames(returns$firm.returns))) {
+      return(list(z.e = NULL, outcome = "unitmissing"))
+    }
 
-  ## :DOC: estimation period goes till event time (inclusive)
-  assign("estimation.period",
-         value = as.character(index(firm.returns.eventtime$z.e)[1]:(-event.window)),
-         envir = parent.frame())
+      ## :DOC:to pick out the common dates of data. can't work on
+      ## event time if the dates of data do not match before
+      ## converting to event time.
+                                        # all = FALSE: pick up dates
+                                        # for which data is available
+                                        # for all types of returns
+      firm.merged <- do.call("merge.zoo",
+                             c(list(firm.returns = returns$firm.returns[, firm.name]),
+                               returns[other.returns.names],
+                               all = FALSE, fill = NA))
+
+      firm.returns.eventtime <- phys2eventtime(z = firm.merged,
+                                       events = rbind(
+                                           data.frame(name = "firm.returns",
+                                                      when = event.list[i, "when"]),
+                                           data.frame(name = other.returns.names,
+                                                      when = event.list[i, "when"])),
+                                       width = event.window)
+    colnames(firm.returns.eventtime$z.e) <- c("firm.returns", other.returns.names)
+
+    if (any(firm.returns.eventtime$outcomes == "success")) {
+      ## :DOC: estimation period goes till event time (inclusive)
+      attr(firm.returns.eventtime, which = "estimation.period") <-
+          as.character(index(firm.returns.eventtime$z.e)[1]:(-event.window))
+    }
+
+    return(firm.returns.eventtime)
+  })
+
+  names(returns.zoo) <- event.list[, "name"]
+  assign("returns.zoo", value = returns.zoo, envir = parent.frame())
 }
+
+
+adjusted.returns <- function(firm.returns, rhsvars, intercept, betas) {
+  returns <- merge(firm.returns, rhsvars, all = FALSE, fill = NA)
+  pred <- intercept + apply(rhsvars, 1, function(n) { n %*% t(betas) })
+  returns <- returns[, -match(colnames(rhsvars), colnames(returns))]
+  adj.ret <- returns - pred
+  adj.ret
+}
+
 
 #########################
 ## Functions for class es

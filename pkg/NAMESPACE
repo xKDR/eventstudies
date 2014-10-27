@@ -2,7 +2,7 @@ export(eventstudy, inference.bootstrap, inference.wilcox, phys2eventtime,
        remap.cumsum, remap.cumprod, remap.event.reindex, eesSummary, eesDates, 
 	eesInference, get.clusters.formatted)
 
-export(marketResidual,
+export(marketModel,
        excessReturn)
 
 export(subperiod.lmAMM, manyfirmssubperiod.lmAMM, lmAMM, makeX)

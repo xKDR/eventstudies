@@ -51,10 +51,9 @@ phys2eventtime <- function(z, events, width=10) {
       z.e <- z.e[, -badcolumns]
       events.attrib <- events.attrib[-badcolumns]
     }
-  }
-
-  if (NCOL(z.e) == 0) {
-    return(list(z.e = NULL, outcomes = factor(outcomes)))
+    if (NCOL(z.e) == 0) {
+      return(list(z.e = NULL, outcomes = factor(outcomes)))
+    }
   }
 
   ## Double check

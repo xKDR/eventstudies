@@ -2,7 +2,7 @@ eventstudy <- function(firm.returns,
                        event.list,
                        event.window = 10,
                        is.levels =  FALSE,
-                       type = "marketResidual",
+                       type = "marketModel",
                        to.remap = TRUE,
                        remap = "cumsum",
                        inference = TRUE,
@@ -40,45 +40,72 @@ eventstudy <- function(firm.returns,
   ## AMM
   if (type == "lmAMM") {
 
-    ## Estimating AMM regressors
-    args.makeX <- model.args[names(model.args) %in% formalArgs(makeX)]
-    if (!is.null(model.args$nlag.makeX)) {
-        args.makeX$nlags <- model.args$nlag.makeX
-    }
-    regressors <- do.call(makeX, args.makeX)
+    cat("preparing paramters\n")
+    prepare.returns(event.list = event.list,
+                    event.window = event.window,
+                    list(firm.returns = firm.returns,
+                         market.returns = model.args$market.returns,
+                         others = model.args$others))
 
-    args.lmAMM <- model.args[names(model.args) %in% formalArgs(lmAMM)]
-    args.lmAMM$X <- regressors
+    outcomes <- unique(sapply(returns.zoo, '[[', "outcomes"))
 
-    if (!is.null(model.args$nlag.lmAMM)) {
-        args.lmAMM$nlags <- model.args$nlag.lmAMM
-    }
-
-    if(NCOL(firm.returns)==1){
-      ## One firm
-      args.lmAMM$firm.returns <- firm.returns
-      tmp <- resid(do.call(lmAMM, args.lmAMM))
-      if (is.null(tmp)) {
-          cat("lmAMM() returned NULL\n")
-          return(NULL)
-      }
-      outputModel <- zoo(x = tmp, order.by = as.Date(names(tmp)))
-
+    if (all(outcomes != "success")) {
+      to.remap = FALSE
+      inference = FALSE
     } else {
-      ## More than one firm
-                                        # Extracting and merging
-      tmp.resid <- lapply(colnames(firm.returns), function(y)
-                          {
-                            args.lmAMM$firm.returns <- firm.returns[, y]
-                            tmp <- resid(do.call(lmAMM, args.lmAMM))
-                            if (is.null(tmp)) {
-                                cat("lmAMM() returned NULL\n")
-                                return(NULL)
-                            }
-                            return(zoo(x = tmp, order.by = as.Date(names(tmp))))
-                        })
-      names(tmp.resid) <- colnames(firm.returns)
-      outputModel <- do.call(merge.zoo, tmp.resid)
+      outputModel <- lapply(returns.zoo, function(firm) {
+        if (is.null(firm$z.e)) {
+          return(NULL)
+        }
+        estimation.period <- attributes(firm)[["estimation.period"]]
+
+        ## Estimating AMM regressors
+        args.makeX <- list()
+        names.args.makeX <- names(model.args) %in% formalArgs(makeX)
+        names.args.makeX <- names.args.makeX[-match("market.returns", names(model.args))]
+        names.args.makeX <- names.args.makeX[-match("others", names(model.args))]
+        args.makeX <- model.args[names.args.makeX]
+        names.nonfirmreturns <- colnames(firm$z.e)[!colnames(firm$z.e) %in% c("firm.returns", "market.returns")]
+        args.makeX$market.returns <- firm$z.e[estimation.period, "market.returns"]
+        args.makeX$others <- firm$z.e[estimation.period, names.nonfirmreturns]
+        if (!is.null(model.args$nlag.makeX)) {
+            args.makeX$nlags <- model.args$nlag.makeX
+            args.makeX <- args.makeX[-match("nlag.makeX", names(args.makeX))]
+        }
+        regressors <- do.call(makeX, args.makeX)
+
+        args.lmAMM <- list()
+        names.args.makeX <- names.args.makeX[-match("firm.returns", names(model.args))]
+        args.lmAMM <- model.args[names(model.args) %in% formalArgs(lmAMM)]
+        args.lmAMM$firm.returns <- firm$z.e[estimation.period, "firm.returns"]
+        args.lmAMM$X <- regressors
+        if (!is.null(model.args$nlag.lmAMM)) {
+            args.lmAMM$nlags <- model.args$nlag.lmAMM
+        }
+
+        model <- do.call(lmAMM, args.lmAMM)
+        if (is.null(model)) {
+            cat("lmAMM() returned NULL\n")
+            return(NULL)
+        }
+
+        abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients[1] -
+            (model$exposures["market.returns"] * firm$z.e[event.period, "market.returns"])
+
+        for (i in 2:length(model$exposures)) { # 2: not market returns
+            abnormal.returns <- abnormal.returns - (model$exposures[i] * firm$z.e[event.period, names.nonfirmreturns[i - 1]])
+            print(abnormal.returns)
+        }
+
+        return(abnormal.returns)
+      })
+
+      if (is.null(outputModel)) {
+        cat("Error: marketModel() returned NULL\n")
+        return(NULL)
+      }
+
+      outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
     }
   } ## end AMM
 
@@ -122,12 +149,39 @@ eventstudy <- function(firm.returns,
 
 ### excessReturn
   if (type == "excessReturn") {
-    outputModel <- excessReturn(firm.returns, model.args$market.returns)
-    if (is.null(outputModel)) {
-      cat("Error: excessReturn() returned NULL\n")
-      return(NULL)
+    cat("preparing paramters\n")
+    prepare.returns(event.list = event.list,
+                    event.window = event.window,
+                    list(firm.returns = firm.returns, market.returns = model.args$market.returns))
+
+    outcomes <- unique(sapply(returns.zoo, '[[', "outcomes"))
+
+    if (all(outcomes != "success")) {
+      to.remap = FALSE
+      inference = FALSE
+    } else {
+      outputModel <- lapply(returns.zoo, function(firm) {
+        if (is.null(firm$z.e)) {
+          return(NULL)
+        }
+        estimation.period <- attributes(firm)[["estimation.period"]]
+        model <- excessReturn(firm$z.e[estimation.period, "firm.returns"],
+                              firm$z.e[estimation.period, "market.returns"])
+
+        abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients[1] -
+          (model$coefficients[2] * firm$z.e[event.period, "market.returns"])
+
+        return(abnormal.returns)
+      })
+
+      if (is.null(outputModel)) {
+        cat("Error: marketModel() returned NULL\n")
+        return(NULL)
+      }
+
+      outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
     }
-  }
+  } ## end excessReturn
 
 
   if(NCOL(outputModel) == 1) {
@@ -181,7 +235,6 @@ eventstudy <- function(firm.returns,
 }
 
 ## return values:
-## 1. other.returns: data.frame
 ## 2. firm.returns.eventtime: data.frame
 ## 3. outcomes: vector
 ## 4. estimation.period: vector
@@ -207,6 +260,7 @@ prepare.returns <- function(event.list, event.window, ...) {
                              c(list(firm.returns = returns$firm.returns[, firm.name]),
                                returns[other.returns.names],
                                all = FALSE, fill = NA))
+      other.returns.names <- colnames(firm.merged)[-match("firm.returns", colnames(firm.merged))]
 
       firm.returns.eventtime <- phys2eventtime(z = firm.merged,
                                        events = rbind(
@@ -215,6 +269,9 @@ prepare.returns <- function(event.list, event.window, ...) {
                                            data.frame(name = other.returns.names,
                                                       when = event.list[i, "when"])),
                                        width = event.window)
+    if (any(firm.returns.eventtime$outcomes != "success")) {
+        return(NULL) #XXX
+    }
     colnames(firm.returns.eventtime$z.e) <- c("firm.returns", other.returns.names)
 
     if (any(firm.returns.eventtime$outcomes == "success")) {

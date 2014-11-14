@@ -16,7 +16,7 @@ eventstudy(firm.returns,
            event.list,
            event.window = 10,
            is.levels =  FALSE,
-           type = "marketResidual",
+           type = "marketModel",
            to.remap = TRUE,
            remap = "cumsum",
            inference = TRUE,
@@ -76,7 +76,7 @@ eventstudy(firm.returns,
   
   \item{model.args}{
     All other arguments to be passed depends on whether \sQuote{type}
-    is \dQuote{marketResidual}, \dQuote{excessReturn}, or
+    is \dQuote{marketModel}, \dQuote{excessReturn}, or
     \dQuote{lmAMM}. When \dQuote{None}, no additional arguments will be
     needed. See \sQuote{Details}. 
   }
@@ -91,8 +91,8 @@ eventstudy(firm.returns,
 
   \dQuote{type} currently supports:
   \itemize{
-    \item{\dQuote{marketResidual}: uses \code{\link{marketResidual}}
-      function to extract market returns from firms return using a
+    \item{\dQuote{marketModel}: uses \code{\link{marketModel}}
+      function to regress market returns on firms return using a
       linear model.}
 
     \item{\dQuote{excessReturn}: uses \code{\link{excessReturn}} to
@@ -137,7 +137,7 @@ eventstudy(firm.returns,
   the relevant functions are listed here:
 
   \itemize{
-    \item \dQuote{marketResidual}: \cr
+    \item \dQuote{marketModel}: \cr
     - market.returns
     \item \dQuote{excessReturn}: \cr
     - market.returns
@@ -209,7 +209,7 @@ eventstudy(firm.returns,
 \author{Ajay Shah, Chirag Anand, Vikram Bahure, Vimal Balasubramaniam}
 
 \seealso{ \code{\link{lmAMM}},
-  \code{\link{marketResidual}},	
+  \code{\link{marketModel}},	
   \code{\link{excessReturn}},
   \code{\link{phys2eventtime}},
   \code{\link{inference.bootstrap}},
@@ -240,7 +240,7 @@ plot(es)
 es <- eventstudy(firm.returns = StockPriceReturns,
                  event.list = SplitDates,
                  event.window = 10,
-                 type = "marketResidual",
+                 type = "marketModel",
                  to.remap = TRUE,
                  remap = "cumsum",
                  inference = TRUE,

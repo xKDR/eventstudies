@@ -1,12 +1,12 @@
-\name{marketResidual}
-\alias{marketResidual}
+\name{marketModel}
+\alias{marketModel}
 
 \title{Extract residuals from a market model}
 
 \description{This function extracts residuals from a market model using
   function \code{stats:lm}.}
 
-\usage{marketResidual(firm.returns, market.returns)}
+\usage{marketModel(firm.returns, market.returns)}
 
 \arguments{
 
@@ -24,7 +24,7 @@
 data("StockPriceReturns")
 data("OtherReturns")
 
-mm.result <- marketResidual(firm.returns = StockPriceReturns,
+mm.result <- marketModel(firm.returns = StockPriceReturns,
                             market.returns = OtherReturns$NiftyIndex)
 
 comparison <- merge(MarketResidual = mm.result$Infosys,
@@ -34,4 +34,4 @@ comparison <- merge(MarketResidual = mm.result$Infosys,
 plot(comparison)
 }
 
-\keyword{marketResidual}
+\keyword{marketModel}

@@ -212,11 +212,11 @@ eventstudy <- function(firm.returns,
 
   if (is.null(outputModel)) {
     return(NULL)
-  } else if(NCOL(outputModel) == 1) {   # XXX: needs checking and fixing
+  } else if (NCOL(outputModel) == 1) {
     name <- event.list[outcomes == "success", "name"]
     event.number <- rownames(event.list[outcomes == "success", ])
     cat("Event date exists only for", name,"\n")
-    attr(outputModel, which = "dim") <- c(1 , 1)
+    attr(outputModel, which = "dim") <- c(length(outputModel) , 1)
     attr(outputModel, which = "dimnames") <- list(NULL, event.number)
     if (inference == TRUE) {
       warning("No inference strategy for single successful event.","\n")

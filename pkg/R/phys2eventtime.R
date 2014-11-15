@@ -18,6 +18,9 @@ phys2eventtime <- function(z, events, width=10) {
   if (!any(class(events$when) %in% c("POSIXt", "Date"))) {
       stop("events$when should be one of 'Date' or 'date-time' classes.")
   }
+  if (!is.character(events$name)) {
+    stop("events$name should a character class.")
+  }
 
   answer <- lapply(1:nrow(events), function(i) timeshift(events[i, ], z))
   outcomes <- sapply(answer, function(x) x$outcome)

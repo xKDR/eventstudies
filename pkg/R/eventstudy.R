@@ -41,11 +41,11 @@ eventstudy <- function(firm.returns,
   if (type == "lmAMM") {
 
     cat("preparing paramters\n")
-    prepare.returns(event.list = event.list,
-                    event.window = event.window,
-                    list(firm.returns = firm.returns,
-                         market.returns = model.args$market.returns,
-                         others = model.args$others))
+    returns.zoo <- prepare.returns(event.list = event.list,
+                                   event.window = event.window,
+                                   list(firm.returns = firm.returns,
+                                        market.returns = model.args$market.returns,
+                                        others = model.args$others))
 
     outcomes <- unique(sapply(returns.zoo, '[[', "outcomes"))
 
@@ -101,7 +101,7 @@ eventstudy <- function(firm.returns,
       })
 
       if (is.null(outputModel)) {
-        cat("Error: marketModel() returned NULL\n")
+        cat("Error: lmAMM() returned NULL\n")
         return(NULL)
       }
 
@@ -112,9 +112,10 @@ eventstudy <- function(firm.returns,
 ### marketModel
   if (type == "marketModel") {
     cat("preparing paramters\n")
-    prepare.returns(event.list = event.list,
-                    event.window = event.window,
-                    list(firm.returns = firm.returns, market.returns = model.args$market.returns))
+    returns.zoo <- prepare.returns(event.list = event.list,
+                                   event.window = event.window,
+                                   list(firm.returns = firm.returns,
+                                        market.returns = model.args$market.returns))
 
     outcomes <- unique(sapply(returns.zoo, '[[', "outcomes"))
 
@@ -150,9 +151,10 @@ eventstudy <- function(firm.returns,
 ### excessReturn
   if (type == "excessReturn") {
     cat("preparing paramters\n")
-    prepare.returns(event.list = event.list,
-                    event.window = event.window,
-                    list(firm.returns = firm.returns, market.returns = model.args$market.returns))
+    returns.zoo <- prepare.returns(event.list = event.list,
+                                   event.window = event.window,
+                                   list(firm.returns = firm.returns,
+                                        market.returns = model.args$market.returns))
 
     outcomes <- unique(sapply(returns.zoo, '[[', "outcomes"))
 
@@ -245,9 +247,9 @@ prepare.returns <- function(event.list, event.window, ...) {
   returns.zoo <- lapply(1:nrow(event.list), function(i) {
     cat("i:", i, "\n")
     firm.name <- event.list[i, "name"]
-                                        # take only firms for which data is present
+                                        # :DOC: take only firms for which data is present
     if (any(!firm.name %in% colnames(returns$firm.returns))) {
-      return(list(z.e = NULL, outcome = "unitmissing"))
+        return(list(z.e = NULL, outcome = "unitmissing")) # phys2eventtime output object
     }
 
       ## :DOC:to pick out the common dates of data. can't work on
@@ -270,7 +272,8 @@ prepare.returns <- function(event.list, event.window, ...) {
                                                       when = event.list[i, "when"])),
                                        width = event.window)
     if (any(firm.returns.eventtime$outcomes != "success")) {
-        return(NULL) #XXX
+        ## :DOC: there could be NAs in firm and other returns in the merged object
+        return(list(z.e = NULL, outcome = "wdatamissing")) # phys2eventtime output object
     }
     colnames(firm.returns.eventtime$z.e) <- c("firm.returns", other.returns.names)
 
@@ -284,7 +287,7 @@ prepare.returns <- function(event.list, event.window, ...) {
   })
 
   names(returns.zoo) <- event.list[, "name"]
-  assign("returns.zoo", value = returns.zoo, envir = parent.frame())
+  return(returns.zoo)
 }
 
 

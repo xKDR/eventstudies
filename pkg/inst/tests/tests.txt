@@ -1,0 +1,62 @@
+## Flow
+Testing functions in eventstudies package.
+
+1. Remap functions
+   1. remap.cumsum
+      1. Make the first value 0.
+      2. See if its not percentage data, then divide by 100.
+      3. Cumulate by summing.
+   2. remap.cumprod
+      1. Make the first value 0.
+      2. Check for is.returns and is.pc, and compute the returns or
+         percentage.
+      3. Cumulate by multiplication.
+2. Inference procedures
+   1. inference.bootstrap
+   2. inference.wilcox
+3. Models
+   1. lmAMM
+   2. marketModel
+   3. excessReturn
+   4. None (will be tested as part of eventstudy())
+4. phys2eventtime()
+   1. Checking for class of arguments.
+   2. Conversion to event time for each event.
+   3. Filter out any non-successful events.
+   4. Check for no successful outcomes, return NULL.
+   5. Assign colnames of successful events.
+   6. Assign attributes.
+   7. Check for missing data (NAs), and change the outcomes based on that.
+   8. Check if only successful outcomes are being returned inside "z.e".
+   9. Return list of event time data.frame and list of events found.
+5. Aggregator function: eventstudy
+   Steps:
+   1. prepare.returns(): for (model != "None") and (number of returns > 1)
+      - Merge all the returns (firm.returns, currency, and/or market)
+        into one 'zoo' object.
+      - Convert the merged object for each event separately to event
+        time.
+      - Store the outcomes as attributes of the event time object.
+      - Return a 'list' of event time objects for each event.
+   2. prepare.returns(): for (model = "None") and (number of returns = 1)
+      - Convert the whole zoo object 'firm.returns' to event time.
+      - Returns this object as a whole.
+   3. Check whether all the outcomes are not "success".
+   4. If model is not "None", run the model program for each object in
+      the returned list, and return the series index only within the
+      event window.
+   5. If model is None, then directly return the series within the
+      event window.
+   6. Check for any NULL values.
+   7. Handle univariate output: convert to a single column zoo object.
+   8. Perform remapping if asked by the user.
+   9. Perform inference if asked by the user.
+   10. Assign attributes to the final object.
+6. Utility functions
+   1. print.es
+   2. plot.es
+   3. summary.es
+7. ees functionality
+   1. eesInference
+   2. eesDates
+   3. eesSummary

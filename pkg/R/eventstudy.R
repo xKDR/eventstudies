@@ -92,7 +92,7 @@ eventstudy <- function(firm.returns,
             return(NULL)
         }
 
-        abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients[1] -
+        abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients["(Intercept)"] -
             (model$exposures["market.returns"] * firm$z.e[event.period, "market.returns"])
 
         for (i in 2:length(model$exposures)) { # 2: not market returns
@@ -134,10 +134,10 @@ eventstudy <- function(firm.returns,
         }
         estimation.period <- attributes(firm)[["estimation.period"]]
         model <- marketModel(firm$z.e[estimation.period, "firm.returns"],
-                             firm$z.e[estimation.period, "market.returns"])
+                             firm$z.e[estimation.period, "market.returns"],resid = FALSE)
 
-        abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients[1] -
-          (model$coefficients[2] * firm$z.e[event.period, "market.returns"])
+          abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients["(Intercept)"] -
+          (model$coefficients["market.returns"] * firm$z.e[event.period, "market.returns"])
 
         return(abnormal.returns)
       })
@@ -331,15 +331,6 @@ prepare.returns <- function(event.list, event.window, ...) {
   }
 
   return(returns.zoo)
-}
-
-
-adjusted.returns <- function(firm.returns, rhsvars, intercept, betas) {
-  returns <- merge(firm.returns, rhsvars, all = FALSE, fill = NA)
-  pred <- intercept + apply(rhsvars, 1, function(n) { n %*% t(betas) })
-  returns <- returns[, -match(colnames(rhsvars), colnames(returns))]
-  adj.ret <- returns - pred
-  adj.ret
 }
 
 

@@ -14,6 +14,9 @@
   otherwise) with firm returns.}
 
   \item{market.returns}{a \pkg{zoo} time series of market index returns.}
+
+  \item {resid}{a \sQuote{logical} indicating whether to return
+    residuals or \sQuote{lm} object.}
 }
 
 \value{Residual returns unexplained by market index returns.}
@@ -25,7 +28,8 @@ data("StockPriceReturns")
 data("OtherReturns")
 
 mm.result <- marketModel(firm.returns = StockPriceReturns,
-                            market.returns = OtherReturns$NiftyIndex)
+                         market.returns = OtherReturns$NiftyIndex,
+                         residuals = TRUE)
 
 comparison <- merge(MarketResidual = mm.result$Infosys,
                     Infosys = StockPriceReturns$Infosys,

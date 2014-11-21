@@ -1,32 +1,50 @@
-marketModel <- function(firm.returns, market.returns,resid = TRUE) {
+marketModel <- function(firm.returns, market.returns, residuals = TRUE) {
     returns <- merge(firm.returns, market.returns, all = FALSE, fill = NA)
-    market.returns <- returns$market.returns
-    returns <- returns[, -match("market.returns", colnames(returns))]
-    if (NCOL(returns) == 1) {             # Output for a single firm
-        reg <- lm(returns ~ market.returns, na.action = na.exclude) #:DOC: na.exclude
-        if (resid == TRUE) { ## MM-residuals for a single firm
-            resid <- returns - predict(reg)
-            return(resid)
-        } else { ## Model estimates for a single firm
-            return(reg)
+
+    if (NCOL(market.returns) == 1) {
+        market.returns.name <- "market.returns"
+    } else {
+        market.returns.name <- colnames(market.returns)
+    }
+    firms.name <- colnames(returns)[-match(market.returns.name, colnames(returns))]
+
+                                        # Single firm
+    if (NCOL(returns[, firms.name]) == 1) {
+        reg <- lm(returns[, firms.name] ~ returns[, market.returns.name],
+                  na.action = na.exclude) # :DOC: na.exclude: NAs can
+                                          # be seen in prediction
+
+        if (residuals == TRUE) {
+            resid <- returns[, firms.name] - predict(reg)
+            result <- resid
+        } else {
+            result <- reg
         }
-    } else { ## Multi-firm case
+                                        # Multiple firms
+    } else 
         reg <- list()
         resids <- list()
-        if (resid == TRUE) { ## Residuals for the multi-firm case
-            for (i in 1:ncol(returns)) {
-                reg[[i]] <- lm(returns[, i] ~ market.returns, na.action = na.exclude)
-                resids[[i]] <- returns[, i] - predict(reg[[i]])
-            }
-            names(resids) <- colnames(returns)
-            resid <- do.call("merge", resids)
-            return(resid)
-        } else { ## Model estimates for the multi-firm case
-            for (i in 1:ncol(returns)) {
-                reg[[i]] <- lm(returns[,i] ~ market.returns, na.action = na.exclude)    
-            }
-            names(reg) <- colnames(returns)
-            return(reg)
+
+    ## :DOC: we don't push the whole data.frame into lm() because it
+    ## does na.omit, thereby removing rows from some firms even if
+    ## they don't have NAs in them.
+    for (i in 1:length(firms.name)) {
+        reg[[i]] <- lm(returns[, firms.name[i]] ~ returns[, market.returns.name],
+                       na.action = na.exclude)
+
+        if (residuals == TRUE) {
+            resids[[i]] <- returns[, firms.name[i]] - predict(reg[[i]])
         }
     }
+    names(reg) <- firms.name
+
+    if (residuals == TRUE) {
+        names(resids) <- firms.name
+        resids <- do.call("merge", resids)
+        result <- resids
+    } else {
+        result <- reg
+    }
+
+    return(result)
 }

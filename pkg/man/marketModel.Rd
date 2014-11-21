@@ -15,7 +15,7 @@
 
   \item{market.returns}{a \pkg{zoo} time series of market index returns.}
 
-  \item {resid}{a \sQuote{logical} indicating whether to return
+  \item{resid}{a \sQuote{logical} indicating whether to return
     residuals or \sQuote{lm} object.}
 }
 

@@ -141,6 +141,7 @@ lmAMM <- function(firm.returns, X, nlags=NULL, verbose=FALSE) {
     }
     tmp <- na.omit(tmp)
     if (nrow(tmp) < 30) {             # refuse to do the work.
+      warning("lmAmm(): less than 30 observations found, returning NULL")
       return(NULL)                    # returns out of do.ols() only
     }
 

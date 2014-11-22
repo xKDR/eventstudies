@@ -48,6 +48,7 @@ eventstudy <- function(firm.returns,
                                         others = model.args$others))
 
     outcomes <- do.call(c, sapply(returns.zoo, '[', "outcomes"))
+    names(outcomes) <- gsub(".outcomes", "", names(outcomes))
 
     if (all(unique(outcomes) != "success")) {
       cat("Error: no successful events\n")
@@ -64,31 +65,29 @@ eventstudy <- function(firm.returns,
 
         ## Estimating AMM regressors
         args.makeX <- list()
-        names.args.makeX <- names(model.args) %in% formalArgs(makeX)
-        names.args.makeX <- names.args.makeX[-match("market.returns", names(model.args))]
-        names.args.makeX <- names.args.makeX[-match("others", names(model.args))]
-        args.makeX <- model.args[names.args.makeX]
+        if (!is.null(model.args$nlag.makeX)) {
+            args.makeX$nlags <- model.args$nlag.makeX
+        }
+        names.args.makeX <- names(model.args)[names(model.args) %in% formalArgs(makeX)]
+        names.args.makeX <- names.args.makeX[-match("market.returns", names.args.makeX)]
+        names.args.makeX <- names.args.makeX[-match("others", names.args.makeX)]
+        args.makeX <- append(args.makeX, model.args[names.args.makeX])
+
         names.nonfirmreturns <- colnames(firm$z.e)[!colnames(firm$z.e) %in% c("firm.returns", "market.returns")]
         args.makeX$market.returns <- firm$z.e[estimation.period, "market.returns"]
         args.makeX$others <- firm$z.e[estimation.period, names.nonfirmreturns]
-        if (!is.null(model.args$nlag.makeX)) {
-            args.makeX$nlags <- model.args$nlag.makeX
-            args.makeX <- args.makeX[-match("nlag.makeX", names(args.makeX))]
-        }
         regressors <- do.call(makeX, args.makeX)
 
         args.lmAMM <- list()
-        names.args.makeX <- names.args.makeX[-match("firm.returns", names(model.args))]
-        args.lmAMM <- model.args[names(model.args) %in% formalArgs(lmAMM)]
-        args.lmAMM$firm.returns <- firm$z.e[estimation.period, "firm.returns"]
-        args.lmAMM$X <- regressors
         if (!is.null(model.args$nlag.lmAMM)) {
             args.lmAMM$nlags <- model.args$nlag.lmAMM
         }
+        args.lmAMM <- append(args.lmAMM, model.args[names(model.args) %in% formalArgs(lmAMM)])
+        args.lmAMM$firm.returns <- firm$z.e[estimation.period, "firm.returns"]
+        args.lmAMM$X <- regressors
 
         model <- do.call(lmAMM, args.lmAMM)
         if (is.null(model)) {
-            cat("lmAMM() returned NULL\n")
             return(NULL)
         }
 
@@ -97,17 +96,24 @@ eventstudy <- function(firm.returns,
 
         for (i in 2:length(model$exposures)) { # 2: not market returns
             abnormal.returns <- abnormal.returns - (model$exposures[i] * firm$z.e[event.period, names.nonfirmreturns[i - 1]])
-            print(abnormal.returns)
         }
 
         return(abnormal.returns)
       })
 
-      if (is.null(outputModel)) {
-        cat("Error: lmAMM() returned NULL\n")
+      ## remove the NULL values
+      null.values <- sapply(outputModel, is.null)
+      if (length(which(null.values)) > 0) {
+        outputModel <- outputModel[names(which(!null.values))]
+        outcomes[names(which(null.values))] <- "edatamissing" #:DOC: edatamissing: estimation data missing
       }
 
-      outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
+      if (length(outputModel) == 0) {
+          warning("lmAMM() returned NULL\n")
+          outputModel <- NULL
+      } else {
+        outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
+      }
     }
   } ## end AMM
 
@@ -120,6 +126,7 @@ eventstudy <- function(firm.returns,
                                         market.returns = model.args$market.returns))
 
     outcomes <- do.call(c, sapply(returns.zoo, '[', "outcomes"))
+    names(outcomes) <- gsub(".outcomes", "", names(outcomes))
 
     if (all(unique(outcomes) != "success")) {
       cat("Error: no successful events\n")
@@ -134,7 +141,8 @@ eventstudy <- function(firm.returns,
         }
         estimation.period <- attributes(firm)[["estimation.period"]]
         model <- marketModel(firm$z.e[estimation.period, "firm.returns"],
-                             firm$z.e[estimation.period, "market.returns"],resid = FALSE)
+                             firm$z.e[estimation.period, "market.returns"],
+                             residuals = FALSE)
 
           abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients["(Intercept)"] -
           (model$coefficients["market.returns"] * firm$z.e[event.period, "market.returns"])
@@ -142,11 +150,18 @@ eventstudy <- function(firm.returns,
         return(abnormal.returns)
       })
 
-      if (is.null(outputModel)) {
-        cat("Error: marketModel() returned NULL\n")
+      null.values <- sapply(outputModel, is.null)
+      if (length(which(null.values)) > 0) {
+        outputModel <- outputModel[names(which(!null.values))]
+        outcomes[names(which(null.values))] <- "edatamissing"
       }
 
-      outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
+      if (length(outputModel) == 0) {
+        warning("marketModel() returned NULL")
+        outputModel <- NULL
+      } else {
+        outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
+      }
     }
 
   } ## END marketModel
@@ -161,9 +176,10 @@ eventstudy <- function(firm.returns,
                                         market.returns = model.args$market.returns))
 
     outcomes <- do.call(c, sapply(returns.zoo, '[', "outcomes"))
+    names(outcomes) <- gsub(".outcomes", "", names(outcomes))
 
     if (all(unique(outcomes) != "success")) {
-      cat("Error: no successful events\n")
+      message("No successful events")
       to.remap = FALSE
       inference = FALSE
       outputModel <- NULL
@@ -183,8 +199,15 @@ eventstudy <- function(firm.returns,
         return(abnormal.returns)
       })
 
-      if (is.null(outputModel)) {
-        cat("Error: marketModel() returned NULL\n")
+      null.values <- sapply(outputModel, is.null)
+      if (length(which(null.values)) > 0) {
+        outputModel <- outputModel[names(which(!null.values))]
+        outcomes[names(which(null.values))] <- "edatamissing"
+      }
+
+      if (length(outputModel) == 0) {
+        warning("excessReturn() returned NULL\n")
+        outputModel <- NULL
       } else {
         outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
       }
@@ -211,11 +234,13 @@ eventstudy <- function(firm.returns,
 
 
   if (is.null(outputModel)) {
-    return(NULL)
+    final.result <- list(result = NULL,
+                         outcomes = as.character(outcomes))
+    class(final.result) <- "es"
+    return(final.result)
   } else if (NCOL(outputModel) == 1) {
-    name <- event.list[outcomes == "success", "name"]
-    event.number <- rownames(event.list[outcomes == "success", ])
-    cat("Event date exists only for", name,"\n")
+    event.number <- which(outcomes == "success")
+    message("Only one successful event: #", event.number)
     attr(outputModel, which = "dim") <- c(length(outputModel) , 1)
     attr(outputModel, which = "dimnames") <- list(NULL, event.number)
     if (inference == TRUE) {
@@ -286,7 +311,9 @@ prepare.returns <- function(event.list, event.window, ...) {
                              c(list(firm.returns = returns$firm.returns[, firm.name]),
                                returns[other.returns.names],
                                all = FALSE, fill = NA))
-      ## other.returns.names needs re-assignment here
+      ## other.returns.names needs re-assignment here, since "returns"
+      ## may have a data.frame as one of the elements, as in case of
+      ## lmAMM.
       other.returns.names <- colnames(firm.merged)[-match("firm.returns", colnames(firm.merged))]
 
       firm.returns.eventtime <- phys2eventtime(z = firm.merged,
@@ -310,7 +337,7 @@ prepare.returns <- function(event.list, event.window, ...) {
 
     if (any(firm.returns.eventtime$outcomes == "wrongspan")) {
         ## :DOC: there could be NAs in firm and other returns in the merged object
-        return(list(z.e = NULL, outcomes = "unitmissing")) # phys2eventtime output object
+        return(list(z.e = NULL, outcomes = "wrongspan")) # phys2eventtime output object
     }
 
     firm.returns.eventtime$outcomes <- "success" # keep one value

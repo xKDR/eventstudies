@@ -6,7 +6,7 @@
 \description{This function extracts residuals from a market model using
   function \code{stats:lm}.}
 
-\usage{marketModel(firm.returns, market.returns)}
+\usage{marketModel(firm.returns, market.returns, residuals = TRUE)}
 
 \arguments{
 
@@ -15,7 +15,7 @@
 
   \item{market.returns}{a \pkg{zoo} time series of market index returns.}
 
-  \item{resid}{a \sQuote{logical} indicating whether to return
+  \item{residuals}{a \sQuote{logical} indicating whether to return
     residuals or \sQuote{lm} object.}
 }
 

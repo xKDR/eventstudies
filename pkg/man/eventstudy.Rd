@@ -227,7 +227,7 @@ data("OtherReturns")
                 # Event study without adjustment
 es <- eventstudy(firm.returns = StockPriceReturns,
                  event.list = SplitDates,
-                 event.window = 10,
+                 event.window = 7,
                  type = "None",
                  to.remap = TRUE,
                  remap = "cumsum",
@@ -239,7 +239,7 @@ plot(es)
                 # Event study using Market Model
 es <- eventstudy(firm.returns = StockPriceReturns,
                  event.list = SplitDates,
-                 event.window = 10,
+                 event.window = 7,
                  type = "marketModel",
                  to.remap = TRUE,
                  remap = "cumsum",
@@ -258,8 +258,8 @@ events <- data.frame(name = c("Infosys", "TCS"),
                      stringsAsFactors = FALSE)
 
 es <- eventstudy(firm.returns = StockPriceReturns,
-                 event.list = events,
-                 event.window = 10,
+                 event.list = SplitDates,
+                 event.window = 7,
                  type = "lmAMM",
                  to.remap = TRUE,
                  remap = "cumsum",
@@ -268,7 +268,7 @@ es <- eventstudy(firm.returns = StockPriceReturns,
                                                  # model arguments
                  model.args = list(
                         market.returns = OtherReturns[, "NiftyIndex"],
-                        others = OtherReturns[, c("USDINR", "CallMoneyRate")],
+                        others = OtherReturns[, "USDINR"],
                         market.returns.purge = TRUE,
                         nlag.makeX = 5,
                         nlag.lmAMM = NULL

@@ -253,10 +253,6 @@ str(es)
 plot(es)
 
                 # Event study using Augmented Market Model
-events <- data.frame(name = c("Infosys", "TCS"),
-                     when = as.Date(c("2012-04-01", "2012-06-01")),
-                     stringsAsFactors = FALSE)
-
 es <- eventstudy(firm.returns = StockPriceReturns,
                  event.list = SplitDates,
                  event.window = 7,

@@ -193,8 +193,7 @@ eventstudy <- function(firm.returns,
         model <- excessReturn(firm$z.e[estimation.period, "firm.returns"],
                               firm$z.e[estimation.period, "market.returns"])
 
-        abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients[1] -
-          (model$coefficients[2] * firm$z.e[event.period, "market.returns"])
+        abnormal.returns <- model
 
         return(abnormal.returns)
       })

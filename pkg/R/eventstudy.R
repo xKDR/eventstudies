@@ -190,11 +190,10 @@ eventstudy <- function(firm.returns,
           return(NULL)
         }
         estimation.period <- attributes(firm)[["estimation.period"]]
-        model <- excessReturn(firm$z.e[estimation.period, "firm.returns"],
-                              firm$z.e[estimation.period, "market.returns"])
+        model <- excessReturn(firm$z.e[event.period, "firm.returns"],
+                              firm$z.e[event.period, "market.returns"])
 
         abnormal.returns <- model
-
         return(abnormal.returns)
       })
 

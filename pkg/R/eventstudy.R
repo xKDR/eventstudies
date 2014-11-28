@@ -98,6 +98,7 @@ eventstudy <- function(firm.returns,
             abnormal.returns <- abnormal.returns - (model$exposures[i] * firm$z.e[event.period, names.nonfirmreturns[i - 1]])
         }
 
+        attr(abnormal.returns, "residuals") <- model$residuals
         return(abnormal.returns)
       })
 
@@ -112,7 +113,8 @@ eventstudy <- function(firm.returns,
           warning("lmAMM() returned NULL\n")
           outputModel <- NULL
       } else {
-        outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
+        outputResiduals <- lapply(outputModel, function(x) attributes(x)[["residuals"]])
+        outputModel <- do.call(merge.zoo, outputModel)
       }
     }
   } ## end AMM
@@ -147,6 +149,7 @@ eventstudy <- function(firm.returns,
           abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients["(Intercept)"] -
           (model$coefficients["market.returns"] * firm$z.e[event.period, "market.returns"])
 
+        attr(abnormal.returns, "residuals") <- model$residuals
         return(abnormal.returns)
       })
 
@@ -160,7 +163,8 @@ eventstudy <- function(firm.returns,
         warning("marketModel() returned NULL")
         outputModel <- NULL
       } else {
-        outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
+        outputResiduals <- lapply(outputModel, function(x) attributes(x)[["residuals"]])
+        outputModel <- do.call(merge.zoo, outputModel)
       }
     }
 
@@ -231,7 +235,7 @@ eventstudy <- function(firm.returns,
   } ## end None
 
 
-  if (is.null(outputModel)) {
+  if (is.null(outputModel)) {           #:DOC
     final.result <- list(result = NULL,
                          outcomes = as.character(outcomes))
     class(final.result) <- "es"
@@ -276,6 +280,9 @@ eventstudy <- function(firm.returns,
   final.result <- list(result = outputModel,
                        outcomes = as.character(outcomes))
 
+  if (exists("outputResiduals")) {      # :DOC
+    attr(final.result, which = "model.residuals") <- outputResiduals
+  }
   attr(final.result, which = "event.window") <- event.window
   attr(final.result, which = "inference") <- inference
   if (inference == TRUE) {

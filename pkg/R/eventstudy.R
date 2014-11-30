@@ -74,8 +74,8 @@ eventstudy <- function(firm.returns,
         args.makeX <- append(args.makeX, model.args[names.args.makeX])
 
         names.nonfirmreturns <- colnames(firm$z.e)[!colnames(firm$z.e) %in% c("firm.returns", "market.returns")]
-        args.makeX$market.returns <- firm$z.e[estimation.period, "market.returns"]
-        args.makeX$others <- firm$z.e[estimation.period, names.nonfirmreturns]
+        args.makeX$market.returns <- na.locf(firm$z.e[estimation.period, "market.returns"]) #XXX REMOVE
+        args.makeX$others <- na.locf(firm$z.e[estimation.period, names.nonfirmreturns])
         regressors <- do.call(makeX, args.makeX)
 
         args.lmAMM <- list()
@@ -83,7 +83,7 @@ eventstudy <- function(firm.returns,
             args.lmAMM$nlags <- model.args$nlag.lmAMM
         }
         args.lmAMM <- append(args.lmAMM, model.args[names(model.args) %in% formalArgs(lmAMM)])
-        args.lmAMM$firm.returns <- firm$z.e[estimation.period, "firm.returns"]
+        args.lmAMM$firm.returns <- na.locf(firm$z.e[estimation.period, "firm.returns"]) #XXX REMOVE na.locf(), its just done to get a regular residuals series.
         args.lmAMM$X <- regressors
 
         model <- do.call(lmAMM, args.lmAMM)
@@ -142,8 +142,8 @@ eventstudy <- function(firm.returns,
           return(NULL)
         }
         estimation.period <- attributes(firm)[["estimation.period"]]
-        model <- marketModel(firm$z.e[estimation.period, "firm.returns"],
-                             firm$z.e[estimation.period, "market.returns"],
+        model <- marketModel(na.locf(firm$z.e[estimation.period, "firm.returns"]), #XXX: remove na.locf
+                             na.locf(firm$z.e[estimation.period, "market.returns"]), #XXX: remove na.locf
                              residuals = FALSE)
 
           abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients["(Intercept)"] -
@@ -194,8 +194,8 @@ eventstudy <- function(firm.returns,
           return(NULL)
         }
         estimation.period <- attributes(firm)[["estimation.period"]]
-        model <- excessReturn(firm$z.e[event.period, "firm.returns"],
-                              firm$z.e[event.period, "market.returns"])
+        model <- excessReturn(na.locf(firm$z.e[event.period, "firm.returns"]), #XXX: remove na.locf
+                              na.locf(firm$z.e[event.period, "market.returns"])) #XXX: remove na.locf
 
         abnormal.returns <- model
         return(abnormal.returns)

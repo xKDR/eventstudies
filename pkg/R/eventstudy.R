@@ -41,6 +41,9 @@ eventstudy <- function(firm.returns,
   if (type == "lmAMM") {
 
     cat("preparing paramters\n")
+    if (length(dim(model.args$market.returns)) == 2) {
+        colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
+    }
     returns.zoo <- prepare.returns(event.list = event.list,
                                    event.window = event.window,
                                    list(firm.returns = firm.returns,
@@ -74,8 +77,8 @@ eventstudy <- function(firm.returns,
         args.makeX <- append(args.makeX, model.args[names.args.makeX])
 
         names.nonfirmreturns <- colnames(firm$z.e)[!colnames(firm$z.e) %in% c("firm.returns", "market.returns")]
-        args.makeX$market.returns <- na.locf(firm$z.e[estimation.period, "market.returns"]) #XXX REMOVE
-        args.makeX$others <- na.locf(firm$z.e[estimation.period, names.nonfirmreturns])
+        args.makeX$market.returns <- na.locf(firm$z.e[estimation.period, "market.returns"], na.rm = FALSE) #XXX REMOVE
+        args.makeX$others <- na.locf(firm$z.e[estimation.period, names.nonfirmreturns], na.rm = FALSE)
         regressors <- do.call(makeX, args.makeX)
 
         args.lmAMM <- list()
@@ -83,7 +86,7 @@ eventstudy <- function(firm.returns,
             args.lmAMM$nlags <- model.args$nlag.lmAMM
         }
         args.lmAMM <- append(args.lmAMM, model.args[names(model.args) %in% formalArgs(lmAMM)])
-        args.lmAMM$firm.returns <- na.locf(firm$z.e[estimation.period, "firm.returns"]) #XXX REMOVE na.locf(), its just done to get a regular residuals series.
+        args.lmAMM$firm.returns <- na.locf(firm$z.e[estimation.period, "firm.returns"], na.rm = FALSE) #XXX REMOVE na.locf(), its just done to get a regular residuals series.
         args.lmAMM$X <- regressors
 
         model <- do.call(lmAMM, args.lmAMM)
@@ -122,6 +125,9 @@ eventstudy <- function(firm.returns,
 ### marketModel
   if (type == "marketModel") {
     cat("preparing paramters\n")
+    if (length(dim(model.args$market.returns)) == 2) {
+        colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
+    }
     returns.zoo <- prepare.returns(event.list = event.list,
                                    event.window = event.window,
                                    list(firm.returns = firm.returns,
@@ -142,8 +148,8 @@ eventstudy <- function(firm.returns,
           return(NULL)
         }
         estimation.period <- attributes(firm)[["estimation.period"]]
-        model <- marketModel(na.locf(firm$z.e[estimation.period, "firm.returns"]), #XXX: remove na.locf
-                             na.locf(firm$z.e[estimation.period, "market.returns"]), #XXX: remove na.locf
+        model <- marketModel(na.locf(firm$z.e[estimation.period, "firm.returns"], na.rm = FALSE), #XXX: remove na.locf
+                             na.locf(firm$z.e[estimation.period, "market.returns"], na.rm = FALSE), #XXX: remove na.locf
                              residuals = FALSE)
 
           abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients["(Intercept)"] -
@@ -174,6 +180,9 @@ eventstudy <- function(firm.returns,
 ### excessReturn
   if (type == "excessReturn") {
     cat("preparing paramters\n")
+    if (length(dim(model.args$market.returns)) == 2) {
+        colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
+    }
     returns.zoo <- prepare.returns(event.list = event.list,
                                    event.window = event.window,
                                    list(firm.returns = firm.returns,

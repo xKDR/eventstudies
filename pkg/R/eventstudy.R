@@ -243,7 +243,10 @@ eventstudy <- function(firm.returns,
           inference = FALSE
           outputModel <- NULL
       } else {
+        returns.zoo <- returns.zoo[which(outcomes == "success")]
         outputModel <-  returns.zoo$z.e[event.period]
+        estimation.period <- as.character(index(returns.zoo$z.e)[1]:(-event.window))
+        outputResiduals <- lapply(returns.zoo$z.e, '[', estimation.period)
       }
   } ## end None
 

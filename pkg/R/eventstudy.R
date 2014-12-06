@@ -117,6 +117,8 @@ eventstudy <- function(firm.returns,
           outputModel <- NULL
       } else {
         outputResiduals <- lapply(outputModel, function(x) attributes(x)[["residuals"]])
+        outputResiduals <- lapply(outputResiduals, function(x)
+                                  zoo(as.numeric(x), order.by = as.integer(names(x))))
         outputModel <- do.call(merge.zoo, outputModel)
       }
     }
@@ -203,10 +205,11 @@ eventstudy <- function(firm.returns,
           return(NULL)
         }
         estimation.period <- attributes(firm)[["estimation.period"]]
-        model <- excessReturn(na.locf(firm$z.e[event.period, "firm.returns"]), #XXX: remove na.locf
-                              na.locf(firm$z.e[event.period, "market.returns"])) #XXX: remove na.locf
+        model <- excessReturn(na.locf(firm$z.e[c(estimation.period, event.period), "firm.returns"]), #XXX: remove na.locf
+                              na.locf(firm$z.e[c(estimation.period, event.period), "market.returns"])) #XXX: remove na.locf
 
-        abnormal.returns <- model
+        abnormal.returns <- model[event.period, ]
+        attr(abnormal.returns, "residuals") <- model[estimation.period, ]
         return(abnormal.returns)
       })
 
@@ -220,6 +223,7 @@ eventstudy <- function(firm.returns,
         warning("excessReturn() returned NULL\n")
         outputModel <- NULL
       } else {
+        outputResiduals <- lapply(outputModel, function(x) attributes(x)[["residuals"]])
         outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
       }
     }

@@ -172,6 +172,8 @@ eventstudy <- function(firm.returns,
         outputModel <- NULL
       } else {
         outputResiduals <- lapply(outputModel, function(x) attributes(x)[["residuals"]])
+        outputResiduals <- lapply(outputResiduals, function(x)
+                                  zoo(as.numeric(x), order.by = as.integer(names(x))))
         outputModel <- do.call(merge.zoo, outputModel)
       }
     }
@@ -244,7 +246,7 @@ eventstudy <- function(firm.returns,
           outputModel <- NULL
       } else {
         returns.zoo <- returns.zoo[which(outcomes == "success")]
-        outputModel <-  returns.zoo$z.e[event.period]
+        outputModel <-  returns.zoo$z.e[event.period, ]
         estimation.period <- as.character(index(returns.zoo$z.e)[1]:(-event.window))
         outputResiduals <- lapply(returns.zoo$z.e, '[', estimation.period)
       }

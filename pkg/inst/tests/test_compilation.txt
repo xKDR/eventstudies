@@ -1,0 +1,209 @@
+###### Testing functions in eventstudies package #####
+
+Tests are categorized as follows:
+I.   Tests for argument inputs (context: user input)
+II.  Tests for functionality (context: functionality)
+III. Tests for aggregate function (context: aggregate) 
+IV.  Example from book as test case (context: example)
+
+I. TESTS FOR ARGUMENT INPUTS
+
+1. Function phys2eventime 
+   a) Check for following values for width:
+      # Normal values:
+      	* 10
+	* 1
+      # Extreme values:
+      	* zero
+	* +Inf
+      	* -Inf
+	* Values greater than the no. of rows in dataframe StockPriceReturns
+   b) Check for following when zoo object with firm data and dates as index is a univariate series:
+      # If univariate series is input as vector (not matrix), then the function fails.
+   c) Check for following values for z (zoo object):
+       # Normal values:
+ 	* ?
+	* ?
+      # Extreme values:
+      	* ?
+	* ?
+   d) Check for following values for event.list:
+       # Normal values:
+      	* ?
+	* ?
+      # Extreme values:
+      	* ?
+	* ?
+
+****************** Models ********************
+
+2. Function marketModel
+   a) Check whether: # of rows in df(firm returns) = # of rows in df(market returns) 
+   b) Check for extreme values of no. of rows and columns i.e. 1 row or 1 col in dataset
+   c) Check for residuals = TRUE (whether data is in returns or price format)
+   d) Check for class of arguments 
+
+3. Function excessReturn
+   a) Check whether: # of rows in df(firm returns) = # of rows in df(market returns)
+   b) Check for extreme values of no. of rows and columns i.e. 1 row or 1 col in dataset   
+   c) Check for class of arguments   
+ 
+4. Function lmAMM
+   a) Check for whether X is the output of makeX or not (read makeX manual)
+   b) Check for other logical arguments (those with TRUE/FALSE)
+
+5. Function None
+   a) Check that no model arguments should be specified
+
+
+************** Remap functions **************
+
+6. Function remap.cumsum
+   a) Check for is.pc = TRUE (whether data is in percentage)
+   b) Check for following values of base:
+      # Normal values:
+        * 0
+        * 100
+      # Extreme values:
+	* -Inf
+	* Inf  
+7. Function remap.cumprod
+   a) Check for is.pc = TRUE (whether data is in percentage)
+   b) Check for is.pc = TRUE (whether data is in returns or price format)
+   c) Check for following values of base:
+      # Normal values:
+        * 0
+        * 100
+      # Extreme values:
+	* -Inf
+	* Inf  
+
+************* Inference procedures ***********
+
+8. Function inference.bootstrap
+   a) Check for following values of boot.run:
+      # Normal values:
+        * 1000
+	* 10  
+      # Extreme values:
+	* 0
+	* Inf/ -Inf
+   b) Check for following values of es.w:
+      # Extreme values:
+	* ?
+	* ?
+10. Function inference.wilcox
+   a) Check for following values of prob:
+      # Normal values:
+        * .10
+      # Extreme values:
+	* Any value less than 0 and greater than 1
+   b) Check for following values of es.w:
+      # Extreme values:
+	* ?
+	* ?
+
+
+************************************************************************************************************
+
+II. TESTS FOR FUNCTIONALITY
+
+1. Function phys2eventime 
+   a) Check for list components returned by the function
+   b) Check for firm selected should not have NA in data for defined width
+   c) Check for class of arguments
+   d) Check for if the function handles following data discrepancies in events:
+      * Missing dates in eventlist 
+      * Missing firm in eventlist  
+   e) When zoo object with firm data and dates as index is a univariate series, 
+      function must work if its a matrix of one column.
+
+
+****************** Models ********************
+
+2. Function marketModel
+   a) Check the working and results of regression analysis manually
+
+3. Function excessReturn
+   a) Check with small sample data whether the result is correct or not.
+   
+4. Function lmaMM
+   a) Check for class of arguments
+   b) Check the working and results of regression analysis manually: difficult @leave this for now
+   @ remind to come up with test cases for lmAMM
+
+5. Function None     
+
+************** Remap functions **************
+6. Function remap.cumsum
+   a) Cumulate by summing and tally
+
+7. Function remap.cumprod
+   a) Cumulate by multiplying and tally
+
+************* Inference procedures ***********
+
+8. Function inference.bootstrap @think and read
+
+9. Function inference.wilcox   @think and read
+   
+********************************************************************************
+
+III. TESTS FOR AGGREGATE FUNCTION (eventstudy)
+
+10. Check the following for argument, event.window:
+      # Normal values:
+        * Any value less than no. of rows of firm.returns and greater than zero
+      # Extreme values:
+	* 0
+	* Inf/ -Inf
+	* Any value greater than no. of rows of firm.returns and less than zero
+   b) Check that event.window does not overlap with estimation window (i.e. firm returns 
+      used to estimate market returns through any of the described models.
+
+***************** Models *********************
+
+10. Check the function for all the models using small data sets:
+    a) Check for the argument, type: by default, model type (argument in eventstudy 
+       function) should be market model, else specify the type as any of the following:
+       # none
+       # lmAMM
+       # excessReturn
+
+***************** Remap functions ************
+
+11. Check the function for logical argument to.remap (taking values TRUE/ FALSE):
+    a) for cumsum
+    b) for cumprod
+
+************* Inference procedures ***********
+
+12. Check the function for logical argument inference (taking values TRUE/ FALSE):
+13. Check the function for the argument inference.strategy taking following values:
+    a) bootstrap
+    b) wilcoxin
+
+  
+
+
+
+Function prepare.returns(): for (model != "None") and (number of returns > 1)
+      - Merge all the returns (firm.returns, currency, and/or market)
+        into one 'zoo' object.
+      - Convert the merged object for each event separately to event
+        time.
+      - Store the outcomes as attributes of the event time object.
+      - Return a 'list' of event time objects for each event.
+   2. prepare.returns(): for (model = "None") and (number of returns = 1)
+      - Convert the whole zoo object 'firm.returns' to event time.
+      - Returns this object as a whole.
+   3. Check whether all the outcomes are not "success".
+   4. If model is not "None", run the model program for each object in
+      the returned list, and return the series index only within the
+      event window.
+   5. If model is None, then directly return the series within the
+      event window.
+   6. Check for any NULL values.
+   7. Handle univariate output: convert to a single column zoo object.
+   8. Perform remapping if asked by the user.
+   9. Perform inference if asked by the user.

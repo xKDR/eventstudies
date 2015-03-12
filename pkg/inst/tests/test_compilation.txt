@@ -21,20 +21,13 @@ I. TESTS FOR ARGUMENT INPUTS
    b) Check for following when zoo object with firm data and dates as index is a univariate series:
       # If univariate series is input as vector (not matrix), then the function fails.
    c) Check for following values for z (zoo object):
-       # Normal values:
- 	* ?
-	* ?
       # Extreme values:
-      	* ?
-	* ?
+      	* NA values as index of zoo object
    d) Check for following values for event.list:
-       # Normal values:
-      	* ?
-	* ?
       # Extreme values:
-      	* ?
-	* ?
-
+	* NA values in dates column
+	* NA values in names column  
+      	
 ****************** Models ********************
 
 2. Function marketModel
@@ -90,8 +83,9 @@ I. TESTS FOR ARGUMENT INPUTS
 	* Inf/ -Inf
    b) Check for following values of es.w:
       # Extreme values:
-	* ?
-	* ?
+	* Only one row in zoo object, es.w (i.e. only one observation for each firm which is corresponding to event date)  
+	* Only one column in zoo object, es.w (i.e. data input is only for one firm)
+
 10. Function inference.wilcox
    a) Check for following values of prob:
       # Normal values:
@@ -100,8 +94,8 @@ I. TESTS FOR ARGUMENT INPUTS
 	* Any value less than 0 and greater than 1
    b) Check for following values of es.w:
       # Extreme values:
-	* ?
-	* ?
+	* Only one row in zoo object, es.w (i.e. only one observation for each firm which is corresponding to event date)  
+	* Only one column in zoo object, es.w  (i.e. data input is only for one firm)
 
 
 ************************************************************************************************************
@@ -110,14 +104,21 @@ II. TESTS FOR FUNCTIONALITY
 
 1. Function phys2eventime 
    a) Check for list components returned by the function
+      * Check for the structure of `z.e'. It should not be a transpose
+   (of the format in which it goes in inference.bootstrap())
    b) Check for firm selected should not have NA in data for defined width
    c) Check for class of arguments
    d) Check for if the function handles following data discrepancies in events:
       * Missing dates in eventlist 
       * Missing firm in eventlist  
    e) When zoo object with firm data and dates as index is a univariate series, 
-      function must work if its a matrix of one column.
-
+      function must work if its a matrix of one column (i.e. only one
+   observation for each firm which is corresponding to event date), or
+   if it is a matrix of one column (i.e. data input is only for one
+   firm).
+   f) Check for only one observation in data frame, event.list
+   (i.e. only one firm has an observed event)
+      
 
 ****************** Models ********************
 
@@ -144,6 +145,10 @@ II. TESTS FOR FUNCTIONALITY
 ************* Inference procedures ***********
 
 8. Function inference.bootstrap @think and read
+   a) Check the structure of es.w given as argument (it should be zoo
+   object indexed by event time and the `z.e' component of the list
+   returned by the ‘phys2eventtime’ function.
+   * Check the structure of es$z.e given as argument
 
 9. Function inference.wilcox   @think and read
    
@@ -160,7 +165,7 @@ III. TESTS FOR AGGREGATE FUNCTION (eventstudy)
 	* Any value greater than no. of rows of firm.returns and less than zero
    b) Check that event.window does not overlap with estimation window (i.e. firm returns 
       used to estimate market returns through any of the described models.
-
+   c) 
 ***************** Models *********************
 
 10. Check the function for all the models using small data sets:

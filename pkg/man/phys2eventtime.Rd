@@ -56,8 +56,10 @@ phys2eventtime(z, events, width = 10)
 \value{
   Returns a \sQuote{list} of two elements:
 
-  \item{z.e}{a \pkg{zoo} object indexed with event time; \dQuote{NULL} if
-  there are no \dQuote{success} in \dQuote{outcomes}.}
+  \item{z.e}{a \pkg{zoo} object containing data of successful events
+  indexed with event time; \dQuote{NULL} if there are no
+  \dQuote{success} in \dQuote{outcomes}. \sQuote{colnames} of z.e are
+  event numbers: row numbers of \dQuote{events}.}
 
   \item{outcomes}{a character vector with outcome definition for each event.}
   \itemize{

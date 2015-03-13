@@ -88,9 +88,10 @@ X <- makeX(market.returns,
            others = currency.returns,
            switch.to.innov = FALSE,
            market.returns.purge = FALSE,
+           nlags = 4,
            verbose = FALSE)
 
-amm.result <- lmAMM(firm.returns, X, nlags = 0, verbose = FALSE)
+amm.result <- lmAMM(firm.returns, X, nlags = 3, verbose = FALSE)
 plot(amm.result)
 
 amm.residual <- residuals(amm.result)

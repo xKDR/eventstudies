@@ -36,7 +36,8 @@ eventstudy(firm.returns,
   }
 
   \item{event.window}{an \sQuote{integer} of length 1 that specifies a
-    symmetric event window around the event date.
+    symmetric event window around the event time as specified in the
+    \code{index} of \dQuote{firm.returns}.
   }
 
   \item{type}{
@@ -82,9 +83,44 @@ eventstudy(firm.returns,
   }
 }
 
-\details{
-  \dQuote{firm.returns} can contain only one series. To study a single
-  series, use \sQuote{[} with \code{drop = FALSE} for subsetting the
+\details{ This function is used to conduct event study analysis acting
+  as a wrapper over the functionality provided in the \pkg{eventstudies}
+  package. It provides an interface to select and control the process of
+  event study analysis. It includes choice of the statistical model for
+  doing in-sample estimation and computing coefficients, choice of
+  cumulative returns, and selection of inference procedure. Process used
+  to conduct a study is detailed below:
+
+  \enumerate{
+    \item{event.period: is defined as (-event.window, event.window].}
+
+    \item{estimation.period: If \dQuote{type} is specified, then
+      estimation.period is calculated for each firm-event in
+      \dQuote{event.list}, starting from the start of the data span till
+      the start of event period (inclusive).}
+
+    \item{For each firm-event, firm returns and other returns (as
+      applicable) are converted to event time using
+      \sQuote{phys2eventtime}. Data is merged using \sQuote{merge.zoo}
+      to make sure the indexes are consistent before conversion to event
+      time.}
+
+    \item{The selected model \dQuote{type} is run on the series indexed
+      by event time and abnormal returns are computed.}
+
+    \item{NULL values because of estimation data missing are removed
+      from the output and \dQuote{outcomes} object is updated with
+      \dQuote{edatamissing}.}
+
+    \item{Remapping is done if \dQuote{to.remap} is TRUE using
+      value of \dQuote{remap} argument.}
+
+    \item{Inference is done if \dQuote{inference} is TRUE using the
+      technique mentioned in \dQuote{inference.strategy}.}
+  }
+
+  \dQuote{firm.returns} can contain a single series also. To study a single
+  series, use \sQuote{[} with \code{drop = FALSE} to subset the
   data set. See \code{\link{phys2eventtime}} for more details.
 
   \sQuote{NA} values in the returns data are converted to \code{0}.
@@ -179,16 +215,28 @@ eventstudy(firm.returns,
           event. This will not appear when this function is used since the
           argument \sQuote{width} in \code{\link{phys2eventtime}} is set to 0.}
         \item{wrongspan: if event date falls outside the range of physical date.}
-        \item{unitmissing: when the unit (firm name) is missing in the event list.}
+        \item{unitmissing: when the unit (firm name) is missing in the
+          event list.}
+        \item{edatamissing: when there is insufficient data to do model
+        estimation.}
       }
     }
   }
 
   The returned object contains input information in other attributes:
   \itemize{
+    \item{\dQuote{model.residuals}:}{
+      a \sQuote{list} of residual series as returned by the selected
+      model. For models which do not compute residuals, this attribute is
+      not returned.}
+
     \item{\dQuote{inference}:}{
       a \sQuote{character} providing information about which inference
       strategy was utilised to estimate the confidence intervals.
+    }
+
+    \item{\dQuote{inference.strategy}:}{
+      a \sQuote{character} providing the name of the selected model.
     }
 
     \item{\dQuote{event.window}:}{
@@ -267,7 +315,7 @@ es <- eventstudy(firm.returns = StockPriceReturns,
                         others = OtherReturns[, "USDINR"],
                         market.returns.purge = TRUE,
                         nlag.makeX = 5,
-                        nlag.lmAMM = NULL
+                        nlag.lmAMM = 5
                         )
                  )
 str(es)

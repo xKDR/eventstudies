@@ -33,7 +33,7 @@ eventstudy <- function(firm.returns,
   stopifnot(!is.null(remap))
 
                                         # compute estimation and event period
-  ## :DOC: event period starts from event time + 1
+                                        # event period starts from event time + 1
   event.period <- as.character((-event.window + 1):event.window)
 
 ### Run models
@@ -109,7 +109,7 @@ eventstudy <- function(firm.returns,
       null.values <- sapply(outputModel, is.null)
       if (length(which(null.values)) > 0) {
         outputModel <- outputModel[names(which(!null.values))]
-        outcomes[names(which(null.values))] <- "edatamissing" #:DOC: edatamissing: estimation data missing
+        outcomes[names(which(null.values))] <- "edatamissing" # estimation data missing
       }
 
       if (length(outputModel) == 0) {
@@ -253,7 +253,7 @@ eventstudy <- function(firm.returns,
   } ## end None
 
 
-  if (is.null(outputModel)) {           #:DOC
+  if (is.null(outputModel)) {
     final.result <- list(result = NULL,
                          outcomes = as.character(outcomes))
     class(final.result) <- "es"
@@ -298,7 +298,7 @@ eventstudy <- function(firm.returns,
   final.result <- list(result = outputModel,
                        outcomes = as.character(outcomes))
 
-  if (exists("outputResiduals")) {      # :DOC
+  if (exists("outputResiduals")) {
     attr(final.result, which = "model.residuals") <- outputResiduals
   }
   attr(final.result, which = "event.window") <- event.window
@@ -324,7 +324,7 @@ prepare.returns <- function(event.list, event.window, ...) {
   returns.zoo <- lapply(1:nrow(event.list), function(i) {
     cat("i:", i, "\n")
     firm.name <- event.list[i, "name"]
-      ## :DOC:to pick out the common dates of data. can't work on
+      ## to pick out the common dates of data. can't work on
       ## event time if the dates of data do not match before
       ## converting to event time.
                                         # all = FALSE: pick up dates

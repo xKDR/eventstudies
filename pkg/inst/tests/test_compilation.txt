@@ -1,7 +1,7 @@
 ###### Testing functions in eventstudies package #####
 
 Tests are categorized as follows:
-I.   Tests for argument inputs (context: user input)
+I.   Tests for argument inputs (context: userinput)
 II.  Tests for functionality (context: functionality)
 III. Tests for aggregate function (context: aggregate) 
 IV.  Example from book as test case (context: example)
@@ -17,8 +17,7 @@ I. TESTS FOR ARGUMENT INPUTS
       	* zero
 	* +Inf
       	* -Inf
->	* Values greater than the no. of rows in dataframe StockPriceReturns
->   b) Check for following when zoo object with firm data and dates as index is a univariate series:
+#   b) Check for following when zoo object with firm data and dates as index is a univariate series:
       # If univariate series is input as vector (not matrix), then the function fails.
    c) Check for following values for z (zoo object):
       # Extreme values:
@@ -39,7 +38,7 @@ I. TESTS FOR ARGUMENT INPUTS
 3. Function excessReturn
 >   a) Check whether: # of rows in df(firm returns) = # of rows in df(market returns)
    b) Check for extreme values of no. of rows and columns i.e. 1 row or 1 col in dataset   
->   c) Check for class of arguments   
+      
  
 4. Function lmAMM
 >   a) Check for whether X is the output of makeX or not (read makeX manual)
@@ -103,20 +102,18 @@ I. TESTS FOR ARGUMENT INPUTS
 II. TESTS FOR FUNCTIONALITY
 
 1. Function phys2eventime 
- >  a) Check for list components returned by the function
+#   a) Check for list components returned by the function
       * Check for the structure of `z.e'. It should not be a transpose
    (of the format in which it goes in inference.bootstrap())
->   b) Check for firm selected should not have NA in data for defined width
->   c) Check for class of arguments
->   d) Check for if the function handles following data discrepancies in events:
+#   b) Check for firm selected should not have NA in data for defined width
+#   c) Check for class of arguments
+#   d) Check for if the function handles following data discrepancies in events:
       * Missing dates in eventlist 
       * Missing firm in eventlist  
->   e) When zoo object with firm data and dates as index is a univariate series, 
-      function must work if its a matrix of one column (i.e. only one
-   observation for each firm which is corresponding to event date), or
-   if it is a matrix of one column (i.e. data input is only for one
+#   e) When zoo object with firm data and dates as index is a univariate series, 
+      function must work if its a matrix of one column (i.e. data input is only for one
    firm).
->   f) Check for only one observation in data frame, event.list
+#   f) Check for only one observation in data frame, event.list
    (i.e. only one firm has an observed event)
       
 
@@ -127,7 +124,8 @@ II. TESTS FOR FUNCTIONALITY
 
 3. Function excessReturn
    a) Check with small sample data whether the result is correct or not.
-   
+   b) Check for class of arguments   
+
 4. Function lmaMM
 L   a) Check for class of arguments
    b) Check the working and results of regression analysis manually: difficult @leave this for now

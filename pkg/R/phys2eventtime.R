@@ -12,25 +12,36 @@
 # A vector of these outcomes is returned.
 
 phys2eventtime <- function(z, events, width=10) {
-  if (is.null(ncol(z))) {
-    stop(paste("'z' should be of class zoo/xts with at least one column. Use '[' with drop = FALSE"))
-  }
-  if (!any(class(events$when) %in% c("POSIXt", "Date"))) {
-      stop("events$when should be one of 'Date' or 'date-time' classes.")
-  }
-  if (!is.character(events$name)) {
-    stop("events$name should a character class.")
-  }
 
-  answer <- lapply(1:nrow(events), function(i) timeshift(events[i, ], z))
-  outcomes <- sapply(answer, function(x) x$outcome)
-  z.e <- do.call(cbind, lapply(answer[outcomes == "success"], function(x) x$result))
+  stopifnot(class(events)=="data.frame")
+  stopifnot(class(z)=="zoo" || class(z)=="xts")
+ 
+ if (is.null(ncol(z))) {
+   stop(paste("'z' should be of class zoo/xts with at least one column. Use '[' with drop = FALSE"))
+ }
+ if (!any(class(events$when) %in% c("POSIXt", "Date"))) {
+   stop("events$when should be one of 'Date' or 'date-time' classes.")
+ }
+ if (any(is.na(events$when))) {
+   stop("events$when should not contain NA values.")
+ }
+ if (any(is.na(events$name))) {
+   stop("events$name should not contain NA values.")
+ }
+ 
+ if (!is.character(events$name)) {
+   stop("events$name should a character class.")
+ }
 
+ answer <- lapply(1:nrow(events), function(i) timeshift(events[i, ], z))
+ outcomes <- sapply(answer, function(x) x$outcome)
+ z.e <- do.call(cbind, lapply(answer[outcomes == "success"], function(x) x$result))
+ 
   ## If no successful outcome, return NULL to z.e. 
-  if (length(z.e) == 0) {               
-    return(list(z.e = NULL, outcomes = factor(outcomes)))
+ if (length(z.e) == 0) {               
+   return(list(z.e = NULL, outcomes = factor(outcomes)))
   }
-
+ 
   colnames(z.e) <- which(outcomes == "success")
   ## :DOC
   events.attrib <- do.call(c, lapply(answer[outcomes == "success"], function(x) x$event))

@@ -61,7 +61,7 @@ inference.bootstrap <- function(es.w, to.plot=TRUE,
 
   results <- NULL
   for (i in 1:ncol(b$t)) {
-    results <- rbind(results, quantile(b$t[,i], prob=c(.025,.975)))
+    results <- rbind(results, quantile(b$t[,i], prob=c(.025,.975), na.rm=TRUE))
   }
   results <- cbind(results[,1], b$t0, results[,2])
   rownames(results) <- rownames(es.w)

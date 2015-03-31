@@ -4,7 +4,12 @@
 \title{Extract residuals from a market model}
 
 \description{This function extracts residuals from a market model using
-  function \code{stats:lm}.}
+  function \code{stats:lm}. \sQuote{na.exclude} is passed as
+  \sQuote{na.action} for \sQuote{lm}. For more than one firm, the
+  function merges \dQuote{market.returns} with each element of
+  \dQuote{firm.returns} before passing to \sQuote{lm} so that rows of
+  firms without \sQuote{NA}s are not removed from the zoo object.
+}
 
 \usage{marketModel(firm.returns, market.returns, residuals = TRUE)}
 
@@ -21,7 +26,7 @@
 
 \value{Residual returns unexplained by market index returns.}
 
-\author{Vikram Bahure}
+\author{Chirag Anand, Vikram Bahure}
 
 \examples{ 
 data("StockPriceReturns")
@@ -31,7 +36,7 @@ mm.result <- marketModel(firm.returns = StockPriceReturns,
                          market.returns = OtherReturns$NiftyIndex,
                          residuals = TRUE)
 
-comparison <- merge(MarketResidual = mm.result$Infosys,
+comparison <- merge(MarketModel = mm.result$Infosys,
                     Infosys = StockPriceReturns$Infosys,
                     NiftyIndex = OtherReturns$NiftyIndex,
                     all = FALSE)

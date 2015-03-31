@@ -40,7 +40,6 @@ eventstudy <- function(firm.returns,
   ## AMM
   if (type == "lmAMM") {
 
-    cat("preparing paramters\n")
     if (length(dim(model.args$market.returns)) == 2) {
         colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
     }
@@ -126,7 +125,6 @@ eventstudy <- function(firm.returns,
 
 ### marketModel
   if (type == "marketModel") {
-    cat("preparing paramters\n")
     if (length(dim(model.args$market.returns)) == 2) {
         colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
     }
@@ -183,7 +181,6 @@ eventstudy <- function(firm.returns,
 
 ### excessReturn
   if (type == "excessReturn") {
-    cat("preparing paramters\n")
     if (length(dim(model.args$market.returns)) == 2) {
         colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
     }
@@ -245,10 +242,9 @@ eventstudy <- function(firm.returns,
           inference = FALSE
           outputModel <- NULL
       } else {
-        returns.zoo <- returns.zoo[which(outcomes == "success")]
-        outputModel <-  returns.zoo$z.e[event.period, ]
-        estimation.period <- as.character(index(returns.zoo$z.e)[1]:(-event.window))
-        outputResiduals <- lapply(returns.zoo$z.e, '[', estimation.period)
+        returns.zoo <- returns.zoo$z.e[, as.character(which(outcomes == "success"))]
+        outputModel <-  returns.zoo[event.period, ]
+        estimation.period <- as.character(index(returns.zoo)[1]:(-event.window))
       }
   } ## end None
 
@@ -322,7 +318,6 @@ prepare.returns <- function(event.list, event.window, ...) {
 
   if (length(other.returns.names) != 0) { # check for type = "None"
   returns.zoo <- lapply(1:nrow(event.list), function(i) {
-    cat("i:", i, "\n")
     firm.name <- event.list[i, "name"]
       ## to pick out the common dates of data. can't work on
       ## event time if the dates of data do not match before

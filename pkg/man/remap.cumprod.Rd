@@ -11,8 +11,9 @@
 }
 
 \arguments{
-  \item{z}{a \pkg{zoo} object indexed by event time obtained from
-  \code{\link{phys2eventtime}}.} 
+  \item{z}{a \pkg{zoo} object indexed by event time, typically by the
+    \dQuote{z.e} component obtained from \dQuote{phys2eventtime}
+    function.}
 
   \item{is.pc}{\sQuote{logical}, whether input is a percentage. Default
   value set to \sQuote{FALSE}.}

@@ -112,11 +112,13 @@ eventstudy(firm.returns,
       from the output and \dQuote{outcomes} object is updated with
       \dQuote{edatamissing}.}
 
-    \item{Remapping is done if \dQuote{to.remap} is TRUE using
-      value of \dQuote{remap} argument.}
+    \item{Remapping is done if \dQuote{to.remap} is \sQuote{TRUE} using
+      the function specified in \dQuote{remap} argument.}
 
-    \item{Inference is done if \dQuote{inference} is TRUE using the
-      technique mentioned in \dQuote{inference.strategy}.}
+    \item{Means of returns are computed across various events.}
+
+    \item{Inference is done if \dQuote{inference} is \sQuote{TRUE} using the
+      technique specified in \dQuote{inference.strategy}.}
   }
 
   \dQuote{firm.returns} can contain a single series also. To study a single
@@ -229,6 +231,11 @@ eventstudy(firm.returns,
       a \sQuote{list} of residual series as returned by the selected
       model. For models which do not compute residuals, this attribute is
       not returned.}
+
+    \item{\dQuote{CAR}:}{
+      a \sQuote{zoo} object contaning Cumulative Abnormal Returns as
+      returned by the function specified by \dQuote{remap} argument.
+    }
 
     \item{\dQuote{inference}:}{
       a \sQuote{character} providing information about which inference

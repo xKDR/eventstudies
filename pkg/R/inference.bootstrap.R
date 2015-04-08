@@ -53,7 +53,7 @@ inference.bootstrap <- function(es.w, to.plot=TRUE,
                                 ylab = "Cumulative returns of response series",
                                 main = "Event study plot") {
   Ecar <- function(transposed, d) {
-    colMeans(transposed[d,], na.rm=TRUE)
+    colMeans(transposed[d, , drop=FALSE], na.rm=TRUE)
   }
   tmp <- t(as.matrix(es.w))
   b <- boot(tmp, Ecar, R=boot.run)

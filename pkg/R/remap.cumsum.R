@@ -8,7 +8,7 @@ remap.cumsum <- function(z, is.pc=FALSE, base=0) {
       tmp <- tmp/100
     }
     if(NCOL(z)==1){
-      z <- tmp
+      z <- base+cumsum(tmp)
     } else {
       z[,i] <- base+cumsum(tmp)
     }
@@ -18,8 +18,8 @@ remap.cumsum <- function(z, is.pc=FALSE, base=0) {
 
 firstValueZero <- function(x){
   if(NCOL(x)==1){
-    x[1] <- 0
-  } else {
+   x[1] <- 0
+ } else {
     x[1,] <- 0
   }
   return(x)

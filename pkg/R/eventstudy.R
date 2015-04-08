@@ -269,11 +269,15 @@ eventstudy <- function(firm.returns,
 ### Remapping event frame
   if (to.remap == TRUE) {
     outputModel <- switch(remap,
-                   cumsum = remap.cumsum(outputModel, is.pc = FALSE, base = 0),
-                   cumprod = remap.cumprod(outputModel, is.pc = TRUE,
-                     is.returns = TRUE, base = 100),
-                   reindex = remap.event.reindex(outputModel)
-                   )
+                          cumsum = remap.cumsum(outputModel, is.pc = FALSE, base = 0),
+                          cumprod = remap.cumprod(outputModel, is.pc = TRUE,
+                            is.returns = TRUE, base = 100),
+                          reindex = remap.event.reindex(outputModel)
+                          )
+    car <- outputModel
+    if(inference == FALSE){
+      outputModel <- ifelse(NCOL(outputModel) != 1, rowMeans(outputModel), mean(outputModel))
+    }
     remapping <- remap
   } else {
     remapping <- "none"
@@ -296,6 +300,10 @@ eventstudy <- function(firm.returns,
 
   if (exists("outputResiduals")) {
     attr(final.result, which = "model.residuals") <- outputResiduals
+  }
+
+  if (exists("car")) {
+    attr(final.result, which = "CAR") <- car
   }
   attr(final.result, which = "event.window") <- event.window
   attr(final.result, which = "inference") <- inference

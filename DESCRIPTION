@@ -22,6 +22,6 @@ Depends: R (>= 3.0), zoo, xts, boot, testthat, sandwich
 Description: An R package for conducting event studies and a platform
              for methodological research on event studies.
 License: GPL-2
-URL: https://r-forge.r-project.org/projects/eventstudies
-BugReports: https://r-forge.r-project.org/tracker/?atid=4491&group_id=1131&func=browse
+URL: https://github.com/nipfpmf/eventstudies
+BugReports: https://github.com/nipfpmf/eventstudies/issues/new
 LazyLoad: yes

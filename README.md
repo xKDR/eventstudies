@@ -5,14 +5,18 @@ methodological research on event studies.
 
 ## Installation
 
-> library(devtools)
-> install_github("nipfpmf/eventstudies/pkg")
+```R
+library(devtools)
+install_github("nipfpmf/eventstudies/pkg")
+```
 
 ## Usage
 
-> library(eventstudies)
-> vignette("eventstudies", package = "eventstudies")
-> examples("eventstudy", package = "eventstudies")
+```R
+library(eventstudies)
+vignette("eventstudies", package = "eventstudies")
+examples("eventstudy", package = "eventstudies")
+```
 
 ## Contributing
 
@@ -25,7 +29,8 @@ methodological research on event studies.
 ## History
 
 This repository was moved from R-forge before the release of v1.2:
-https://r-forge.r-project.org/projects/eventstudies
+
+<https://r-forge.r-project.org/projects/eventstudies>
 
 ## License
 

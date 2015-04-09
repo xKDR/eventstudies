@@ -1,6 +1,4 @@
-<snippet>
-  <content><![CDATA[
-  # ${1:Project Name}
+# eventstudies
 
 An R package for conducting event studies and a platform for
 methodological research on event studies.
@@ -32,7 +30,3 @@ https://r-forge.r-project.org/projects/eventstudies
 ## License
 
 GPL-2
-
-]]></content>
-  <tabTrigger>readme</tabTrigger>
-  </snippet>

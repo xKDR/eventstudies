@@ -2,9 +2,6 @@ library(testthat)
 context("functionality")
 
 ## 1. Test for class of arguments
-
-
-
 test_that("functionality for inference functions", {
   library(eventstudies)
   ## Data of Stock Prices
@@ -34,7 +31,7 @@ test_that("functionality for inference functions", {
                                    "2005-01-15", "2004-01-01",
                                    "2005-01-01")))
   test.eventslist0$name <- as.character(test.eventslist0$name)
-  
+
   cat("\nTesting for class of arguments")
   esConvertNormal0 <- phys2eventtime(z = test.data0,
                                      events = test.eventslist0,
@@ -42,11 +39,12 @@ test_that("functionality for inference functions", {
   es.test.w0 <- window(esConvertNormal0$z.e,
                        start = -1,
                        end = +1)
-  
+
   test.eventtime0 <- remap.cumsum(es.test.w0, is.pc = FALSE,
                                   base = 0)
   test.eventtime1 <- coredata(test.eventtime0)
 
   test.boot1 <- inference.bootstrap(es.w = test.eventtime1,
                                     to.plot = FALSE)
-  
+
+})

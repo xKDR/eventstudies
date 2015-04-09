@@ -3,7 +3,7 @@ context("functionality")
 
 ## 1. Test for class of arguments
 
-test <- that("functionality for excessReturn", {
+test_that("functionality for excessReturn", {
   library(eventstudies)
   ## Data of stock prices and returns
   test.firm <- structure(c(33.16, 34.0967, 35.3683, 34.46, 34.17,
@@ -78,4 +78,4 @@ test <- that("functionality for excessReturn", {
   er.testResult2 <- excessReturn(firm.returns = test.firm1,
                                  market.returns = test.market1[,1])
 
-}
+})

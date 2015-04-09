@@ -77,8 +77,5 @@ test <- that("functionality for excessReturn", {
 
   er.testResult2 <- excessReturn(firm.returns = test.firm1,
                                  market.returns = test.market1[,1])
-  
 
-
-  
- 
+}

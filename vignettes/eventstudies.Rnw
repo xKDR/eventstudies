@@ -5,7 +5,6 @@
 \usepackage[colorlinks,linkcolor=blue,citecolor=red]{hyperref}
 \usepackage{natbib}
 \usepackage{float}
-\usepackage{tikz}
 \usepackage{parskip}
 \usepackage{amsmath}
 \title{Introduction to the \textbf{eventstudies} package in R}

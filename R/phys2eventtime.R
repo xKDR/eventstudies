@@ -14,7 +14,7 @@
 phys2eventtime <- function(z, events, width=10) {
 
   stopifnot(class(events)=="data.frame")
-  stopifnot(class(z)=="zoo" || class(z)=="xts")
+  stopifnot(any(class(z) %in% "zoo") || any(class(z) %in% "xts"))
  
  if (is.null(ncol(z))) {
    stop(paste("'z' should be of class zoo/xts with at least one column. Use '[' with drop = FALSE"))

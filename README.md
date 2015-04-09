@@ -1,5 +1,7 @@
 # eventstudies
 
+[![Build Status](https://travis-ci.org/nipfpmf/eventstudies.svg?branch=master)](https://travis-ci.org/nipfpmf/eventstudies)
+
 An R package for conducting event studies and a platform for
 methodological research on event studies.
 

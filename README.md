@@ -7,7 +7,7 @@ methodological research on event studies.
 
 ```R
 library(devtools)
-install_github("nipfpmf/eventstudies/pkg")
+install_github("nipfpmf/eventstudies")
 ```
 
 ## Usage

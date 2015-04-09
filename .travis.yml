@@ -5,6 +5,6 @@ r_binary_packages:
 
 notifications:
   slack:
-    secure: YSjx7UvRyMLHosmHvSwCE1KH46DFA9mSIybfdTtVneEV+zqUgCUY90sVLggWN8kt4ozK0fBdKVm6xYVjxdOp+nksCE0h+QLWF1IiXnmlvMgzkuHaZISJ7rj0cvz7KqSNvA90POZa7T6x4aWbAlpJppbjR2JvH+SY6c4mvO5tbsg=
+    secure: NdUMSkGwr9JnBNS7JOVhyH/WKmElQYVJ2+ey8S/bh/1KMAEDj2ESboUSw8qf2kma+JeetMJN5zfA322udMjn4Mzx6o/gIGJaCqXvbG4RZ6ujWbVfyI/iCdKbT+H+VqC2ZpsbLME2xaFXEXXCIZeL11mJaPSJ4J0pqH5udzfxiVQ=
 
 sudo: required

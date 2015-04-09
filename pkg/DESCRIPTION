@@ -1,11 +1,27 @@
 Package: eventstudies
+Version: 1.2
+Date: 2015-04-09
 Type: Package
 Title: Event study analysis
-Version: 1.2
-Date: 2014-05-02
-Author: Chirag Anand, Vikram Bahure, Vimal Balasubramaniam, Ajay Shah
-Maintainer: Vikram Bahure <economics.vikram@gmail.com>
-Depends: R (>= 2.12.0), zoo, xts, boot, testthat, sandwich
-Description: An R package for conducting event studies and a platform for methodological research on event studies.
+Authors@R: c(
+           person("Chirag", "Anand", role = c("aut", "cre"),
+                            email = "anand.chirag@gmail.com"),
+           person("Vikram", "Bahure", role = "aut",
+                            email = "economics.vikram@gmail.com"),
+           person("Vimal", "Balasubramaniam", role = "aut",
+                           email = "vimsaa@gmail.com"),
+           person("Shekhar", "Harikumar", role = "ctb",
+                             email = "shekhar.harikumar@gmail.com"),
+           person("Sargam", "Jain", role = "ctb",
+                            email = "sargamjain13@gmail.com"),
+           person("Ajay", "Shah", role = "aut",
+                          email = "ajayshah@mayin.org")
+           )
+Maintainer: Chirag Anand <anand.chirag@gmail.com>
+Depends: R (>= 3.0), zoo, xts, boot, testthat, sandwich
+Description: An R package for conducting event studies and a platform
+             for methodological research on event studies.
 License: GPL-2
+URL: https://r-forge.r-project.org/projects/eventstudies
+BugReports: https://r-forge.r-project.org/tracker/?atid=4491&group_id=1131&func=browse
 LazyLoad: yes

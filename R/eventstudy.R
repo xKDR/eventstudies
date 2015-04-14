@@ -298,11 +298,11 @@ eventstudy <- function(firm.returns,
   final.result <- list(result = outputModel,
                        outcomes = as.character(outcomes))
 
-  if (exists("outputResiduals")) {
+  if (exists("outputResiduals", mode = "numeric", inherits = FALSE)) {
     attr(final.result, which = "model.residuals") <- outputResiduals
   }
 
-  if (exists("car")) {
+  if (exists("car", mode = "numeric", inherits = FALSE)) {
     attr(final.result, which = "CAR") <- car
   }
   attr(final.result, which = "event.window") <- event.window

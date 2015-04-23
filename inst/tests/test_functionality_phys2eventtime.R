@@ -35,9 +35,9 @@ test_that("functionality for phys2eventtime", {
   
 ### List of events
   
-  test.eventslist <- data.frame(name=c("ITC","Reliance","TCS",
+  test.eventslist <- data.frame(name = c("ITC","Reliance","TCS",
                                   "ITC","Reliance","Junk"),
-                                when=as.Date(c("2004-01-02",
+                                when = as.Date(c("2004-01-02",
                                   "2004-01-08", "2004-01-14",
                                   "2005-01-15", "2004-01-01",
                                   "2005-01-01")))
@@ -63,39 +63,39 @@ test_that("functionality for phys2eventtime", {
                                        class = "Date"),
                           class = "matrix")
   test.eventslist1 <- as.matrix(test.eventslist)
-  esConvertNormal0 <- phys2eventtime(z = test.data1,
+  expect_error(esConvertNormal0 <- phys2eventtime(z = test.data1,
                                      events = test.eventslist,
-                                     width = 2)
+                                     width = 2))
 
-  esConvertNormal0 <- phys2eventtime(z = test.data,
+  expect_error(esConvertNormal0 <- phys2eventtime(z = test.data,
                                      events = test.eventslist1,
-                                     width = 2)
+                                     width = 2))
 
 ### Testing for missing data in eventslist
 
   cat("\nTesting for missing dates in eventslist")
-  test.eventslist2 <- data.frame(name=c("ITC","Reliance","TCS",
+  test.eventslist2 <- data.frame(name = c("ITC","Reliance","TCS",
                                    "ITC","Reliance","Junk"),
-                                 when=as.Date(c("2004-01-02",
+                                 when = as.Date(c("2004-01-02",
                                    "2004-01-08", "2004-01-14",
                                    NA, "2004-01-01",
                                    "2005-01-01")))
   test.eventslist2$name <- as.character(test.eventslist2$name)
-  esConvertNormal1 <- phys2eventtime(z = test.data,
+  expect_error(esConvertNormal1 <- phys2eventtime(z = test.data,
                                      events = test.eventslist2,
-                                     width = 2)
+                                     width = 2))
 
   cat("\nTesting for missing firm names in eventlist")
-  test.eventslist2 <- data.frame(name=c("ITC",NA,"TCS",
+  test.eventslist2 <- data.frame(name = c("ITC",NA,"TCS",
                                    "ITC","Reliance","Junk"),
-                                 when=as.Date(c("2004-01-02",
+                                 when = as.Date(c("2004-01-02",
                                    "2004-01-08", "2004-01-14",
                                    "2005-01-15", "2004-01-01",
                                    "2005-01-01")))
   test.eventslist2$name <- as.character(test.eventslist2$name)
-  esConvertNormal2 <- phys2eventtime(z = test.data,
+  expect_error(esConvertNormal2 <- phys2eventtime(z = test.data,
                                      events = test.eventslist2,
-                                     width = 2)
+                                     width = 2))
 
 ### Testing the function for outcomes
 
@@ -132,8 +132,8 @@ test_that("functionality for phys2eventtime", {
 
   test.eventslist3 <- test.eventslist[1,]            
   cat("\nTesting for only one firm data in events list")
-  esConvertNormal7 <- phys2eventtime(z = test.data2,
+  expect_error(esConvertNormal7 <- phys2eventtime(z = test.data1,
                                      events = test.eventslist3,
-                                     width = 2)
+                                     width = 2))
 })
 

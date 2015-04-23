@@ -26,9 +26,9 @@ test_that("userinput for remap.functions", {
                          class = "zoo")
   test.data <- diff(log(test.data))
   ## List of events
-  test.eventslist <- data.frame(name=c("ITC","Reliance","TCS",
+  test.eventslist <- data.frame(name = c("ITC","Reliance","TCS",
                                   "ITC","Reliance","Junk"),
-                                when=as.Date(c("2004-01-02",
+                                when = as.Date(c("2004-01-02",
                                   "2004-01-08", "2004-01-14",
                                   "2005-01-15", "2004-01-01",
                                   "2005-01-01")))

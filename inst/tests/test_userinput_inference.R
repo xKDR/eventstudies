@@ -2,8 +2,7 @@ library(testthat)
 context("userinput")
 
 ## 1. Test for normal values
-## 2. Test for univariate zoo object: one firm data
-
+## 2. Testing for univariate series in zoo object
 
 test_that("userinput for inference functions", {
     library(eventstudies)
@@ -25,14 +24,16 @@ test_that("userinput for inference functions", {
                              class = "Date"),
                            class = "zoo")
     test.data <- diff(log(test.data))
+
     ## List of events
-    test.eventslist <- data.frame(name=c("ITC","Reliance","TCS",
+    test.eventslist <- data.frame(name = c("ITC","Reliance","TCS",
                                     "ITC","Reliance","Junk"),
-                                  when=as.Date(c("2004-01-02",
+                                  when = as.Date(c("2004-01-02",
                                     "2004-01-08", "2004-01-14",
                                     "2005-01-15", "2004-01-01",
                                     "2005-01-01")))
     test.eventslist$name <- as.character(test.eventslist$name)
+
 
 ### Testing function for normal values of width
     
@@ -47,9 +48,11 @@ test_that("userinput for inference functions", {
     test.eventtime0 <- remap.cumsum(es.test.w0, is.pc = FALSE,
                                     base = 0)
 
+    ## Inference.bootstrap function
     test.boot0 <- inference.bootstrap(es.w = test.eventtime0,
                                      to.plot = FALSE)
 
+    ## Inference.wilcox function
     test.boot1 <- inference.wilcox(es.w = test.eventtime0,
                                      to.plot = FALSE)
 
@@ -66,10 +69,12 @@ test_that("userinput for inference functions", {
     test.eventtime1 <- remap.cumsum(es.test.w1, is.pc = FALSE,
                                     base = 0)
 
-    test.boot2 <- inference.bootstrap(es.w = test.eventtime1,
-                                      to.plot = FALSE)
+    ## Inference.bootstrap function
 
-    test.boot3 <- inference.wilcox(es.w = test.eventtime1,
-                                   to.plot = FALSE)
-
+    expect_error(inference.bootstrap(es.w = test.eventtime1,
+                                     to.plot = FALSE))
+    ## Inference.wilcox function
+    expect_error(test.boot3 <-
+                 inference.wilcox(es.w = test.eventtime1,
+                                  to.plot = FALSE))
   })

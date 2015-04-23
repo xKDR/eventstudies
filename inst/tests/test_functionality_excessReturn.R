@@ -75,7 +75,7 @@ test_that("functionality for excessReturn", {
   er.testResult1 <- excessReturn(firm.returns = test.firm,
                                  market.returns = test.market[,1])
 
-  er.testResult2 <- excessReturn(firm.returns = test.firm1,
-                                 market.returns = test.market1[,1])
+  expect_error(er.testResult2 <- excessReturn(firm.returns = test.firm1,
+                                 market.returns = test.market1[,1]))
 
 })

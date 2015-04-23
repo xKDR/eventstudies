@@ -24,9 +24,9 @@ test_that("functionality for inference functions", {
   test.data0 <- diff(log(test.data0))
 
   ## List of events
-  test.eventslist0 <- data.frame(name=c("ITC","Reliance","TCS",
+  test.eventslist0 <- data.frame(name = c("ITC","Reliance","TCS",
                                    "ITC","Reliance","Junk"),
-                                 when=as.Date(c("2004-01-02",
+                                 when = as.Date(c("2004-01-02",
                                    "2004-01-08", "2004-01-14",
                                    "2005-01-15", "2004-01-01",
                                    "2005-01-01")))

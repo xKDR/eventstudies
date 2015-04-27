@@ -3,9 +3,9 @@
 #    values are like "1" for 1%
 # is.returns is true but not is.pc
 #    values are like "0.01" for 1%
-# is.returns is false                         in this case is.pc is ignored!
+# is.returns is false in this case is.pc is ignored!
 #    values are like 1.01 for 1%
-remap.cumprod <- function(z, is.pc=FALSE, is.returns=TRUE, base=100) {
+remap.cumprod <- function(z, is.pc = FALSE, is.returns = TRUE, base = 100) {
   z <- firstValueZero(z)
   for (i in 1:NCOL(z)) {
     tmp <- z[,i]

@@ -52,6 +52,9 @@ inference.bootstrap <- function(es.w, to.plot=TRUE,
                                 xlab = "Event time",
                                 ylab = "Cumulative returns of response series",
                                 main = "Event study plot") {
+  if(NCOL(es.w) == 1){
+    stop("More than one series is required for inference.")
+  }         
   Ecar <- function(transposed, d) {
     colMeans(transposed[d, , drop=FALSE], na.rm=TRUE)
   }
@@ -79,6 +82,9 @@ inference.wilcox <- function(es.w, to.plot = TRUE, xlab = "Event time",
                       ylab = "Cumulative returns of response series",
                       main = "Event study plot"
                       ){
+  if(NCOL(es.w) == 1){
+    stop("More than one series is required for inference.")
+  }         
   ## Wilcoxon sign test
   wilcox.sign.test <- function(x, prob){
     n <- length(x)
@@ -106,6 +112,3 @@ inference.wilcox <- function(es.w, to.plot = TRUE, xlab = "Event time",
   }
   return(result)  
 }
-
-
-

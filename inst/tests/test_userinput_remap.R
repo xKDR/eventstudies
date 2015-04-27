@@ -53,11 +53,11 @@ test_that("userinput for remap.functions", {
 
   ### Testing remap.cumprod for univariate series i.e. only one firm
 
-  cat("\nTesting for univariate series in remap.cumsum")
+  cat("\nTesting for univariate series in remap.cumprod")
   es.test.remap2 <- remap.cumprod(es.test.w0, is.pc = FALSE,
-                                  base = 100)
+                                  base = 1)
   es.test.remap3 <- remap.cumprod(es.test.w1, is.pc = FALSE,
-                                  base = 100)
+                                  base = 1)
 
   ### Testing remap.cumsum for percentage and absolute returns
   

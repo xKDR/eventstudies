@@ -1,4 +1,3 @@
-rm(list = ls())
 library(testthat)
 library(eventstudies)
 context("example")
@@ -48,13 +47,12 @@ test.firm.returns <- zoo(stock.prices, -30:90)
 test.market.returns <- zoo(index.prices, -30:90)
 
 
-##################### Testing the models in the package################
+##################### Testing the models in the package###############
 
 ### Stage I: AR estimation
-#excessReturn model: defined as naive benchmark models in test example 
+#excessReturn model: defined as naive benchmark model in test example 
 test.er.result <- excessReturn(firm.returns = test.firm.returns,
                                market.returns = test.market.returns)
-
 
 ### Stage II: Data sorting
 naive.result <- t(test.er.result)

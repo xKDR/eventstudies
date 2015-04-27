@@ -8,6 +8,7 @@ eventstudy <- function(firm.returns,
                        inference = TRUE,
                        inference.strategy = "bootstrap",
                        model.args = NULL) {
+  stopifnot(event.window > 0)
   
   if (type == "None" && !is.null(firm.returns)) {
     outputModel <- firm.returns

@@ -41,9 +41,9 @@ test_that("userinput for excessReturn", {
   test.market <- diff(log(test.market))
   
   ## List of events
-  test.eventslist <- data.frame(name=c("ITC","Reliance","TCS",
+  test.eventslist <- data.frame(name = c("ITC","Reliance","TCS",
                                   "ITC","Reliance","Junk"),
-                                when=as.Date(c("2004-01-02",
+                                when = as.Date(c("2004-01-02",
                                   "2004-01-08", "2004-01-14",
                                   "2005-01-15", "2004-01-01",
                                   "2005-01-01")))
@@ -58,8 +58,8 @@ test_that("userinput for excessReturn", {
                                  market.returns = test.market[,1])
 
   
-  er.testResult2 <- excessReturn(firm.returns = test.firm,
-                                 market.returns = test.market1[,1])
+  expect_error(er.testResult2 <- excessReturn(firm.returns = test.firm,
+                                 market.returns = test.market1[,1]))
 
 })
 

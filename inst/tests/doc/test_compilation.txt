@@ -3,7 +3,7 @@
 Tests are categorized as follows:
 I.   Tests for argument inputs (context: userinput)
 II.  Tests for functionality (context: functionality)
-III. Tests for aggregate function (context: aggregate) 
+III. Tests for aggregate function (context: wrapper) 
 IV.  Example from book as test case (context: example)
 
 I. TESTS FOR ARGUMENT INPUTS

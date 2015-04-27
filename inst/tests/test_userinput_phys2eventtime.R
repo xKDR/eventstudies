@@ -24,9 +24,9 @@ test.data <- structure(c(33.16, 34.0967, 35.3683, 34.46, 34.17,
                                         class = "Date"),
                        class = "zoo")
 ## List of events
-test.eventslist <- data.frame(name=c("ITC","Reliance","TCS",
+test.eventslist <- data.frame(name = c("ITC","Reliance","TCS",
                                 "ITC","Reliance","Junk"),
-                              when=as.Date(c("2004-01-02",
+                              when = as.Date(c("2004-01-02",
                                 "2004-01-08", "2004-01-14",
                                 "2005-01-15", "2004-01-01",
                                 "2005-01-01")))
@@ -46,16 +46,16 @@ test.eventslist$name <- as.character(test.eventslist$name)
 
 ### Testing for univariate zoo object: matrix and not a vector
 
-  test.data2 <- test.data[,1, drop=FALSE]
+  test.data2 <- test.data[,1, drop = FALSE]
   test.data3 <- test.data[,1]
   cat("\nTesting for univariate zoo object")
   esConvertNormal2 <- phys2eventtime(z = test.data2,
                                      events = test.eventslist,
                                      width = 2)
   
-  esConvertNormal3 <- phys2eventtime(z = test.data3,
+  expect_error(esConvertNormal3 <- phys2eventtime(z = test.data3,
                                      events = test.eventslist,
-                                     width = 2)
+                                     width = 2))
   
 })
 

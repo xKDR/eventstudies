@@ -290,6 +290,13 @@ eventstudy <- function(firm.returns,
     if(inference.strategy == "bootstrap"){
       outputModel <- inference.bootstrap(es.w = outputModel, to.plot = FALSE)
     }
+
+    ## Classic
+    if(inference.strategy == "classic"){
+      outputModel <- inference.classic(es.w = outputModel,
+                                       to.plot = FALSE)
+    }
+
     ## Wilcoxon
     if(inference.strategy == "wilcoxon"){
       outputModel <- inference.wilcox(es.w = outputModel, to.plot = FALSE)

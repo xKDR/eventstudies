@@ -277,7 +277,11 @@ eventstudy <- function(firm.returns,
                           )
     car <- outputModel
     if(inference == FALSE){
-      outputModel <- ifelse(NCOL(outputModel) != 1, rowMeans(outputModel), mean(outputModel))
+      if(NCOL(outputModel) != 1){
+        outputModel <- rowMeans(outputModel)
+      } else {
+        mean(outputModel)
+      }
     }
     remapping <- remap
   } else {

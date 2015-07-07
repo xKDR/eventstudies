@@ -9,8 +9,8 @@
 ####################
 inference.classic <- function(es.w, to.plot = TRUE,
                               xlab = "Event time",
-                              main = "Event study plot",
-                              ylab = "Cumulative returns of response series"){
+                              ylab = "Cumulative returns of response series",
+                              main = "Event study plot"){
   if(NCOL(es.w) == 1){
     stop("More than one series is required for inference.")
   }         

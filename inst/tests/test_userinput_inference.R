@@ -53,8 +53,13 @@ test_that("userinput for inference functions", {
                                      to.plot = FALSE)
 
     ## Inference.wilcox function
-    test.boot1 <- inference.wilcox(es.w = test.eventtime0,
+    test.wilcox0 <- inference.wilcox(es.w = test.eventtime0,
                                      to.plot = FALSE)
+
+    ## Inference.classic function
+    test.classic0 <- inference.wilcox(es.w = test.eventtime0,
+                                      to.plot = FALSE)
+    
 
 ### Testing function for univariate series: one firm
     
@@ -70,11 +75,12 @@ test_that("userinput for inference functions", {
                                     base = 0)
 
     ## Inference.bootstrap function
-
     expect_error(inference.bootstrap(es.w = test.eventtime1,
                                      to.plot = FALSE))
     ## Inference.wilcox function
-    expect_error(test.boot3 <-
-                 inference.wilcox(es.w = test.eventtime1,
+    expect_error(inference.wilcox(es.w = test.eventtime1,
                                   to.plot = FALSE))
-  })
+    ## Inference.classic function
+    expect_error(inference.classic(es.w = test.eventtime1,
+                                   to.plot = FALSE))
+})

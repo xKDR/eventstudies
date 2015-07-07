@@ -54,6 +54,7 @@ inference.bootstrap(es.w,
   \code{\link{boot}}
   \code{\link{phys2eventtime}}
   \code{\link{inference.wilcox}}
+  \code{\link{inference.classic}}
 }
 
 \author{Vikram Bahure, Vimal Balasubramaniam}

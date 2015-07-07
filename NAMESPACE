@@ -1,9 +1,8 @@
-export(eventstudy, inference.bootstrap, inference.wilcox, phys2eventtime,
-       remap.cumsum, remap.cumprod, remap.event.reindex, eesSummary, eesDates, 
-	eesInference, get.clusters.formatted)
+export(eventstudy, inference.bootstrap, inference.wilcox, inference.classic,
+       phys2eventtime, remap.cumsum, remap.cumprod, remap.event.reindex, eesSummary,
+       eesDates, eesInference, get.clusters.formatted)
 
-export(marketModel,
-       excessReturn)
+export(marketModel, excessReturn)
 
 export(subperiod.lmAMM, manyfirmssubperiod.lmAMM, lmAMM, makeX)
 
@@ -18,4 +17,4 @@ S3method(plot, amm)
 S3method(plot, es)
 S3method(plot, ees)
 
-import(boot,sandwich,testthat,xts,zoo)
+import(boot, sandwich, testthat, xts, zoo)

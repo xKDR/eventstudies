@@ -13,6 +13,7 @@
 
 phys2eventtime <- function(z, events, width=10) {
 
+  stopifnot(width > 0)
   stopifnot(class(events)=="data.frame")
   stopifnot(any(class(z) %in% "zoo") || any(class(z) %in% "xts"))
  

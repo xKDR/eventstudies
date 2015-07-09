@@ -202,7 +202,7 @@ eventstudy(firm.returns,
   \itemize{
     \item{\dQuote{eventstudy.output}:}{
       a \sQuote{matrix} containing mean (bootstrap) or median (with
-      wilcoxon) estimate with confidence interval; \sQuote{NULL} if there
+      wilcox) estimate with confidence interval; \sQuote{NULL} if there
       are no \dQuote{success} \dQuote{outcomes}.
     }
 

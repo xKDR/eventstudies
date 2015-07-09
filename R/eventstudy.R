@@ -8,40 +8,41 @@ eventstudy <- function(firm.returns,
                        inference = TRUE,
                        inference.strategy = "bootstrap",
                        model.args = NULL) {
+  stopifnot(event.window > 0)
   
   if (type == "None" && !is.null(firm.returns)) {
     outputModel <- firm.returns
     if (length(model.args) != 0) {
-        warning(deparse("type"), " = ", deparse("None"),
-                " does not take extra arguments, ignoring them.")
+      warning(deparse("type"), " = ", deparse("None"),
+              " does not take extra arguments, ignoring them.")
     }
   }
-
+  
   if (type != "None" && is.null(model.args)) {
-      stop("model.args cannot be NULL when 'type' is not 'None'.")
+    stop("model.args cannot be NULL when 'type' is not 'None'.")
   }
-
+  
   if (is.levels == TRUE) {
     firm.returns <- diff(log(firm.returns)) * 100
   }
-
+  
   ## handle single series
   if (is.null(ncol(firm.returns))) {
-      stop("firm.returns should be a zoo series with at least one column. Use '[' with 'drop = FALSE'.")
+    stop("firm.returns should be a zoo series with at least one column. Use '[' with 'drop = FALSE'.")
   }
-
+  
   stopifnot(!is.null(remap))
-
-                                        # compute estimation and event period
-                                        # event period starts from event time + 1
+  
+  ## compute estimation and event period
+  ## event period starts from event time + 1
   event.period <- as.character((-event.window + 1):event.window)
 
 ### Run models
   ## AMM
   if (type == "lmAMM") {
-
+    
     if (length(dim(model.args$market.returns)) == 2) {
-        colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
+      colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
     }
     returns.zoo <- prepare.returns(event.list = event.list,
                                    event.window = event.window,
@@ -51,7 +52,7 @@ eventstudy <- function(firm.returns,
 
     outcomes <- do.call(c, sapply(returns.zoo, '[', "outcomes"))
     names(outcomes) <- gsub(".outcomes", "", names(outcomes))
-
+    
     if (all(unique(outcomes) != "success")) {
       cat("Error: no successful events\n")
       to.remap = FALSE
@@ -64,17 +65,17 @@ eventstudy <- function(firm.returns,
           return(NULL)
         }
         estimation.period <- attributes(firm)[["estimation.period"]]
-
+        
         ## Estimating AMM regressors
         args.makeX <- list()
         if (!is.null(model.args$nlag.makeX)) {
-            args.makeX$nlags <- model.args$nlag.makeX
+          args.makeX$nlags <- model.args$nlag.makeX
         }
         names.args.makeX <- names(model.args)[names(model.args) %in% formalArgs(makeX)]
         names.args.makeX <- names.args.makeX[-match("market.returns", names.args.makeX)]
         names.args.makeX <- names.args.makeX[-match("others", names.args.makeX)]
         args.makeX <- append(args.makeX, model.args[names.args.makeX])
-
+        
         names.nonfirmreturns <- colnames(firm$z.e)[!colnames(firm$z.e) %in% c("firm.returns", "market.returns")]
         args.makeX$market.returns <- firm$z.e[estimation.period, "market.returns"]
         args.makeX$others <- firm$z.e[estimation.period, names.nonfirmreturns]
@@ -110,10 +111,10 @@ eventstudy <- function(firm.returns,
         outputModel <- outputModel[names(which(!null.values))]
         outcomes[names(which(null.values))] <- "edatamissing" # estimation data missing
       }
-
+      
       if (length(outputModel) == 0) {
-          warning("lmAMM() returned NULL\n")
-          outputModel <- NULL
+        warning("lmAMM() returned NULL\n")
+        outputModel <- NULL
       } else {
         outputResiduals <- lapply(outputModel, function(x) attributes(x)[["residuals"]])
         outputResiduals <- lapply(outputResiduals, function(x)
@@ -122,20 +123,20 @@ eventstudy <- function(firm.returns,
       }
     }
   } ## end AMM
-
+  
 ### marketModel
   if (type == "marketModel") {
     if (length(dim(model.args$market.returns)) == 2) {
-        colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
+      colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
     }
     returns.zoo <- prepare.returns(event.list = event.list,
                                    event.window = event.window,
                                    list(firm.returns = firm.returns,
                                         market.returns = model.args$market.returns))
-
+    
     outcomes <- do.call(c, sapply(returns.zoo, '[', "outcomes"))
     names(outcomes) <- gsub(".outcomes", "", names(outcomes))
-
+    
     if (all(unique(outcomes) != "success")) {
       cat("Error: no successful events\n")
       to.remap = FALSE
@@ -152,13 +153,13 @@ eventstudy <- function(firm.returns,
                              firm$z.e[estimation.period, "market.returns"],
                              residuals = FALSE)
 
-          abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients["(Intercept)"] -
+        abnormal.returns <- firm$z.e[event.period, "firm.returns"] - model$coefficients["(Intercept)"] -
           (model$coefficients["market.returns"] * firm$z.e[event.period, "market.returns"])
-
+        
         attr(abnormal.returns, "residuals") <- model$residuals
         return(abnormal.returns)
       })
-
+      
       null.values <- sapply(outputModel, is.null)
       if (length(which(null.values)) > 0) {
         outputModel <- outputModel[names(which(!null.values))]
@@ -175,14 +176,14 @@ eventstudy <- function(firm.returns,
         outputModel <- do.call(merge.zoo, outputModel)
       }
     }
-
+    
   } ## END marketModel
 
 
 ### excessReturn
   if (type == "excessReturn") {
     if (length(dim(model.args$market.returns)) == 2) {
-        colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
+      colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
     }
     returns.zoo <- prepare.returns(event.list = event.list,
                                    event.window = event.window,
@@ -231,21 +232,21 @@ eventstudy <- function(firm.returns,
 
 ### None
   if (type == "None") {
-      returns.zoo <- prepare.returns(event.list = event.list,
-                                     event.window = event.window,
-                                     list(firm.returns = firm.returns))
-
-      outcomes <- returns.zoo$outcomes  # its only a single list in this case
-      if (all(unique(outcomes) != "success")) {
-          cat("Error: no successful events\n")
-          to.remap = FALSE
-          inference = FALSE
-          outputModel <- NULL
-      } else {
-        returns.zoo <- returns.zoo$z.e[, as.character(which(outcomes == "success"))]
-        outputModel <-  returns.zoo[event.period, ]
-        estimation.period <- as.character(index(returns.zoo)[1]:(-event.window))
-      }
+    returns.zoo <- prepare.returns(event.list = event.list,
+                                   event.window = event.window,
+                                   list(firm.returns = firm.returns))
+    
+    outcomes <- returns.zoo$outcomes  # its only a single list in this case
+    if (all(unique(outcomes) != "success")) {
+      cat("Error: no successful events\n")
+      to.remap = FALSE
+      inference = FALSE
+      outputModel <- NULL
+    } else {
+      returns.zoo <- returns.zoo$z.e[, as.character(which(outcomes == "success"))]
+      outputModel <-  returns.zoo[event.period, ]
+      estimation.period <- as.character(index(returns.zoo)[1]:(-event.window))
+    }
   } ## end None
 
 
@@ -257,26 +258,32 @@ eventstudy <- function(firm.returns,
   } else if (NCOL(outputModel) == 1) {
     event.number <- which(outcomes == "success")
     message("Only one successful event: #", event.number)
-    attr(outputModel, which = "dim") <- c(length(outputModel) , 1)
+      attr(outputModel, which = "dim") <- c(length(outputModel) , 1)
     attr(outputModel, which = "dimnames") <- list(NULL, event.number)
     if (inference == TRUE) {
       warning("No inference strategy for single successful event.","\n")
       inference <- FALSE
     }
   }
-
+  
 
 ### Remapping event frame
   if (to.remap == TRUE) {
     outputModel <- switch(remap,
-                          cumsum = remap.cumsum(outputModel, is.pc = FALSE, base = 0),
-                          cumprod = remap.cumprod(outputModel, is.pc = TRUE,
+                          cumsum = remap.cumsum(outputModel,
+                            is.pc = FALSE, base = 0),
+                          cumprod = remap.cumprod(outputModel,
+                            is.pc = TRUE,
                             is.returns = TRUE, base = 100),
                           reindex = remap.event.reindex(outputModel)
                           )
     car <- outputModel
     if(inference == FALSE){
-      outputModel <- ifelse(NCOL(outputModel) != 1, rowMeans(outputModel), mean(outputModel))
+      if(NCOL(outputModel) != 1){
+        outputModel <- rowMeans(outputModel)
+      } else {
+        mean(outputModel)
+      }
     }
     remapping <- remap
   } else {
@@ -287,11 +294,20 @@ eventstudy <- function(firm.returns,
   if (inference == TRUE) {
     ## Bootstrap
     if(inference.strategy == "bootstrap"){
-      outputModel <- inference.bootstrap(es.w = outputModel, to.plot = FALSE)
+      outputModel <- inference.bootstrap(es.w = outputModel,
+                                         to.plot = FALSE)
     }
-    ## Wilcoxon
-    if(inference.strategy == "wilcoxon"){
-      outputModel <- inference.wilcox(es.w = outputModel, to.plot = FALSE)
+
+    ## Classic
+    if(inference.strategy == "classic"){
+      outputModel <- inference.classic(es.w = outputModel,
+                                       to.plot = FALSE)
+    }
+
+    ## Wilcox
+    if(inference.strategy == "wilcox"){
+      outputModel <- inference.wilcox(es.w = outputModel,
+                                      to.plot = FALSE)
     }
   }
 
@@ -311,7 +327,7 @@ eventstudy <- function(firm.returns,
     attr(final.result, which = "inference.strategy") <- inference.strategy
   }
   attr(final.result, which = "remap") <- remapping
-
+  
   class(final.result) <- "es"
   return(final.result)
 }
@@ -325,8 +341,8 @@ prepare.returns <- function(event.list, event.window, ...) {
   other.returns.names <- names(returns)[-match("firm.returns", names(returns))]
 
   if (length(other.returns.names) != 0) { # check for type = "None"
-  returns.zoo <- lapply(1:nrow(event.list), function(i) {
-    firm.name <- event.list[i, "name"]
+    returns.zoo <- lapply(1:nrow(event.list), function(i) {
+      firm.name <- event.list[i, "name"]
       ## to pick out the common dates of data. can't work on
       ## event time if the dates of data do not match before
       ## converting to event time.
@@ -343,40 +359,40 @@ prepare.returns <- function(event.list, event.window, ...) {
       other.returns.names <- colnames(firm.merged)[-match("firm.returns", colnames(firm.merged))]
 
       firm.returns.eventtime <- phys2eventtime(z = firm.merged,
-                                       events = rbind(
-                                           data.frame(name = "firm.returns",
-                                                      when = event.list[i, "when"],
-                                                      stringsAsFactors = FALSE),
-                                           data.frame(name = other.returns.names,
-                                                      when = event.list[i, "when"],
-                                                      stringsAsFactors = FALSE)),
+                                               events = rbind(
+                                                 data.frame(name = "firm.returns",
+                                                            when = event.list[i, "when"],
+                                                            stringsAsFactors = FALSE),
+                                                 data.frame(name = other.returns.names,
+                                                            when = event.list[i, "when"],
+                                                            stringsAsFactors = FALSE)),
                                                width = event.window)
-
-    if (any(firm.returns.eventtime$outcomes == "unitmissing")) {
+      
+      if (any(firm.returns.eventtime$outcomes == "unitmissing")) {
         ## :DOC: there could be NAs in firm and other returns in the merged object
         return(list(z.e = NULL, outcomes = "unitmissing")) # phys2eventtime output object
-    }
-
-    if (any(firm.returns.eventtime$outcomes == "wdatamissing")) {
+      }
+      
+      if (any(firm.returns.eventtime$outcomes == "wdatamissing")) {
         return(list(z.e = NULL, outcomes = "wdatamissing")) # phys2eventtime output object
-    }
+      }
 
-    if (any(firm.returns.eventtime$outcomes == "wrongspan")) {
+      if (any(firm.returns.eventtime$outcomes == "wrongspan")) {
         ## :DOC: there could be NAs in firm and other returns in the merged object
         return(list(z.e = NULL, outcomes = "wrongspan")) # phys2eventtime output object
-    }
+      }
 
-    firm.returns.eventtime$outcomes <- "success" # keep one value
-
-    colnames(firm.returns.eventtime$z.e) <- c("firm.returns", other.returns.names)
-    ## :DOC: estimation period goes till event time (inclusive)
+      firm.returns.eventtime$outcomes <- "success" # keep one value
+      
+      colnames(firm.returns.eventtime$z.e) <- c("firm.returns", other.returns.names)
+      ## :DOC: estimation period goes till event time (inclusive)
     attr(firm.returns.eventtime, which = "estimation.period") <-
-        as.character(index(firm.returns.eventtime$z.e)[1]:(-event.window))
-
-    return(firm.returns.eventtime)
-  })
-  names(returns.zoo) <- 1:nrow(event.list)
-
+      as.character(index(firm.returns.eventtime$z.e)[1]:(-event.window))
+      
+      return(firm.returns.eventtime)
+    })
+    names(returns.zoo) <- 1:nrow(event.list)
+    
   } else {
     returns.zoo <- phys2eventtime(z = returns$firm.returns,
                                   events = event.list,
@@ -405,42 +421,35 @@ summary.es <- function(object, ...){
 }
 
 ## XXX: needs fixing for non-inference objects
-plot.es <- function(x, xlab = NULL, ylab = NULL, ...){
-  if (!attributes(x)$inference) {
+plot.es <- function(x, ...){
+                                        # Defining ylab for
+                                        # cumulative sum/ cumulative
+                                        # product
+  if (attr(x, "remap") == "cumsum") {
+    remapLabel <- "Cum."
+  } else if (attr(x, "remap") == "cumprod") {
+    remapLabel <- "Cum. product"
+  } else if (attr(x, "remap") == "reindex") {
+    remapLabel <- "Re-index"
+  } else {
+    remapLabel <- ""
+  }
+  ylab <- paste0("(", remapLabel, ")",
+                 " change in response series (%)")
+
+  if (attributes(x)$inference) {
     if (NCOL(x$result) < 3) {
-        cat("Error: No confidence bands available to plot.\n")
-        return(invisible(NULL))
+      cat("Error: No confidence bands available to plot.\n")
+      return(invisible(NULL))
+    } else {
+      plot.inference(x$result, xlab = "Event time", ylab = ylab,
+                     main = "", col = "blue")
     }
+  } else {
+    big <- max(abs(x$result[is.finite(x$result)]))
+    hilo <- c(-big, big)
+    plot.simple(x$result, xlab = "Event time", ylab = ylab,
+                main = "", col = "blue", ylim = hilo)
   }
-  big <- max(abs(x$result))
-  hilo <- c(-big,big)
-  width <- (nrow(x$result)-1)/2
-
-  ## assign own labels if they're missing
-  if (is.null(ylab)) {
-      if (attr(x, "remap") == "cumsum") {
-          remapLabel <- "Cum."
-      } else if (attr(x, "remap") == "cumprod") {
-          remapLabel <- "Cum. product"
-      } else if (attr(x, "remap") == "reindex") {
-          remapLabel <- "Re-index"
-      } else {
-          remapLabel <- ""
-      }
-      ylab <- paste0("(", remapLabel, ")", " change in response series (%)")
-  }
-
-  if (is.null(xlab)) {
-      xlab <- "Event time"
-  }
-
-  plot(-width:width, x$result[,2], type="l", lwd=2, ylim=hilo,
-       xlab = xlab, ylab = ylab, ...)
-
-  points(-width:width, x$result[,2])
-  lines(-width:width, x$result[,"2.5%"],
-        lwd=1, lty=2, ...)
-  lines(-width:width, x$result[,"97.5%"],
-        lwd=1, lty=2, ...)
-  abline(h=0,v=0)
 }
+

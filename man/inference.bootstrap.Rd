@@ -21,7 +21,7 @@ inference.bootstrap(es.w,
   \item{es.w}{
     a \pkg{zoo} object indexed by event time: the \dQuote{z.e}
     component of the list returned by the \code{\link{phys2eventtime}}
-    function.
+    function. The object should consist of more than one series.
   }
 
   \item{boot.run}{
@@ -54,6 +54,7 @@ inference.bootstrap(es.w,
   \code{\link{boot}}
   \code{\link{phys2eventtime}}
   \code{\link{inference.wilcox}}
+  \code{\link{inference.classic}}
 }
 
 \author{Vikram Bahure, Vimal Balasubramaniam}

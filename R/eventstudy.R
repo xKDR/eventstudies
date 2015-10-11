@@ -18,8 +18,8 @@ eventstudy <- function(firm.returns,
     }
   }
   
-  if (type != "None" && is.null(model.args)) {
-    stop("model.args cannot be NULL when 'type' is not 'None'.")
+  if (!(type %in% c("None", "constantMeanReturn")) && is.null(model.args)) {
+    stop("model.args cannot be NULL when 'type' is not 'None' or 'constantMeanReturn'.")
   }
   
   if (is.levels == TRUE) {
@@ -182,72 +182,137 @@ eventstudy <- function(firm.returns,
 
 ### excessReturn
   if (type == "excessReturn") {
-    if (length(dim(model.args$market.returns)) == 2) {
-      colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
-    }
-    returns.zoo <- prepare.returns(event.list = event.list,
-                                   event.window = event.window,
-                                   list(firm.returns = firm.returns,
-                                        market.returns = model.args$market.returns))
-
-    outcomes <- do.call(c, sapply(returns.zoo, '[', "outcomes"))
-    names(outcomes) <- gsub(".outcomes", "", names(outcomes))
-
-    if (all(unique(outcomes) != "success")) {
-      message("No successful events")
-      to.remap = FALSE
-      inference = FALSE
-      outputModel <- NULL
-    } else {
-      returns.zoo <- returns.zoo[which(outcomes == "success")]
-      outputModel <- lapply(returns.zoo, function(firm) {
-        if (is.null(firm$z.e)) {
-          return(NULL)
-        }
-        estimation.period <- attributes(firm)[["estimation.period"]]
-        model <- excessReturn(firm$z.e[c(estimation.period, event.period), "firm.returns"],
-                              firm$z.e[c(estimation.period, event.period), "market.returns"])
-
-        abnormal.returns <- model[event.period, ]
-        attr(abnormal.returns, "residuals") <- model[estimation.period, ]
-        return(abnormal.returns)
-      })
-
-      null.values <- sapply(outputModel, is.null)
-      if (length(which(null.values)) > 0) {
-        outputModel <- outputModel[names(which(!null.values))]
-        outcomes[names(which(null.values))] <- "edatamissing"
+      if (length(dim(model.args$market.returns)) == 2) {
+          colnames(model.args$market.returns) <- "market.returns" # needed to fix market returns colname
       }
-
-      if (length(outputModel) == 0) {
-        warning("excessReturn() returned NULL\n")
-        outputModel <- NULL
+      returns.zoo <- prepare.returns(event.list = event.list,
+                                     event.window = event.window,
+                                     list(firm.returns = firm.returns,
+                                          market.returns = model.args$market.returns))
+      
+      outcomes <- do.call(c, sapply(returns.zoo, '[', "outcomes"))
+      names(outcomes) <- gsub(".outcomes", "", names(outcomes))
+      
+      if (all(unique(outcomes) != "success")) {
+          message("No successful events")
+          to.remap = FALSE
+          inference = FALSE
+          outputModel <- NULL
       } else {
-        outputResiduals <- lapply(outputModel, function(x) attributes(x)[["residuals"]])
-        outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
+          returns.zoo <- returns.zoo[which(outcomes == "success")]
+          outputModel <- lapply(returns.zoo, function(firm) {
+                                    if (is.null(firm$z.e)) {
+                                        return(NULL)
+                                    }
+           estimation.period <- attributes(firm)[["estimation.period"]]
+           model <- excessReturn(firm$z.e[c(estimation.period,
+                                            event.period),
+                                          "firm.returns"],
+                                 firm$z.e[c(estimation.period,
+                                            event.period),
+                                          "market.returns"])
+                                    
+           abnormal.returns <- model[event.period, ]
+           attr(abnormal.returns, "residuals") <- model[estimation.period, ]
+           return(abnormal.returns)
+                                })
+          
+          null.values <- sapply(outputModel, is.null)
+          if (length(which(null.values)) > 0) {
+              outputModel <- outputModel[names(which(!null.values))]
+              outcomes[names(which(null.values))] <- "edatamissing"
+          }
+          
+          if (length(outputModel) == 0) {
+              warning("excessReturn() returned NULL\n")
+              outputModel <- NULL
+          } else {
+              outputResiduals <- lapply(outputModel, function(x) attributes(x)[["residuals"]])
+              outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
+          }
       }
-    }
   } ## end excessReturn
 
+
+### constantMeanReturn
+  if (type == "constantMeanReturn") {
+      returns.zoo <- prepare.returns(event.list = event.list,
+                                     event.window = event.window,
+                                     list(firm.returns = firm.returns))
+      outcomes <- do.call(c, sapply(returns.zoo, '[', "outcomes"))
+      names(outcomes) <- gsub(".outcomes", "", names(outcomes))
+      if (all(unique(outcomes) != "success")) {
+          cat("Error: no successful events\n")
+          to.remap = FALSE
+          inference = FALSE
+          outputModel <- NULL
+      }  else {
+          returns.zoo <- returns.zoo[which(outcomes == "success")]
+          outputModel <- lapply(returns.zoo, function(firm) {
+                                    if (is.null(firm$z.e)) {
+                                        return(NULL)
+                                    }
+          estimation.period <- as.numeric(attributes(firm)[["estimation.period"]])
+          model <- constantMeanReturn(firm$z.e[which(index(firm$z.e) %in% estimation.period), ])
+          abnormal.returns <- firm$z.e[which(index(firm$z.e) %in% event.period), ] - model
+          attr(abnormal.returns, "residuals") <- firm$z.e[which(index(firm$z.e) %in% estimation.period), ] - model
+          return(abnormal.returns)
+                                })
+
+          null.values <- sapply(outputModel, is.null)
+          if (length(which(null.values)) > 0) {
+              outputModel <- outputModel[names(which(!null.values))]
+              outcomes[names(which(null.values))] <- "edatamissing"
+          }
+
+          if (length(outputModel) == 0) {
+              warning("constantMeanReturn() returned NULL\n")
+              outputModel <- NULL
+          } else {
+              outputResiduals <- lapply(outputModel, function(x) attributes(x)[["residuals"]])
+              outputModel <- do.call(merge.zoo, outputModel[!sapply(outputModel, is.null)])
+          }
+      }
+  } ## end constantMeanReturn
 
 ### None
   if (type == "None") {
     returns.zoo <- prepare.returns(event.list = event.list,
                                    event.window = event.window,
                                    list(firm.returns = firm.returns))
-    
-    outcomes <- returns.zoo$outcomes  # its only a single list in this case
+    outcomes <- do.call(c, sapply(returns.zoo, '[', "outcomes"))
+    names(outcomes) <- gsub(".outcomes", "", names(outcomes))
     if (all(unique(outcomes) != "success")) {
       cat("Error: no successful events\n")
       to.remap = FALSE
       inference = FALSE
       outputModel <- NULL
     } else {
-      returns.zoo <- returns.zoo$z.e[, as.character(which(outcomes == "success"))]
-      outputModel <-  returns.zoo[event.period, ]
-      estimation.period <- as.character(index(returns.zoo)[1]:(-event.window))
+        returns.zoo <- returns.zoo[which(outcomes == "success")]
+        outputModel <- lapply(returns.zoo, function(firm) {
+                                  if (is.null(firm$z.e)) {
+                                      return(NULL)
+                                  }
+        estimation.period <- attributes(firm)[["estimation.period"]]
+        abnormal.returns <- firm$z.e[event.period]
+        return(abnormal.returns)
+                              })
+        null.values <- sapply(outputModel, is.null)
+          if (length(which(null.values)) > 0) {
+              outputModel <- outputModel[names(which(!null.values))]
+              outcomes[names(which(null.values))] <- "edatamissing"
+          }
+
+          if (length(outputModel) == 0) {
+              warning("None() returned NULL\n")
+              outputModel <- NULL
+          } else {
+              outputModel <- do.call(merge.zoo,
+                                     outputModel[!sapply(outputModel,
+                                                         is.null)])
+          }
     }
-  } ## end None
+} ## end None
 
 
   if (is.null(outputModel)) {
@@ -337,69 +402,89 @@ eventstudy <- function(firm.returns,
 ## 3. outcomes: vector
 ## 4. estimation.period: vector
 prepare.returns <- function(event.list, event.window, ...) {
-  returns <- unlist(list(...), recursive = FALSE)
-  other.returns.names <- names(returns)[-match("firm.returns", names(returns))]
-
-  if (length(other.returns.names) != 0) { # check for type = "None"
-    returns.zoo <- lapply(1:nrow(event.list), function(i) {
-      firm.name <- event.list[i, "name"]
-      ## to pick out the common dates of data. can't work on
-      ## event time if the dates of data do not match before
-      ## converting to event time.
+    returns <- unlist(list(...), recursive = FALSE)
+    other.returns.names <- names(returns)[-match("firm.returns", names(returns))]
+    
+    if (length(other.returns.names) != 0) { # check for type = "None"
+                                        # and "constantMeanReturn"
+        returns.zoo <- lapply(1:nrow(event.list), function(i) {
+                                  firm.name <- event.list[i, "name"]
+                                        # to pick out the common dates
+                                        # of data. can't work on event
+                                        # time if the dates of data do
+                                        # not match before converting
+                                        # to event time.
                                         # all = FALSE: pick up dates
                                         # for which data is available
                                         # for all types of returns
-      firm.merged <- do.call("merge.zoo",
-                             c(list(firm.returns = returns$firm.returns[, firm.name]),
-                               returns[other.returns.names],
-                               all = FALSE, fill = NA))
+        firm.merged <- do.call("merge.zoo",
+               c(list(firm.returns = returns$firm.returns[, firm.name]),
+                 returns[other.returns.names],
+                 all = FALSE, fill = NA))
       ## other.returns.names needs re-assignment here, since "returns"
       ## may have a data.frame as one of the elements, as in case of
       ## lmAMM.
-      other.returns.names <- colnames(firm.merged)[-match("firm.returns", colnames(firm.merged))]
+     other.returns.names <- colnames(firm.merged)[-match("firm.returns",
+                                              colnames(firm.merged))]
 
-      firm.returns.eventtime <- phys2eventtime(z = firm.merged,
-                                               events = rbind(
-                                                 data.frame(name = "firm.returns",
-                                                            when = event.list[i, "when"],
-                                                            stringsAsFactors = FALSE),
-                                                 data.frame(name = other.returns.names,
-                                                            when = event.list[i, "when"],
-                                                            stringsAsFactors = FALSE)),
-                                               width = event.window)
+    firm.returns.eventtime <- phys2eventtime(z = firm.merged,
+    events = rbind(
+    data.frame(name = "firm.returns", when = event.list[i, "when"],
+    stringsAsFactors = FALSE),
+    data.frame(name = other.returns.names, when = event.list[i, "when"],
+    stringsAsFactors = FALSE)),
+    width = event.window)
       
       if (any(firm.returns.eventtime$outcomes == "unitmissing")) {
-        ## :DOC: there could be NAs in firm and other returns in the merged object
-        return(list(z.e = NULL, outcomes = "unitmissing")) # phys2eventtime output object
-      }
+          ## :DOC: there could be NAs in firm and other returns in the merged object
+          return(list(z.e = NULL, outcomes = "unitmissing")) # phys2eventtime output object
+    }
       
       if (any(firm.returns.eventtime$outcomes == "wdatamissing")) {
-        return(list(z.e = NULL, outcomes = "wdatamissing")) # phys2eventtime output object
-      }
-
-      if (any(firm.returns.eventtime$outcomes == "wrongspan")) {
-        ## :DOC: there could be NAs in firm and other returns in the merged object
-        return(list(z.e = NULL, outcomes = "wrongspan")) # phys2eventtime output object
-      }
-
-      firm.returns.eventtime$outcomes <- "success" # keep one value
+          return(list(z.e = NULL, outcomes = "wdatamissing")) # phys2eventtime output object
+    }
       
-      colnames(firm.returns.eventtime$z.e) <- c("firm.returns", other.returns.names)
+      if (any(firm.returns.eventtime$outcomes == "wrongspan")) {
+          ## :DOC: there could be NAs in firm and other returns in the merged object
+          return(list(z.e = NULL, outcomes = "wrongspan")) # phys2eventtime output object
+    }
+      
+     firm.returns.eventtime$outcomes <- "success" # keep one value
+      
+     colnames(firm.returns.eventtime$z.e) <- c("firm.returns", other.returns.names)
       ## :DOC: estimation period goes till event time (inclusive)
-    attr(firm.returns.eventtime, which = "estimation.period") <-
-      as.character(index(firm.returns.eventtime$z.e)[1]:(-event.window))
+      attr(firm.returns.eventtime, which = "estimation.period") <-
+        as.character(index(firm.returns.eventtime$z.e)[1]:(-event.window))
       
       return(firm.returns.eventtime)
-    })
-    names(returns.zoo) <- 1:nrow(event.list)
+  })
+        names(returns.zoo) <- 1:nrow(event.list)
     
-  } else {
-    returns.zoo <- phys2eventtime(z = returns$firm.returns,
-                                  events = event.list,
-                                  width = event.window)
-  }
+    } else {
 
-  return(returns.zoo)
+      returns.zoo <- lapply(1:nrow(event.list),  function(i) {
+     firm.returns.eventtime <- phys2eventtime(z = returns$firm.returns,
+                                              events = event.list[i, ],
+                                               width = event.window)
+      if (any(firm.returns.eventtime$outcomes == "unitmissing")) {
+          return(list(z.e = NULL, outcomes = "unitmissing"))
+    }
+
+      if (any(firm.returns.eventtime$outcomes == "wdatamissing")) {
+          return(list(z.e = NULL, outcomes = "wdatamissing"))
+    }
+
+      if (any(firm.returns.eventtime$outcomes == "wrongspan")) {
+        return(list(z.e = NULL, outcomes = "wrongspan"))
+    }
+      firm.returns.eventtime$outcomes <- "success" 
+      attr(firm.returns.eventtime, which = "estimation.period") <-
+          as.character(index(firm.returns.eventtime$z.e)[1]:(-event.window))
+      return(firm.returns.eventtime)
+  })
+      names(returns.zoo) <- 1:nrow(event.list)
+  }
+    return(returns.zoo)
 }
 
 

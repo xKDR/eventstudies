@@ -34,7 +34,7 @@ phys2eventtime <- function(z, events, width=10) {
    stop("events$name should a character class.")
  }
 
- answer <- lapply(1:nrow(events), function(i) timeshift(events[i, ], z))
+ answer <- lapply(1:nrow(events), function(i) timeshift(events[i, ], z, width))
  outcomes <- sapply(answer, function(x) x$outcome)
  z.e <- do.call(cbind, lapply(answer[outcomes == "success"], function(x) x$result))
  
@@ -54,7 +54,7 @@ phys2eventtime <- function(z, events, width=10) {
   if (width > 0) {
     for (i in 1:ncol(z.e)) {
       tmp <- z.e[,i]
-      tmp2 <- window(tmp, start=-width, end=+width)
+      tmp2 <- window(tmp, start = (-width + 1), end = +width)
       if (any(is.na(tmp2))) {
         outcomes[as.numeric(colnames(z.e)[i])] <- "wdatamissing"
         badcolumns <- c(badcolumns, i)
@@ -63,7 +63,7 @@ phys2eventtime <- function(z, events, width=10) {
       }
     }
     if (any(outcomes == "wdatamissing")) {
-      z.e <- z.e[, -badcolumns]
+      z.e <- z.e[, -badcolumns, drop = FALSE]
       events.attrib <- events.attrib[-badcolumns]
     }
     if (NCOL(z.e) == 0) {
@@ -76,7 +76,7 @@ phys2eventtime <- function(z, events, width=10) {
   list(z.e=z.e, outcomes=factor(outcomes), events = events.attrib) # :DOC: events.attrib
 }
 
-timeshift <- function(x, z) {
+timeshift <- function(x, z, width) {
   firm.present <- x[, "name"] %in% colnames(z)
   if (!firm.present) {
     return(list(result=NULL, outcome="unitmissing"))
@@ -84,7 +84,8 @@ timeshift <- function(x, z) {
 
   ## Take previous date if exact data is not found.
   location <- findInterval(x[, "when"], index(z[, x[, "name"]]))
-  if ((location <= 1) | (location >= length(index(z)))) {
+  if ((location <= (width - 1)) ||      # testing upper bound
+      (location > (length(index(z)) - width))) { # lower bound
     return(list(result=NULL, outcome="wrongspan"))
   }
 

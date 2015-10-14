@@ -11,6 +11,8 @@ context("functionality")
 # b. Elements in z.e
 # 4. Testing that firms should not have NA for defined width of
 #    phys2eventtime
+# a. Test for wrongspan functionality
+# b. Test for wdatamissing functionality
 # 5. Test for only one observation in events list.
 test_that("functionality for phys2eventtime", {
   library(eventstudies)
@@ -127,6 +129,30 @@ test_that("functionality for phys2eventtime", {
                                      width = 2)
   expect_that(esConvertNormal4$z.e[8:12], not(equals(NA)))
 
+  cat("\nTesting for wrongspan")
+  esConvertNormal8 <- phys2eventtime(z = test.data,
+                                     events = test.eventslist,
+                                     width = 3)
+  expect_that(as.character(esConvertNormal8$outcomes[1]), equals("wrongspan"))
+
+  cat("\nTesting for wdatamissing")
+  test.data.NA <- test.data
+  test.data.NA[1, 1] <- NA
+  esConvertNormal8 <- phys2eventtime(z = test.data.NA,
+                                     events = test.eventslist,
+                                     width = 2)
+  expect_that(as.character(esConvertNormal8$outcomes[1]), equals("wdatamissing"))
+
+### Testing for output window
+  cat("\nTesting for output window for any successful event")
+  esConvertNormal9 <- phys2eventtime(z = test.data,
+                                     events = test.eventslist,
+                                     width = 2)
+  if (any(esConvertNormal9$outcomes == "success")) {
+      expect_that(index(esConvertNormal9$z.e[as.character(-1:2), ]),
+                  equals(-1:2))
+  }
+  
 
 ### Testing for only one firm in eventslist
 
@@ -135,5 +161,5 @@ test_that("functionality for phys2eventtime", {
   expect_error(esConvertNormal7 <- phys2eventtime(z = test.data1,
                                      events = test.eventslist3,
                                      width = 2))
-})
 
+})

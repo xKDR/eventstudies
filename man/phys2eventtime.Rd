@@ -35,17 +35,18 @@ phys2eventtime(z, events, width = 10)
   and \dQuote{when} should be same and one of the \sQuote{date-time} or
   \sQuote{Date} classes.
 
-  If an event date does not lie within this period, the function
-  approximates to the nearest previous date using
+  If an event date does not lie within the index of \dQuote{z}, the function
+  approximates to the nearest previous time using
   \code{\link{findInterval}}. Note that \sQuote{findInterval} assumes the
   index of \sQuote{z} is non-decreasing.
 
   The argument \dQuote{width} provides the user with an option to define
   successful events as those that have data within a window around the
-  event. If \dQuote{width} is 10 periods, those events with \sQuote{NA}
-  within 10 periods before and after the event will be classified as
-  \dQuote{wdatamissing}, otherwise, the event \dQuote{outcome} will be
-  classified as \dQuote{success}.
+  event. Window is defined as (-width, +width]. If \dQuote{width} is 10
+  periods, those events with \sQuote{NA} within 10 periods before and
+  after the event will be classified as \dQuote{wdatamissing},
+  otherwise, the event \dQuote{outcome} will be classified as
+  \dQuote{success}.
 
   Currently this function requires \dQuote{z} to have at least one
   \emph{column}. It relies on \sQuote{colnames} of \dQuote{z} for the series
@@ -64,9 +65,9 @@ phys2eventtime(z, events, width = 10)
   \item{outcomes}{a character vector with outcome definition for each event.}
   \itemize{
     \item{success: the successful use of an event.}
-    \item{wdatamissing: when the \dQuote{width} condition is not satisfied.}
-    \item{wrongspan: when event date cannot be mapped to the physical
-      time in \dQuote{z}.}
+    \item{wdatamissing: when there are NAs within the event window.}
+    \item{wrongspan: when event time cannot be mapped to physical
+      time in \dQuote{z} because event window is outside \sQuote{index(z)}}.
     \item{unitmissing: when the unit (a column) is missing in \dQuote{z}.}
   }
 }
@@ -84,7 +85,7 @@ data(SplitDates)
 result <- phys2eventtime(z = StockPriceReturns,
 			 events = SplitDates,
 			 width = 5)
-print(result$z.e[as.character(-3:3)])
-print(result$outcomes)
+print(result$z.e[as.character(-4:5)])
+print(SplitDates[result$outcomes == "success", ])
 }
 \keyword{phys2eventime}

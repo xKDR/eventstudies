@@ -1,0 +1,276 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{a4wide}
+\usepackage[colorlinks,linkcolor=blue,citecolor=red]{hyperref}
+\usepackage{natbib}
+\usepackage{float}
+\usepackage{parskip}
+\usepackage{amsmath}
+\title{Illustrations using the \textbf{eventstudies} package in R}
+\author{Sargam Jain}
+\begin{document}
+
+\maketitle
+
+% \begin{abstract}
+% \end{abstract}
+\SweaveOpts{engine=R,pdf=TRUE}
+
+\section{Introduction}
+An event study analysis measures the impact of firm-specific and 
+economy-wide events on the value of a firm or on the economy. The 
+`eventstudies' package is designed to conduct standard event study 
+analysis using not only daily financial returns data but also the 
+intra-day returns data. The package consists of various estimation 
+models such as market model, augmented market model, excess returns 
+model, and constant mean returns model. These models are used to 
+estimate stock price abnormal returns. In the following sections, we 
+illustrate the use of the \textbf{eventstudies} package on intra-day 
+financial returns of the firms before and after a specific event. We 
+also replicate the standard event study approach applied on daily financial 
+returns data in \citet{KligerGurevich2014} and \citet{ChenSiems2003}. 
+
+\section{Illustration 1: Intra day event study}
+
+In this exercise, we aim to assess the impact of key interest rate 
+cuts by Reserve Bank of India (RBI) on value of the Indian banks with 
+highest weight in the Bank Nifty Index. To conduct the intraday event 
+study, the package provides a sample data frame, \emph{RateCuts}, which 
+provides associated dates and time stamps of the event analysed for each 
+corresponding bank. In addition to the dataframe with the event list, the 
+package includes \emph{AggregateReturns}, a \emph{zoo} object for intra-day 
+stock price returns of all the included banks. 
+
+The abnormal returns are estimated using \emph{marketModel} on stock price 
+returns provided in \emph{AggregateReturns}. The regressor used in the market 
+model is the intra-day returns on CNX NIFTY 50 index. The intra-day returns 
+data for CNX NIFTY 50 is provided in \emph{IndexReturns}. Further descriptions 
+of the data sets used in this exercise are provided in the package.  
+
+<<intraday-example,results=verbatim>>=
+library(eventstudies)
+data(AggregateReturns) # Data used
+data(RateCuts)
+data(IndexReturns)
+                                        # IntraDay eventstudy
+                                        # For 35 minutes pre and post event
+intraday.es <- eventstudy(firm.returns = AggregateReturns,
+                          event.list = RateCuts,
+                          event.window = 35,
+                          type = "marketModel",
+                          to.remap = TRUE,
+                          remap = "cumsum",
+                          inference = TRUE,
+                          inference.strategy = "bootstrap",
+                          model.args = list(market.returns=IndexReturns)
+                          )
+@ 
+
+The plot to study the intra-day CARs is illustrated in Figure 
+\ref{f:esplot2}. The abnormal returns are averaged across multiple 
+events for multiple banks to isolate event-related fluctuations and 
+thus, obtain statistically significant results from event study 
+analysis. The 95\% confidence interval is above 0, implying a significant 
+impact of the RBI announcements on stock price returns of these banks. 
+
+\begin{figure}
+\begin{center}
+<<plot-intraes,fig=TRUE,width=4,height=3.5>>=
+par(mai=c(.8,.8,.2,.2))
+plot(intraday.es, cex.axis=.5, cex.lab=.5)
+@ 
+\end{center}
+\caption{Intraday event study plot}\label{f:esplot2}
+\end{figure}
+
+
+
+\section{Illustration 2: Effect of terrorism on global capital markets}
+
+\citet{ChenSiems2003} apply standard event study approach to assess the 
+effects of terrorism on global capital markets. This section explains how 
+eventstudies package replicates the study for the sample of 33 global capital 
+markets. The response of the global capital markets to the September 11, 2001 
+terrorist attack is evaluated using this package. The event study approach 
+applied by the authors uses constant mean return model to estimate abnormal 
+returns. The \emph{constantMeanReturns} model from the package is used to 
+reproduce the abnormal returns. To replicate 11-day CAR for the event, 
+the window is set at 10. The estimation period starts 30 days prior to 
+the event i.e. -30:-11. Due to different time zones across the global markets 
+analysed, the analysis is done separately for each market. 
+
+<<terrorism-example,results=verbatim>>=
+                                     # For each market with 
+                                     # different time zones
+data(StockIndiceReturns)
+data(AttackDates)
+@ 
+
+The \emph{StockIndiceReturns} object is a \emph{zoo} object which is a time
+series of daily returns on global capital market indices. These are measured 
+in per cent, i.e. a value of +4 is returns of +4\%. Each column in the zoo 
+object refers to returns from a specific market. The column names in the zoo 
+object refer to the names of the global markets. 
+
+The \emph{AttackDates} is a data frame with two columns. The first column is 
+the name of the capital market affected by the terrorist attack. The second 
+column is the event date, which varies for different capital markets due to 
+varying time zones.
+
+<<terrorism-example,results=verbatim>>=
+
+StockIndiceCAR <- lapply(1: ncol(StockIndiceReturns), function(x){
+                                     # 10-day window around the event
+     event <- phys2eventtime(na.omit(StockIndiceReturns[ , x, 
+                                                        drop = FALSE]),
+                             AttackDates, 
+                             10)
+                                     # Estimate ARs
+     esMean <- constantMeanReturn(event$z.e[which(attributes(event$z.e)$index 
+                                                  %in% -30:-11), ], 
+                                  residual = FALSE)
+     ar <- event$z.e - esMean
+     ar <- window(ar, start = 0, end = 10)
+                                     # CAR 
+     car <- remap.cumsum(ar, base = as.numeric(ar[1, x]))
+     names(car) <- colnames(StockIndiceReturns[ , x, 
+                                               drop = FALSE])
+     return(car)
+ })
+names(StockIndiceCAR) <- colnames(StockIndiceReturns)
+                                        # Compile for all indices
+StockIndiceCAR <- do.call(cbind, StockIndiceCAR)
+head(StockIndiceCAR[ , 1:6])
+@ 
+
+In the above example, `\texttt{StockIndiceCAR}' gives the 11-day CAR for 
+all the 33 global capital markets. The window can be adjusted to compute 
+6-day CAR as well. 
+
+<<terrorism-example,results=verbatim>>=
+StockIndiceNYSE <- na.omit(StockIndiceReturns[ , 3, drop = FALSE])
+es.terror <- eventstudy(firm.returns = StockIndiceNYSE,
+                        event.list = AttackDates,
+                        event.window = 20,
+                        type = "None",
+                        to.remap = TRUE,
+                        remap = "cumsum",
+                        inference = FALSE,
+                        model.args = NULL)
+@ 
+
+Additionally, to assess the impact of the September 11, 2001 
+terrorist attack on the NYSE index, we plot the cumulated abnormal 
+returns for the index using the eventstudy wrapper function in the 
+package. The Figure \ref{f:esplot3} illustrates 20-day CARs before 
+and after the terrorist attack.  
+
+
+\begin{figure}
+\begin{center}
+<<plot-terrores,fig=TRUE,width=4,height=3.5>>=
+par(mai=c(.8,.8,.2,.2))
+plot(es.terror, cex.axis=.5, cex.lab=.5)
+@ 
+\end{center}
+\caption{Event study plot for NYSE}\label{f:esplot3}
+\end{figure}
+
+
+
+\section{Illustration 3: Market response to earnings' announcements}
+
+\citet{KligerGurevich2014} examine the reaction of 670 firms around their 
+earnings announcements. The firms belong to the service and technology 
+sector. In the exercise, they define `surprise' as unexpected 
+deviation of the realised earnings from the forecast. According to the 
+`surprise' variable, authors categorise firms into -- good 
+(higher-than-expected earnings), bad(lower-than-expected earnings), and 
+medium (earnings as expected). The event study analysis is conducted 
+separately for each category of firms. 
+
+In order to estimate abnormal returns, authors use `naive benchmark 
+model', which is defined as \emph{excessReturns} model in the eventstudies 
+package. In the data provided, the S\&P market index levels 
+are individually matched for calender dates of each firm. Thus, the 
+abnormal returns are estimated separately for each firm.
+
+The event is already defined in the returns data provided by authors 
+and thus, daily returns before and after the event are already known. 
+Therefore, instead of using the event study wrapper function, we apply 
+individual functions to compute cumulated average returns (CARs). 
+
+<<earnings-example,results=verbatim>>=
+                                     # For each market with 
+                                     # different time zones
+data(StockReturns)
+data(MarketReturns)
+data(SurpriseCategory)
+@ 
+
+The \emph{StockReturns} is a \emph{zoo} object, which is a time
+series of daily stock price returns of firms categorised as good, bad, 
+and medium. Again, these are measured in per cent. Each column in the 
+zoo object refers to returns for a specific firm. The column names in 
+the zoo object refer to the names of the firms. 
+
+The \emph{MarketReturns} is a \emph{zoo} object with time series of 
+returns from S\&P 500 index. These index returns are individually 
+matched for calender dates of each firm. 
+
+The \emph{SurpriseCategory} is the data frame in which the firms are 
+categorised into the three above-mentioned categories. It is used to 
+apply event study approach separately for each category of firms.
+
+<<earnings-example,results=verbatim>>=
+es.categories <- function(stock, market, surprise, option){
+                                        # Categorising returns for                                                                               
+                                        # each category    
+    surprise <- surprise[which(surprise$Category %in% option), ]
+    stock <- stock[ , which(names(stock) %in% 
+                                as.character(surprise$Company))]
+    market <- market[ , which(names(market) %in% 
+                                  as.character(surprise$Company))]
+                                        # ARs
+    ar <- lapply(1:NCOL(stock), function(x){
+                     output <- excessReturn(stock[ , x],
+                                            market[ , x])
+                     return(output)
+                 })
+    names(ar) <- names(stock)
+    ar <- do.call("merge", ar)
+                                        # CARs
+    car <- lapply(1:NCOL(ar), function(x){
+                      tmp <- remap.cumsum(z = ar[ , x],
+                                          base = as.numeric(ar[1, x]))
+                      return(tmp)
+                  })
+    names(car) <- names(ar)
+    car <- do.call("merge", car)
+                                        # CAARs 
+    caar <- round(apply(car, 1, mean), 10)
+    
+    return(list(ar, car, caar))
+}
+                                        # Calling for each category
+                                        # Good
+goodCompanies <- es.categories(StockReturns, MarketReturns,
+                               SurpriseCategory, "good")
+                                        # Medium
+mediumCompanies <- es.categories(StockReturns, MarketReturns,
+                                 SurpriseCategory, "medium")
+                                        # Bad
+badCompanies <- es.categories(StockReturns, MarketReturns,
+                              SurpriseCategory, "bad")
+@ 
+
+In the above example, `\texttt{goodCompanies} \texttt{mediumCompanies}, and 
+\texttt{badCompanies}' provide a list of abnormal returns (ARs), cumulated
+abnormal returns (CARs) and cumulated average abnormal returns (CAARs) for 
+each corresponding category of firms. 
+
+\newpage
+\bibliographystyle{jss} \bibliography{eventstudies}
+
+\end{document}

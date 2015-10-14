@@ -21,7 +21,10 @@
   \item{market.returns}{a \pkg{zoo} time series of market index returns.}
 
   \item{residuals}{a \sQuote{logical} indicating whether to return
-    residuals or \sQuote{lm} object.}
+    residuals or \sQuote{lm} object. When argument to the function
+    includes the entire time series, returns are estimated using the
+    entire data set and not just estimation period, value of residuals
+    should be TRUE in such a case.}
 }
 
 \value{Residual returns unexplained by market index returns.}

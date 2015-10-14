@@ -1,7 +1,10 @@
 library(testthat)
 context("functionality")
 
-## 1. Test for class of arguments
+## 1. Test for output returned from each of the three strategies
+## 1a. Class of the object returned
+## 1b. Number of data points
+## 1c. Check for mean estimate and confidence intervals
 test_that("functionality for inference functions", {
   library(eventstudies)
   ## Data of Stock Prices
@@ -32,19 +35,42 @@ test_that("functionality for inference functions", {
                                    "2005-01-01")))
   test.eventslist0$name <- as.character(test.eventslist0$name)
 
-  cat("\nTesting for class of arguments")
   esConvertNormal0 <- phys2eventtime(z = test.data0,
                                      events = test.eventslist0,
                                      width = 1)
   es.test.w0 <- window(esConvertNormal0$z.e,
                        start = -1,
                        end = +1)
-
   test.eventtime0 <- remap.cumsum(es.test.w0, is.pc = FALSE,
                                   base = 0)
-  test.eventtime1 <- coredata(test.eventtime0)
+                                        # Bootstrap strategy
+  test.boot <- inference.bootstrap(es.w = test.eventtime0,
+                                   to.plot = TRUE)
+                                        # Wilcox strategy
+  test.wilcox <- inference.wilcox(es.w = test.eventtime0,
+                                  to.plot = TRUE)
+                                        # Classic strategy
+  test.classic <- inference.classic(es.w = test.eventtime0,
+                                    to.plot = TRUE)
+  testing.inference <- function(strategy){
 
-  test.boot1 <- inference.bootstrap(es.w = test.eventtime1,
-                                    to.plot = FALSE)
+      cat("\nTesting for class of the object returned")
 
+      expect_that(length(which(colnames(strategy) %in% c("2.5%",
+                                                         "Mean",
+                                                         "Median",
+                                                         "97.5%"))),
+                  equals(3))
+
+      cat("\nTestimg for number of data points returned in the object")
+      expect_that(nrow(strategy), equals(nrow(test.eventtime0)))
+      
+      cat("\nTesting for mean estimates and confidence intervals")
+      expect_that(class(strategy), equals("matrix"))
+  }
+
+  testing.inference(strategy = test.boot)
+  testing.inference(strategy = test.wilcox)
+  testing.inference(strategy = test.classic)
+  
 })

@@ -4,8 +4,9 @@
 ## "plot.simple" plots the CAR when inference is FALSE
 
 plot.inference <- function(inference, ...){
-  big1 <- max(abs(t(apply(inference, 1,
-                          function(y) y[is.finite(y)]))))
+
+  big1 <- max(apply(inference, 1,
+                    function(y) max(abs(y[is.finite(y)]))))
   hilo1 <- c(-big1, big1)
   width <- NROW(inference) / 2
   plot.simple(inference[ , 2], ylim = hilo1, ...)

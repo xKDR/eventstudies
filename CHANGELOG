@@ -4,7 +4,8 @@ ChangeLog
 	* eventstudy: added one main function to do eventstudy
 	* Models: Added market model to handle excess return and market	residuals
 	* AMM: added Augmented Market Model functions
+	* constantMeanReturns: added constant mean returns model to estimate mean retuns over estimation period
 	* phys2eventtime: modified phys2eventtime function <needs more description>
-	* bootstrap: added inference wilcox and inference bootstrap methods
-	* Tests: added unit tests to test the models
-	* Documentation: updated vignette and manuals, made them more descriptive
+	* bootstrap: added inference wilcox and inference bootstrap and inference classic methods
+	* Tests: added unit tests to test the models and inference strategies
+	* Documentation: updated vignette and manuals, made them more descriptive, replicated exercises applying event study approach 

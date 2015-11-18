@@ -8,7 +8,7 @@
 \usepackage{parskip}
 \usepackage{amsmath}
 \title{Introduction to the \textbf{eventstudies} package in R}
-\author{Ajay Shah}
+\author{Ajay Shah \and Sargam Jain}
 \begin{document}
 
 % \VignetteIndexEntry{An R package for conducting event studies and a platform for methodological research on event studies.}
@@ -99,7 +99,8 @@ which is done by setting \texttt{type} to ``\texttt{None}''.
 
 While daily returns data has been supplied, the standard event study
 deals with cumulated returns. In order to achieve this, we set
-\texttt{to.remap} to \texttt{TRUE} and we ask that this remapping be done using ``\texttt{cumsum}''.
+\texttt{to.remap} to \texttt{TRUE} and we ask that this remapping be done using 
+``\texttt{cumsum}''.
  
 Finally, we come to inference strategy. We instruct eventstudy to do
 inference and ask for ``\texttt{bootstrap}'' inference.
@@ -128,12 +129,12 @@ returns data is not observed.
 
 \begin{figure}
 \begin{center}
-<<plot-es,fig=TRUE,width=4,height=2.5>>=
-par(mai=c(.8,.8,.2,.2))
-plot(es, cex.axis=.7, cex.lab=.7)
+<<plot-es,fig=TRUE,width=4,height=3.5>>=
+par(mai=c(.8,.8,.2,.2), cex=.7)
+plot(es)
 @ 
-\end{center}
 \caption{Plot method applied to es object}\label{f:esplot1}
+\end{center}
 \end{figure}
 
 % TODO: The x label should be "Event time (days)" and should
@@ -189,12 +190,12 @@ the stock market index.
 
 \begin{figure}
 \begin{center}
-<<plot-es-mm,fig=TRUE,width=4,height=2.5>>=
-par(mai=c(.8,.8,.2,.2))
-plot(es.mm, cex.axis=.7, cex.lab=.7)
+<<plot-es-mm,fig=TRUE,width=4,height=3.5>>=
+par(mai=c(.8,.8,.2,.2), cex=.7)
+plot(es.mm)
 @ 
-\end{center}
 \caption{Adjustment using the market model}\label{f:esplotmm}
+\end{center}
 \end{figure}
 
 A comparison of the range of the $y$ axis in Figure \ref{f:esplot1}
@@ -266,11 +267,70 @@ print(tmp["AMM", ] - tmp["None", ])
 @ 
 
 This shows a sharp reduction in the width of the bootstrap 95\%
-confidence interval from ``\texttt{None}'' to MM adjustment. Over and above this, a
-small gain is obtained when going from MM adjustment to AMM
-adjustment.
+confidence interval from ``\texttt{None}'' to MM adjustment. Over and 
+above this, a small gain is obtained when going from MM adjustment to 
+AMM adjustment.
+
+\section{Event study using intra-day data}
+The `eventstudies' package is designed to conduct standard event study 
+analysis using not only daily financial returns data but also the 
+intra-day returns data. In this section, we aim to assess the impact of 
+key interest rate cuts by Reserve Bank of India (RBI) on value of the Indian 
+banks that have the highest weight in the Bank Nifty Index. To conduct the 
+intra-day event study, the package provides a sample data frame, \emph{RateCuts}, 
+which provides associated dates and time stamps of the event analysed for each 
+corresponding bank. In addition to the dataframe with the event list, the 
+package includes \emph{AggregateReturns}, a \emph{zoo} object for intra-day 
+stock price returns of all included banks. 
+
+<<intraday-example>>=
+data(AggregateReturns) # Data used
+data(RateCuts)
+data(IndexReturns)
+@ 
+
+The abnormal returns are estimated using \emph{marketModel} on stock price 
+returns provided in \emph{AggregateReturns}. The regressor used in the market 
+model is the intra-day returns on CNX NIFTY 50 index. The intra-day returns 
+data for CNX NIFTY 50 is provided in \emph{IndexReturns}. Further descriptions 
+of the data sets used in this exercise are provided in the package.  
+
+<<intraday-example>>=
+                                        # IntraDay eventstudy
+                                        # For 35 minutes pre and post event
+
+intraday.es <- eventstudy(firm.returns = AggregateReturns,
+                          event.list = RateCuts,
+                          event.window = 35,
+                          type = "marketModel",
+                          to.remap = TRUE,
+                          remap = "cumsum",
+                          inference = TRUE,
+                          inference.strategy = "bootstrap",
+                          model.args = list(market.returns=IndexReturns)
+                          )
+@
+
+The plot to study the intra-day CARs is illustrated in Figure 
+\ref{f:esplot2}. The abnormal returns are averaged across multiple 
+events for multiple banks to isolate event-related fluctuations and 
+thus, obtain statistically significant results from event study 
+analysis. The 95\% confidence interval is above 0, implying a significant 
+impact of the RBI announcements on stock price returns of these banks. 
+
+\begin{figure}
+\begin{center}
+<<plot-intraes,fig=TRUE,width=4,height=3.5>>=
+par(mai=c(.8,.8,.2,.2), cex=.7)
+plot(intraday.es)
+@ 
+\caption{Intraday event study plot}\label{f:esplot2}
+\end{center}
+\end{figure}
 
 \newpage
 \bibliographystyle{jss} \bibliography{eventstudies}
 
 \end{document}
+
+

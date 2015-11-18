@@ -11,14 +11,17 @@ context("functionality")
 # b. Elements in z.e
 # 4. Testing that firms should not have NA for defined width of
 #    phys2eventtime
-# a. Test for wrongspan functionality
-# b. Test for wdatamissing functionality
 # 5. Test for only one observation in events list.
+# 6. Test for intraday functionality
+# a. Testing for normal functionality
+# b. Testing for announcements post trading day
+
 test_that("functionality for phys2eventtime", {
   library(eventstudies)
 
 ### Data for testing ###
-
+  ## Daily data
+                                        # Zoo object
   test.data <- structure(c(33.16, 34.0967, 35.3683, 34.46, 34.17,
                            35.89, 36.19, 37.1317, 36.7033, 37.7933,
                            37.8533, 285.325, 292.6, 290.025, 286.2,
@@ -34,17 +37,54 @@ test_that("functionality for phys2eventtime", {
                                       12431, 12432),
                                       class = "Date"),
                          class = "zoo")
-  
-### List of events
-  
+                                        # List of events
   test.eventslist <- data.frame(name = c("ITC","Reliance","TCS",
-                                  "ITC","Reliance","Junk"),
+                                    "ITC","Reliance","Junk"),
                                 when = as.Date(c("2004-01-02",
-                                  "2004-01-08", "2004-01-14",
-                                  "2005-01-15", "2004-01-01",
-                                  "2005-01-01")))
+                                    "2004-01-08", "2004-01-14",
+                                    "2005-01-15", "2004-01-01",
+                                    "2005-01-01")))
   test.eventslist$name <- as.character(test.eventslist$name)
-                 
+
+  ## Intra-day data
+                                        # Zoo object
+   test.data.intraday <- structure(c(0.647207, 0.575475, 0.950237,
+                                     0.333410, 0.972791, 0.859014,
+                                     0.462836, 0.101042, 0.420174,
+                                     0.108433, 0.480622, 0.768775,
+                                     0.936763, 0.509670, 0.598303,
+                                     0.325926, 0.768188, 0.210077,
+                                     0.028643, 0.465721, 0.426375,
+                                     0.612842, 0.673736, 0.297408,
+                                     0.828808, 0.091200, 0.915891,
+                                     0.5374675),
+                                   .Dim = c(7L, 4L),
+                                   index = structure(c(1262316600,
+                                       1262320200, 1262323800,
+                                       1262327400,
+                                       1262331000, 1262334600,
+                                       1262338200),
+                                       class = c("POSIXct", "POSIXt"),
+                                       tzone = ""),
+                                   class = "zoo",
+                                   .Dimnames = list(NULL,
+                                       c("ITC", "Reliance",
+                                         "TCS", "Infosys")))
+                                        # List of events
+  test.eventslist.intraday <- structure(list(name = c("ITC",
+                                                 "Reliance", "TCS",
+                                                 "ITC", "Reliance",
+                                                 "Junk"),
+                                      when = structure(c(1262331000,
+                                          1262327400, 1262327400,
+                                          1262316600, 1262334600,
+                                          1262320200),
+                                          class = c("POSIXct",
+                                              "POSIXt"), tzone = "")),
+                                        .Names = c("name", "when"),
+                                        row.names = c(NA, -6L),
+                                        class = "data.frame")
+    
 ### Test for class of arguments
 
   cat("\nTesting for class of arguments input")
@@ -109,8 +149,12 @@ test_that("functionality for phys2eventtime", {
               equals(nrow(test.eventslist)))
 
   cat("\nTesting for list component: z.e")
+  esConvertNormal9 <- phys2eventtime(z = test.data,
+                                     events = test.eventslist,
+                                     width = 5)
+  
   analyseDate <- subset(test.eventslist,
-                        test.eventslist$when >= index(test.data[1,]))
+                        test.eventslist$when >= (index(test.data[1,]) + 4))
   maxDate <- max(as.Date(analyseDate$when))
   minDate <- min(as.Date(analyseDate$when))
   l1 <- length(which(index(test.data) <= maxDate))
@@ -119,7 +163,7 @@ test_that("functionality for phys2eventtime", {
   if(is.null(esConvertNormal3$z.e))
     {expect_that(nrow(esConvertNormal3$z.e), equals(NULL))
    }else{
-  expect_that(nrow(esConvertNormal3$z.e), equals(elementsInz.e))}
+  expect_that(nrow(esConvertNormal9$z.e), equals(elementsInz.e))}
   
 ### Testing that firms should not have NA for defined width
 
@@ -129,30 +173,6 @@ test_that("functionality for phys2eventtime", {
                                      width = 2)
   expect_that(esConvertNormal4$z.e[8:12], not(equals(NA)))
 
-  cat("\nTesting for wrongspan")
-  esConvertNormal8 <- phys2eventtime(z = test.data,
-                                     events = test.eventslist,
-                                     width = 3)
-  expect_that(as.character(esConvertNormal8$outcomes[1]), equals("wrongspan"))
-
-  cat("\nTesting for wdatamissing")
-  test.data.NA <- test.data
-  test.data.NA[1, 1] <- NA
-  esConvertNormal8 <- phys2eventtime(z = test.data.NA,
-                                     events = test.eventslist,
-                                     width = 2)
-  expect_that(as.character(esConvertNormal8$outcomes[1]), equals("wdatamissing"))
-
-### Testing for output window
-  cat("\nTesting for output window for any successful event")
-  esConvertNormal9 <- phys2eventtime(z = test.data,
-                                     events = test.eventslist,
-                                     width = 2)
-  if (any(esConvertNormal9$outcomes == "success")) {
-      expect_that(index(esConvertNormal9$z.e[as.character(-1:2), ]),
-                  equals(-1:2))
-  }
-  
 
 ### Testing for only one firm in eventslist
 
@@ -162,4 +182,26 @@ test_that("functionality for phys2eventtime", {
                                      events = test.eventslist3,
                                      width = 2))
 
+
+
+### Testing for intraday functionality
+  cat("\nTesting for intra-day functionality")
+  esConvertNormal5 <- phys2eventtime(test.data.intraday,
+                                     test.eventslist.intraday,
+                                     3)
+  cat("\nTesting for announcement post trading day")
+                                        # Altering zoo object
+  test.data.intraday2 <- test.data.intraday
+  index(test.data.intraday2) <- index(test.data.intraday2) + (3600*24)
+  test.data.intraday2 <- rbind(test.data.intraday, test.data.intraday2)
+                                        # Altering events list
+  test.eventslist.intraday2 <- test.eventslist.intraday
+  test.eventslist.intraday2[1, 2] <- as.POSIXct("2010-01-01 18:00:00")
+  esConvertNormal6 <- phys2eventtime(test.data.intraday2,
+                                     test.eventslist.intraday2,
+                                     3)
 })
+
+
+
+

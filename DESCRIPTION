@@ -2,7 +2,7 @@ Package: eventstudies
 Version: 1.2
 Date: 2015-04-09
 Type: Package
-Title: Event study analysis
+Title: Event Study Analysis
 Authors@R: c(
            person("Chirag", "Anand", role = c("aut", "cre"),
                             email = "anand.chirag@gmail.com"),

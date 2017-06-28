@@ -17,4 +17,10 @@ S3method(plot, amm)
 S3method(plot, es)
 S3method(plot, ees)
 
-import(boot, sandwich, testthat, xts, zoo)
+importFrom("graphics", "abline", "legend", "lines", "par", "plot",
+           "plot.default", "points")
+importFrom("methods", "formalArgs")
+importFrom("utils", "capture.output", "head", "tail")
+importFrom("boot", "boot", "boot.ci")
+
+import(sandwich, stats, testthat, xts, zoo)

@@ -460,11 +460,11 @@ yearly.exevent.summary <- function(tmp){
   # Bad days
   tmp.bad.y <- apply.yearly(xts(tmp.bad),function(x)nrow(x))
   tmp.bad.y <- merge(tmp.bad.y,apply.yearly(xts(tmp.bad[,1]),function(x)median(x,na.rm=T)))
-  index(tmp.bad.y) <- as.yearmon(as.Date(substr(index(tmp.bad.y),1,4),"%Y"))
+  index(tmp.bad.y) <- zoo::as.yearmon(as.Date(substr(index(tmp.bad.y),1,4),"%Y"))
   # Good days
   tmp.good.y <- apply.yearly(xts(tmp.good),function(x)nrow(x))
   tmp.good.y <- merge(tmp.good.y,apply.yearly(xts(tmp.good[,1]),function(x)median(x,na.rm=T)))
-    index(tmp.good.y) <- as.yearmon(as.Date(substr(index(tmp.good.y),1,4),"%Y"))
+    index(tmp.good.y) <- zoo::as.yearmon(as.Date(substr(index(tmp.good.y),1,4),"%Y"))
   tmp.res <- merge(tmp.bad.y,tmp.good.y)
   colnames(tmp.res) <- c("total.events.l","median.value.l",
                          "total.events.u","median.value.u")

@@ -6,4 +6,4 @@ bibentry(bibtype = "Manual",
                     person("Ajay", "Shah")),
 organisation = "NIPFP, Macro/Finance group",
          year = 2014,
-         url = "http://CRAN.R-project.org/package=eventstudies")
+         url = "https://CRAN.R-project.org/package=eventstudies")

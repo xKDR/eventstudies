@@ -84,7 +84,7 @@ TerrorIndiceCAR <- lapply(1: ncol(TerrorIndiceReturns), function(x){
      ar <- window(ar, start = 0, end = 10)
      
                                         # CAR 
-     car <- remap.cumsum(ar, base = as.numeric(ar[1, x]))
+     car <- remap.cumsum(ar, base = as.numeric(ar[1, 1]))
      names(car) <- colnames(TerrorIndiceReturns[ , x, 
                                                 drop = FALSE])
      return(car)

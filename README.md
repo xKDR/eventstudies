@@ -7,9 +7,17 @@ methodological research on event studies.
 
 ## Installation
 
+### Stable version
+**Release notes**: https://github.com/nipfpmf/eventstudies/releases/tag/v1.2
 ```R
-library(devtools)
-install_github("nipfpmf/eventstudies")
+install.packages("eventstudies")
+## OR
+devtools::install_github("nipfpmf/eventstudies", ref="v1.2")
+```
+
+### Latest version
+```R
+devtools::install_github("nipfpmf/eventstudies", ref="master")
 ```
 
 ## Usage
@@ -26,7 +34,7 @@ examples("eventstudy", package = "eventstudies")
 2. Create your feature branch: `git checkout -b my-new-feature`
 3. Commit your changes: `git commit -am 'Add some feature'`
 4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request :D
+5. Submit a pull request
 
 ## History
 

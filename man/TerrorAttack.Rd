@@ -15,7 +15,7 @@
   \cite{Andrew H Chen and Thomas F Siems (2004).
     The effects of terrorism on global capital markets.
     European Journal of Political Economy, 20(1), 349-366.
-    \url{http://dev.wcfia.harvard.edu/sites/default/files/ChenSiems2004.pdf}
+    \doi{10.1016/j.ejpoleco.2003.12.005}
   }
 }
 

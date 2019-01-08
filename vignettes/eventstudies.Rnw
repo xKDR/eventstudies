@@ -11,9 +11,9 @@
 \author{Ajay Shah \and Sargam Jain}
 \begin{document}
 
-% \VignetteIndexEntry{An R package for conducting event studies and a platform for methodological research on event studies.}
+% \VignetteIndexEntry{Introduction to the \textbf{eventstudies} package in R}
 % \VignetteDepends{}  
-% \VignetteKeywords{eventstudies}  
+% \VignetteKeyword{eventstudies}  
 % \VignettePackage{eventstudies}
 
 \maketitle

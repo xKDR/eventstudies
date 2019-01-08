@@ -1,6 +1,6 @@
 Package: eventstudies
-Version: 1.2
-Date: 2017-06-28
+Version: 1.2.1
+Date: 2019-01-08
 Type: Package
 Title: Event Study Analysis
 Authors@R: c(
@@ -18,13 +18,16 @@ Authors@R: c(
                           email = "ajayshah@mayin.org")
            )
 Maintainer: Chirag Anand <anand.chirag@gmail.com>
-Depends: R (>= 3.4), zoo, xts
+Depends: R (>= 3.1), zoo, xts
 Description: An R package for conducting event studies and a platform
-             for methodological research on event studies.
+             for methodological research on event studies. The package
+             supports several data adjustment procedures and inference
+             procedures like bootstrap and the classical t-statistic.
 VignetteBuilder: knitr
 Suggests: knitr
 Imports: boot, graphics, methods, testthat, sandwich, stats, utils
 License: GPL-2
-URL: https://github.com/nipfpmf/eventstudies
-BugReports: https://github.com/nipfpmf/eventstudies/issues/new
+URL: <https://github.com/nipfpmf/eventstudies>
+BugReports: <https://github.com/nipfpmf/eventstudies/issues/new>
 LazyLoad: yes
+RoxygenNote: 6.0.1

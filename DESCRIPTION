@@ -19,10 +19,12 @@ Authors@R: c(
            )
 Maintainer: Chirag Anand <anand.chirag@gmail.com>
 Depends: R (>= 3.1), zoo, xts
-Description: An R package for conducting event studies and a platform
-             for methodological research on event studies. The package
-             supports several data adjustment procedures and inference
-             procedures like bootstrap and the classical t-statistic.
+Description: A platform for conducting event studies (Fama, Fisher,
+             Jensen, Roll (1969) <doi:10.2307/2525569>) and for
+             methodological research on event studies. The package
+             supports market model, augmented market model, and excess
+             returns methods for data modelling along with Wilcox,
+             classical t-test, and Bootstrap as inference procedures.
 VignetteBuilder: knitr
 Suggests: knitr
 Imports: boot, graphics, methods, testthat, sandwich, stats, utils

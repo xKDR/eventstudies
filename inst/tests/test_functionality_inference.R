@@ -45,13 +45,13 @@ test_that("functionality for inference functions", {
                                   base = 0)
                                         # Bootstrap strategy
   test.boot <- inference.bootstrap(es.w = test.eventtime0,
-                                   to.plot = TRUE)
+                                   to.plot = FALSE)
                                         # Wilcox strategy
   test.wilcox <- inference.wilcox(es.w = test.eventtime0,
-                                  to.plot = TRUE)
+                                  to.plot = FALSE)
                                         # Classic strategy
   test.classic <- inference.classic(es.w = test.eventtime0,
-                                    to.plot = TRUE)
+                                    to.plot = FALSE)
   testing.inference <- function(strategy){
 
       cat("\nTesting for class of the object returned")

@@ -1,3 +1,1 @@
-library(testthat)
-library(eventstudies)
-test_package("eventstudies")
+testthat::test_check("eventstudies")

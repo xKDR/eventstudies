@@ -23,7 +23,6 @@ marketModel <- function(firm.returns, market.returns, residuals = TRUE) {
         ## does na.omit, thereby removing rows from some firms even if
         ## they don't have NAs in them.
         for (i in 1:NCOL(firm.returns)) {
-            cat("i:", i, "\n")
             merged.object <- merge.zoo(firm.returns[, i], market.returns, all = TRUE)
             colnames(merged.object)[1] <- "firm.returns"
             reg[[i]] <- lm(firm.returns ~ market.returns, data = merged.object,

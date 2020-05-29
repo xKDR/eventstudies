@@ -17,7 +17,6 @@ constantMeanReturn <- function(firm.returns, residuals = TRUE) {
         constantMean <- list()
         resids <- list()
         for (i in 1:NCOL(firm.returns)) {
-            cat("i:", i, "\n")
             constantMean[[i]] <- mean(firm.returns[ , i],
                                       na.rm = TRUE)
             if (residuals == TRUE) {

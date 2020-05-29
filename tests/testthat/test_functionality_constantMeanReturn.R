@@ -51,9 +51,14 @@ test_that("functionality for constantMeanReturn", {
   
 
   ## Testing the class of arguments
-  cat("\nTesting for class of arguments input")
   es.result <- phys2eventtime(test.firm, test.eventslist, 2)
   estimation.period <- attributes(es.result$z.e)$index[1]:-2
   cmr <- constantMeanReturn(es.result$z.e[which(attributes(es.result$z.e)$index %in% estimation.period), ], residual = FALSE)
 
+  message("Testing for class of arguments input")
+  expect_that(cmr, is_a("matrix"))
+
+  message("Testing output")
+  x <- structure(c(0.00102066189422878, 0.00250892908936651, 0.00102066189422878), .Dim = c(3L, 1L))
+  expect_that(cmr, equals(x))
 })

@@ -88,7 +88,7 @@ makeX <- function(market.returns, others,
   stopifnot(all.equal(index(market.returns), index(others)),
             length(switch.to.innov)==NCOL(others))
   if (!is.null(dates)) {
-    stopifnot(class(dates) == "Date")
+    stopifnot("Date" %in% class(dates))
   }
   if (verbose) {cat("1. Checking dates.\n")}
   if (is.null(dates)) {

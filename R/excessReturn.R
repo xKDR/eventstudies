@@ -1,9 +1,9 @@
 excessReturn <- function(firm.returns, market.returns) {
   stopifnot(NROW(firm.returns) == NROW(market.returns))
 
-  stopifnot(class(firm.returns)=="zoo" || class(firm.returns)=="xts")
+  stopifnot("zoo" %in% class(firm.returns) || "xts" %in% class(firm.returns))
 
-  stopifnot(class(market.returns)=="zoo" || class(market.returns)=="xts")
+  stopifnot("zoo" %in% class(market.returns) || "xts" %in% class(market.returns))
   
    return(firm.returns - market.returns)
 }

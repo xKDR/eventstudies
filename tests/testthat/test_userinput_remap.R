@@ -47,7 +47,7 @@ test_that("userinput for remap.functions", {
 
   ### Testing remap.cumsum for univariate series i.e. only one firm
 
-  cat("\nTesting for univariate series in remap.cumsum")
+  message("Testing for univariate series in remap.cumsum")
   es.test.remap0 <- remap.cumsum(es.test.w0, is.pc = FALSE, base = 0)
   es.test.remap1 <- remap.cumsum(es.test.w1, is.pc = FALSE, base = 0)
 
@@ -70,7 +70,7 @@ test_that("userinput for remap.functions", {
 
   ### Testing remap.cumprod for univariate series i.e. only one firm
 
-  cat("\nTesting for univariate series in remap.cumprod")
+  message("Testing for univariate series in remap.cumprod")
   es.test.remap2 <- remap.cumprod(es.test.w0, is.pc = FALSE,
                                   base = 1)
   es.test.remap3 <- remap.cumprod(es.test.w1, is.pc = FALSE,
@@ -93,7 +93,7 @@ test_that("userinput for remap.functions", {
 
   ### Testing remap.cumsum for percentage and absolute returns
 
-  cat("\nTesting for percentage and absolute returns in remap.cumsum")
+  message("Testing for percentage and absolute returns in remap.cumsum")
 
   es.test.remap4 <- remap.cumsum(es.test.w0, is.pc = TRUE, base = 0)
 
@@ -112,7 +112,7 @@ test_that("userinput for remap.functions", {
 
   ### Testing remap.cumprod for percentage and absolute returns
 
-  cat("\nTesting for percentage and absolute returns in remap.cumprod")
+  message("Testing for percentage and absolute returns in remap.cumprod")
 
   es.test.remap6 <- remap.cumsum(es.test.w0, is.pc = TRUE, base = 100)
 

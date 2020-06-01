@@ -1,6 +1,6 @@
 Package: eventstudies
 Version: 1.2.2
-Date: 2020-05-24
+Date: 2020-06-01
 Type: Package
 Title: Event Study Analysis
 Authors@R: c(

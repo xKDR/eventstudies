@@ -70,7 +70,7 @@ test_that("functionality for excessReturn", {
 
 
   ### Testing the class of arguments
-  cat("\nTesting for class of arguments input")
+  message("Testing for class of arguments input")
   
   er.testResult1 <- excessReturn(firm.returns = test.firm,
                                  market.returns = test.market[,1])

@@ -52,7 +52,7 @@ test_that("userinput for excessReturn", {
 ### Testing the function for number of rows in dataframe of
 ### firm returns and market returns                       
 
-  cat("\n Testing for no. of rows in firm returns and market returns")
+  message("Testing for no. of rows in firm returns and market returns")
   test.market1 <- test.market[-1,] 
   er.testResult1 <- excessReturn(firm.returns = test.firm,
                                  market.returns = test.market[,1])

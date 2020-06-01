@@ -37,7 +37,7 @@ test_that("userinput for inference functions", {
 
 ### Testing function for normal values of width
     
-    cat("\nTesting for normal input values")
+    message("Testing for normal input values")
     esConvertNormal0 <- phys2eventtime(z = test.data,
                                        events = test.eventslist,
                                        width = 1)
@@ -63,7 +63,7 @@ test_that("userinput for inference functions", {
 
 ### Testing function for univariate series: one firm
     
-    cat("\nTesting for univariate series in zoo object")
+    message("Testing for univariate series in zoo object")
     esConvertNormal1 <- phys2eventtime(z = test.data,
                                        events = test.eventslist,
                                        width = 4)

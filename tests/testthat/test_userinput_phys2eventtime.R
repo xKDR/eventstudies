@@ -35,11 +35,11 @@ test.eventslist$name <- as.character(test.eventslist$name)
 
 ### Testing function for normal values of width
 
-  cat("\nTesting for normal input values")
+  message("Testing for normal input values")
   esConvertNormal0 <- phys2eventtime(z = test.data,
                                      events = test.eventslist,
                                      width = 5)
-  cat("\nTesting for normal input values")
+  message("Testing for normal input values")
   esConvertNormal1 <- phys2eventtime(z = test.data,
                                      events = test.eventslist,
                                      width = 10)
@@ -48,7 +48,7 @@ test.eventslist$name <- as.character(test.eventslist$name)
 
   test.data2 <- test.data[,1, drop = FALSE]
   test.data3 <- test.data[,1]
-  cat("\nTesting for univariate zoo object")
+  message("Testing for univariate zoo object")
   esConvertNormal2 <- phys2eventtime(z = test.data2,
                                      events = test.eventslist,
                                      width = 2)

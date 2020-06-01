@@ -206,8 +206,8 @@ get.clusters.formatted <- function(event.series,
     
     if(me!=0){
       tmp <- tmp[-which(tmp$remove.mixed==5),]
-      cat("Pattern of:",i,";",
-          "Discarded event:",me/i,"\n")
+      message("Pattern of:",i,";",
+          "Discarded event:",me/i)
     }
   }
   tmp.nc <- tmp
@@ -231,8 +231,8 @@ get.clusters.formatted <- function(event.series,
   # Get pattern with maximum length
   res <- summarise.cluster(temp)
   max.len <- max(res[,"Max."])
-  cat("Maximum length after removing mixed clusters is",
-      max.len,"\n")
+  message("Maximum length after removing mixed clusters is",
+      max.len)
   # Marking clusters
   n$cluster.pattern <- n$both.tails
   for(pt.len in max.len:1){
@@ -249,7 +249,7 @@ get.clusters.formatted <- function(event.series,
     rownum <- exact.pattern.location(n$both.tails,1,pt.len)
     # If pattern does not exist
     if(length(rownum)==0){
-      cat("Pattern",pt.len,"does not exist.","\n");next
+      message("Pattern",pt.len,"does not exist.");next
     }
     # Clustering
     while(length(rownum)>0){

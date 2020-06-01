@@ -87,7 +87,7 @@ test_that("functionality for phys2eventtime", {
     
 ### Test for class of arguments
 
-  cat("\nTesting for class of arguments input")
+  message("Testing for class of arguments input")
 
   test.data1 <- structure(c(33.16, 34.0967, 35.3683, 34.46, 34.17,
                             35.89, 36.19, 37.1317, 36.7033, 37.7933,
@@ -115,7 +115,7 @@ test_that("functionality for phys2eventtime", {
 
 ### Testing for missing data in eventslist
 
-  cat("\nTesting for missing dates in eventslist")
+  message("Testing for missing dates in eventslist")
   test.eventslist2 <- data.frame(name = c("ITC","Reliance","TCS",
                                    "ITC","Reliance","Junk"),
                                  when = as.Date(c("2004-01-02",
@@ -127,7 +127,7 @@ test_that("functionality for phys2eventtime", {
                                      events = test.eventslist2,
                                      width = 2))
 
-  cat("\nTesting for missing firm names in eventlist")
+  message("Testing for missing firm names in eventlist")
   test.eventslist2 <- data.frame(name = c("ITC",NA,"TCS",
                                    "ITC","Reliance","Junk"),
                                  when = as.Date(c("2004-01-02",
@@ -141,14 +141,14 @@ test_that("functionality for phys2eventtime", {
 
 ### Testing the function for outcomes
 
-  cat("\nTesting for list component: outcomes")
+  message("Testing for list component: outcomes")
   esConvertNormal3 <- phys2eventtime(z = test.data,
                                      events = test.eventslist,
                                      width = 10)
   expect_that(length(esConvertNormal3$outcomes),
               equals(nrow(test.eventslist)))
 
-  cat("\nTesting for list component: z.e")
+  message("Testing for list component: z.e")
   esConvertNormal9 <- phys2eventtime(z = test.data,
                                      events = test.eventslist,
                                      width = 5)
@@ -167,7 +167,7 @@ test_that("functionality for phys2eventtime", {
   
 ### Testing that firms should not have NA for defined width
 
-  cat("\nTesting for no NA values in defined width")
+  message("Testing for no NA values in defined width")
   esConvertNormal4 <- phys2eventtime(z = test.data,
                                      events = test.eventslist,
                                      width = 2)
@@ -178,7 +178,7 @@ test_that("functionality for phys2eventtime", {
 ### Testing for only one firm in eventslist
 
   test.eventslist3 <- test.eventslist[1,]            
-  cat("\nTesting for only one firm data in events list")
+  message("Testing for only one firm data in events list")
   expect_error(esConvertNormal7 <- phys2eventtime(z = test.data1,
                                      events = test.eventslist3,
                                      width = 2))
@@ -186,11 +186,11 @@ test_that("functionality for phys2eventtime", {
 
 
 ### Testing for intraday functionality
-  cat("\nTesting for intra-day functionality")
+  message("Testing for intra-day functionality")
   esConvertNormal5 <- phys2eventtime(test.data.intraday,
                                      test.eventslist.intraday,
                                      3)
-  cat("\nTesting for announcement post trading day")
+  message("Testing for announcement post trading day")
                                         # Altering zoo object
   test.data.intraday2 <- test.data.intraday
   index(test.data.intraday2) <- index(test.data.intraday2) + (3600*24)

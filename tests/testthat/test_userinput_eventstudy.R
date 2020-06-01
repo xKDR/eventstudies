@@ -71,7 +71,7 @@ test_that("tests for wrapper function", {
 #### Testing for argument inputs ####
 
   ## for normal values
-  cat("\nTesting for normal input values")
+  message("Testing for normal input values")
   es.test.wrapper1 <- eventstudy(firm.returns = test.data,
                                  event.list = test.eventslist,
                                  event.window = 1,
@@ -84,7 +84,7 @@ test_that("tests for wrapper function", {
                                  model.args = NULL)  
 
   ## for wrong class of returns object
-  cat("\nTesting for wrong class of returns object")
+  message("Testing for wrong class of returns object")
   expect_error(eventstudy(firm.returns = test.data1,
                           event.list = test.eventslist,
                           event.window = 1,
@@ -97,7 +97,7 @@ test_that("tests for wrapper function", {
                           model.args = NULL))
 
   ## for event window less than 1
-  cat("\nTesting for event window less than 1")
+  message("Testing for event window less than 1")
   expect_error(eventstudy(firm.returns = test.data,
                           event.list = test.eventslist,
                           event.window = -1,
@@ -110,7 +110,7 @@ test_that("tests for wrapper function", {
                           model.args = NULL))
 
   ## for is.levels = TRUE when data is already in returns format
-  cat("\nTesting for value of is.levels with input in returns format")
+  message("Testing for value of is.levels with input in returns format")
   expect_error(eventstudy(firm.returns = test.data,
                           event.list = test.eventslist,
                           event.window = -1,
@@ -123,7 +123,7 @@ test_that("tests for wrapper function", {
                           model.args = NULL))
 
   ## for type != None and no model arguments specified
-  cat("\nTesting for type != None and no model arguments specified")
+  message("Testing for type != None and no model arguments specified")
   expect_error(eventstudy(firm.returns = test.data,
                           event.list = test.eventslist,
                           event.window = 1,

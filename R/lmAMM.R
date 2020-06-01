@@ -22,7 +22,7 @@ ARinnovations <- function(x) {
 do.one.piece <- function(market.returns, others, switch.to.innov, market.returns.purge, nlags, verbose=FALSE) {
   thedates <- index(market.returns)
   if (verbose) {
-    cat("   Doing work for period from ",
+    message("   Doing work for period from ",
         as.character(head(thedates,1)), " to ",
         as.character(tail(thedates,1)), "\n")
   }
@@ -32,7 +32,7 @@ do.one.piece <- function(market.returns, others, switch.to.innov, market.returns
       a <- ARinnovations(others[,i])
       innovated <- a$result
       if (verbose) {
-        cat("   AR model for ", colnames(others, do.NULL=FALSE)[i], "\n")
+        message("   AR model for ", colnames(others, do.NULL=FALSE)[i], "\n")
         print(a$m)
       }
       otherlags <- c(otherlags, a$m$order)
@@ -65,14 +65,14 @@ do.one.piece <- function(market.returns, others, switch.to.innov, market.returns
     if (NCOL(z) > 1) {colnames(z) <- labels}
     m <- lm(market.returns ~ ., as.data.frame(cbind(market.returns, z)))
     if (verbose) {
-      cat("   Model explaining market.returns:\n")
+      message("   Model explaining market.returns:")
       print(summary(m))
     }
     how.many.NAs <- nlags + max(otherlags)
     market.returns.purged <- zoo(c(rep(NA,how.many.NAs),m$residuals),
                       order.by=thedates)
   }
-                                        #    if (verbose) {cat("   Finished do.one.piece()\n")}
+                                        #    if (verbose) {message("   Finished do.one.piece()\n")}
   list(market.returns.purged=market.returns.purged, innov=innov)
 }                              
 
@@ -84,13 +84,13 @@ makeX <- function(market.returns, others,
                   nlags=5,
                   dates=NULL,
                   verbose=FALSE) {
-  if (verbose) {cat("0. Checking args\n")}
+  if (verbose) {message("0. Checking args")}
   stopifnot(all.equal(index(market.returns), index(others)),
             length(switch.to.innov)==NCOL(others))
   if (!is.null(dates)) {
     stopifnot("Date" %in% class(dates))
   }
-  if (verbose) {cat("1. Checking dates.\n")}
+  if (verbose) {message("1. Checking dates.")}
   if (is.null(dates)) {
     dates <- c(start(market.returns),end(market.returns))
   }
@@ -100,13 +100,13 @@ makeX <- function(market.returns, others,
   if(tail(dates,1)!=tail(index(market.returns),1)){
     stop("End date provided and the end date of the dataset do not match \n")
   }
-  if (verbose) {cat("2. Run through all the pieces --\n")}
+  if (verbose) {message("2. Run through all the pieces --")}
   for (i in 1:(length(dates)-1)) {
     t1 <- dates[i]
     t2 <- dates[i+1]
     if (i != (length(dates)-1)) {t2 <- t2 -1}
     if (verbose) {
-      cat("   Focusing down from date = ", as.character(t1), " to ", as.character(t2), "\n")
+      message("   Focusing down from date = ", as.character(t1), " to ", as.character(t2), "\n")
     }
     tmp.market.returns <- window(market.returns, start=t1, end=t2)
     tmp.others <- window(others, start=t1, end=t2)
@@ -119,7 +119,7 @@ makeX <- function(market.returns, others,
       res.innov <- a$innov
     }
   }
-  if (verbose) {cat("2. Make a clean X and send it back --\n")}
+  if (verbose) {message("2. Make a clean X and send it back --\n")}
   X <- cbind(res.market.returns, res.innov)
   if (NCOL(res.innov) == 1) {colnames(X) <- c("market.returns","z")}
   else {colnames(X) <- c("market.returns", colnames(res.innov))}
@@ -150,7 +150,7 @@ lmAMM <- function(firm.returns, X, nlags=NULL, verbose=FALSE) {
   }
 
   if (is.null(nlags)) {
-    if(verbose) {cat("Trying to find the best lag structure...\n")}
+    if(verbose) {message("Trying to find the best lag structure...\n")}
     bestlag <- 0
     bestm <- NULL
     bestAIC <- Inf
@@ -158,7 +158,7 @@ lmAMM <- function(firm.returns, X, nlags=NULL, verbose=FALSE) {
       thism <- do.ols(trylag)
       if (is.null(thism)) {next}
       thisAIC <- AIC(thism, k=log(length(thism$fitted.values)))
-      if (verbose) {cat(trylag, " lags, SBC = ", thisAIC, "\n")}
+      if (verbose) {message(trylag, " lags, SBC = ", thisAIC, "\n")}
       if (thisAIC < bestAIC) {
         bestlag <- trylag
         bestAIC <- thisAIC
@@ -175,7 +175,7 @@ lmAMM <- function(firm.returns, X, nlags=NULL, verbose=FALSE) {
     if (is.null(m)) {return(NULL)}
   }
   # In either event, you endup holding an "m" here.
-  if (verbose) {cat("\n\nThe OLS:\n"); print(summary(m))}
+  if (verbose) {message("\n\nThe OLS:\n"); print(summary(m))}
 
   # Compute a series of exposure measures, and their standard errors.
   beta <- m$coefficients
@@ -271,7 +271,7 @@ manyfirmssubperiod.lmAMM <- function(firm.returns,X,
   }
   nperiods <- length(periodnames)
   if(length(dates) != (nperiods+1)){
-    cat("Mistake in length of dates versus length of periods.\n")
+    message("Mistake in length of dates versus length of periods.\n")
     return(NULL)
   }
   nfirms <- ncol(firm.returns)
@@ -297,7 +297,7 @@ manyfirmssubperiod.lmAMM <- function(firm.returns,X,
                 s.exposures=rep(NA,ncol(X)))
   
   for(i in 1:NCOL(firm.returns)){
-    cat("AMM estimation for",colnames(firm.returns)[i],"\n")
+    message("AMM estimation for",colnames(firm.returns)[i],"\n")
     if (verbose) {cat ("AMM estimation for", colnames(firm.returns)[i], "\n")}
     stock.return <- firm.returns[,i]
     dataset <- cbind(stock.return, X)   # This is the full time-series
@@ -321,23 +321,23 @@ manyfirmssubperiod.lmAMM <- function(firm.returns,X,
 ## Summary, print and plot functions for AMM
 ############################################
 summary.amm <- function(object, ...) {
-  cat("\n", "Summary statistics of exposure: \n")
+  message("\n", "Summary statistics of exposure: \n")
   sstats <- cbind(object$exposure, object$s.exposure,
                   object$exposure/object$s.exposure)
   colnames(sstats) <- c("Exposure", "Std.Err", "t statistic")  
   rownames(sstats) <- names(object$exposures)
   print(sstats)
-  cat("\n","Linear model AMM  results: ","\n");
+  message("\n","Linear model AMM  results: ","\n");
   class(object) <- "lm";
   print.default(summary.default(object))
 }
 
 print.amm <- function(x, ...){
-  cat("\n")
+  message()
   print(x$call)
-  cat("\n","Coefficients:","\n")
+  message("\nCoefficients:")
   print(x$coef)
-  cat("\n","Exposures:","\n")
+  message("\nExposures:")
   print.default(x$exposures)
 }
 

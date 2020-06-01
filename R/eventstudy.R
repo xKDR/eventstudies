@@ -54,7 +54,7 @@ eventstudy <- function(firm.returns,
     names(outcomes) <- gsub(".outcomes", "", names(outcomes))
     
     if (all(unique(outcomes) != "success")) {
-      cat("Error: no successful events\n")
+      message("Error: no successful events")
       to.remap = FALSE
       inference = FALSE
       outputModel <- NULL
@@ -138,7 +138,7 @@ eventstudy <- function(firm.returns,
     names(outcomes) <- gsub(".outcomes", "", names(outcomes))
     
     if (all(unique(outcomes) != "success")) {
-      cat("Error: no successful events\n")
+      message("Error: no successful events")
       to.remap = FALSE
       inference = FALSE
       outputModel <- NULL
@@ -242,7 +242,7 @@ eventstudy <- function(firm.returns,
       outcomes <- do.call(c, sapply(returns.zoo, '[', "outcomes"))
       names(outcomes) <- gsub(".outcomes", "", names(outcomes))
       if (all(unique(outcomes) != "success")) {
-          cat("Error: no successful events\n")
+          message("Error: no successful events")
           to.remap = FALSE
           inference = FALSE
           outputModel <- NULL
@@ -283,7 +283,7 @@ eventstudy <- function(firm.returns,
     outcomes <- do.call(c, sapply(returns.zoo, '[', "outcomes"))
     names(outcomes) <- gsub(".outcomes", "", names(outcomes))
     if (all(unique(outcomes) != "success")) {
-      cat("Error: no successful events\n")
+      message("Error: no successful events")
       to.remap = FALSE
       inference = FALSE
       outputModel <- NULL
@@ -493,11 +493,11 @@ prepare.returns <- function(event.list, event.window, ...) {
 #########################
 
 print.es <- function(x, ...){
-  cat("Event study", colnames(x$result)[2], "response with",
-      attr(x, "inference"), "inference for CI:\n")
+  message("Event study", colnames(x$result)[2], "response with",
+      attr(x, "inference"), "inference for CI:")
   print(x$result)
-  cat("\n","Event outcome has",length(which(x$outcomes=="success")),
-      "successful outcomes out of", length(x$outcomes),"events:","\n")
+  message("\n","Event outcome has",length(which(x$outcomes=="success")),
+      "successful outcomes out of", length(x$outcomes),"events:")
   print(x$outcomes)
 }
 
@@ -524,7 +524,7 @@ plot.es <- function(x, ...){
 
   if (attributes(x)$inference) {
     if (NCOL(x$result) < 3) {
-      cat("Error: No confidence bands available to plot.\n")
+      message("Error: No confidence bands available to plot.")
       return(invisible(NULL))
     } else {
       plot.inference(x$result, xlab = "Event time", ylab = ylab,

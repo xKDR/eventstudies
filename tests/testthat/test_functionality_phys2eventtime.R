@@ -171,7 +171,8 @@ test_that("functionality for phys2eventtime", {
   esConvertNormal4 <- phys2eventtime(z = test.data,
                                      events = test.eventslist,
                                      width = 2)
-  expect_that(esConvertNormal4$z.e[8:12], not(equals(NA)))
+  x <- esConvertNormal4$z.e[8:12]
+  expect_false(all(is.na(x)))
 
 
 ### Testing for only one firm in eventslist

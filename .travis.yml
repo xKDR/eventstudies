@@ -1,8 +1,5 @@
 language: r
 
-r_binary_packages:
-  - testthat
-
 notifications:
   slack:
     secure: NdUMSkGwr9JnBNS7JOVhyH/WKmElQYVJ2+ey8S/bh/1KMAEDj2ESboUSw8qf2kma+JeetMJN5zfA322udMjn4Mzx6o/gIGJaCqXvbG4RZ6ujWbVfyI/iCdKbT+H+VqC2ZpsbLME2xaFXEXXCIZeL11mJaPSJ4J0pqH5udzfxiVQ=

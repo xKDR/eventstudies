@@ -8,14 +8,24 @@ methodological research on event studies.
 ## Installation
 
 ### Stable version
-**Release notes**: https://github.com/nipfpmf/eventstudies/releases/tag/v1.2
+**Release notes**: https://github.com/nipfpmf/eventstudies/releases/tag/v1.2.2
+
+Current stable version of `eventstudies` is `v1.2.2`. It can be
+installed directly from CRAN or via GitHub.
+
+* CRAN URL: https://cran.r-project.org/web/packages/eventstudies/index.html
 ```R
-install.packages("eventstudies")
-## OR
-devtools::install_github("nipfpmf/eventstudies", ref="v1.2")
+install.packages("eventstudies")                                                    
+```
+
+* GitHub
+```R                                                                  
+devtools::install_github("nipfpmf/eventstudies", ref="v1.2.2") 
 ```
 
 ### Latest version
+
+Latest/unstable version of the package can be installed via GitHub:
 ```R
 devtools::install_github("nipfpmf/eventstudies", ref="master")
 ```

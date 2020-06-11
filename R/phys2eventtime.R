@@ -11,9 +11,9 @@
 #   success : all is well.
 # A vector of these outcomes is returned.
 
-phys2eventtime <- function(z, events, width=10) {
+phys2eventtime <- function(z, events, width=c(-9,10)) {
 
-  stopifnot(width > 0)
+  stopifnot(length(width) > 0 && length(width) <= 2)
   stopifnot("data.frame" %in% class(events))
   stopifnot("zoo" %in% class(z) || "xts" %in% class(z))
  
@@ -54,7 +54,11 @@ phys2eventtime <- function(z, events, width=10) {
   if (width > 0) {
     for (i in 1:ncol(z.e)) {
       tmp <- z.e[,i]
-      tmp2 <- window(tmp, start = (-width + 1), end = +width)
+      if (length(width) == 2) {
+        tmp2 <- window(tmp, start = width[1], end = width[2])
+        } else {
+          tmp2 <- window(tmp, start = (-width + 1), end = +width)
+        }
       if (any(is.na(tmp2))) {
         outcomes[as.numeric(colnames(z.e)[i])] <- "wdatamissing"
         badcolumns <- c(badcolumns, i)
@@ -84,9 +88,20 @@ timeshift <- function(x, z, width) {
 
   ## Take previous date if exact data is not found.
   location <- findInterval(x[, "when"], index(z[, x[, "name"]]))
-  if ((location <= (width - 1)) ||      # testing upper bound
-      (location > (length(index(z)) - width))) { # lower bound
-    return(list(result=NULL, outcome="wrongspan"))
+  if (length(width) == 2) {
+      if (location <= min(width) ||      # testing upper bound
+          location > (length(index(z)) - max(width))) # lower bound
+      {
+          return(list(result=NULL, outcome="wrongspan"))
+      }
+  } else {
+      if ((location <= (width - 1)) || # testing upper bound (location should
+                                       # be > [9] position in case width is 10)
+          (location > (length(index(z)) - width))) { # lower bound (location
+                                                     # should be before 10 elements from
+                                                     # last in case width is 10)
+          return(list(result=NULL, outcome="wrongspan"))
+      }
   }
 
   remapped <- zoo(as.numeric(z[, x[, "name"]]),

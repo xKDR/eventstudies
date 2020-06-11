@@ -11,9 +11,14 @@
 #   success : all is well.
 # A vector of these outcomes is returned.
 
-phys2eventtime <- function(z, events, width=c(-9,10)) {
+phys2eventtime <- function(z, events, width=10) {
 
-  stopifnot(length(width) > 0 && length(width) <= 2)
+  stopifnot(is.numeric(width))
+  stopifnot(length(width) == 1 || length(width) == 2)
+  if (length(width) == 2) {
+    stopifnot(width[1] < 0)
+    stopifnot(width[2] > 0)
+  }
   stopifnot("data.frame" %in% class(events))
   stopifnot("zoo" %in% class(z) || "xts" %in% class(z))
  
@@ -51,7 +56,6 @@ phys2eventtime <- function(z, events, width=c(-9,10)) {
   ## Information verification within 'width'
   ##   :: Will not be executed with width = 0
   badcolumns <- NULL
-  if (width > 0) {
     for (i in 1:ncol(z.e)) {
       tmp <- z.e[,i]
       if (length(width) == 2) {
@@ -73,7 +77,6 @@ phys2eventtime <- function(z, events, width=c(-9,10)) {
     if (NCOL(z.e) == 0) {
       return(list(z.e = NULL, outcomes = factor(outcomes)))
     }
-  }
 
   ## Double check
   stopifnot(sum(outcomes=="success") == NCOL(z.e))
@@ -89,7 +92,7 @@ timeshift <- function(x, z, width) {
   ## Take previous date if exact data is not found.
   location <- findInterval(x[, "when"], index(z[, x[, "name"]]))
   if (length(width) == 2) {
-      if (location <= min(width) ||      # testing upper bound
+      if (location <= abs(min(width)) ||      # testing upper bound
           location > (length(index(z)) - max(width))) # lower bound
       {
           return(list(result=NULL, outcome="wrongspan"))

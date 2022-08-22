@@ -4,7 +4,7 @@
 
 An R package for conducting event studies and a platform for
 methodological research on event studies.
-Latops are waving. 
+Laptops are waving. 
 ## Installation
 
 ### Stable version

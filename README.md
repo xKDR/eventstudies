@@ -52,6 +52,10 @@ es <- eventstudies::eventstudy(firm.returns = StockPriceReturns,
 plot(es)
 ```
 
+Note that `firm.returns` must be a `zoo` object, and `event.list` must be a `data.frame` with columns `name` and `when`.  
+
+If you wish to pass data in absolute values ("levels") instead of as relative return data, pass `is.levels=TRUE` to the `eventstudies` function.
+
 ## Help
 ```R
 ?eventstudy

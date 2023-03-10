@@ -78,13 +78,14 @@ We can see how these two timeseries look in Figure \Fref{fig:timeseries}
 
 Now that we've defined the timeseries, we'll also define a \texttt{data.frame} which describes when the events happen.
 Here, since we've created the data, we know that the events happen at time 4 for \texttt{variable.one}, and at time 5 for \texttt{variable.two}.
+The time values can be of type \texttt{date-time}, \texttt{Date}, or \texttt{integer}.  To use integers in R, we use the \texttt{L} suffix, as in \texttt{4L}.
 
 Note that the column names have to be precisely what is shown here.
 
 <<show-the-events,results=verbatim>>=
 dates.data.frame <- data.frame(
     name = c("variable.one", "variable.two"),
-    when = c(3, 4))
+    when = c(3L, 4L))
 @
 
 \section{Performing the event study}

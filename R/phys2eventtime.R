@@ -20,8 +20,8 @@ phys2eventtime <- function(z, events, width=10) {
  if (is.null(ncol(z))) {
    stop(paste("'z' should be of class zoo/xts with at least one column. Use '[' with drop = FALSE"))
  }
- if (!any(class(events$when) %in% c("POSIXt", "Date", "numeric"))) {
-   stop("events$when should be one of 'Date' or 'date-time' classes.")
+ if (!any(class(events$when) %in% c("POSIXt", "Date", "integer"))) {
+   stop("events$when should be one of 'Date', 'date-time' or 'integer' classes.")
  }
  if (any(is.na(events$when))) {
    stop("events$when should not contain NA values.")

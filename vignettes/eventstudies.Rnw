@@ -49,7 +49,7 @@ head(SplitDates)
 
 The representation of dates is a data frame with two columns. The
 first column is the name of the unit of observation which experienced
-the event. The second column is the event date.
+the event, named \texttt{name}. The second column is the event date, named \texttt{when}.
 
 The second thing that is required for doing an event study is data for
 stock price returns for all the firms. The sample dataset supplied in

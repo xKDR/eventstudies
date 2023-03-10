@@ -1,0 +1,127 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{a4wide}
+\usepackage[colorlinks,linkcolor=blue,citecolor=red]{hyperref}
+\usepackage{natbib}
+\usepackage{float}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage{fancyref}
+\title{A minimal example of using the \textbf{eventstudies} package in R}
+\author{Anshul Singhvi}
+\begin{document}
+
+% \VignetteIndexEntry{A minimal example of using the \textbf{eventstudies} package in R}
+% \VignetteDepends{}  
+% \VignetteKeyword{eventstudies}  
+% \VignettePackage{eventstudies}
+
+\maketitle
+
+% \begin{abstract}
+% \end{abstract}
+\SweaveOpts{engine=R,pdf=TRUE}
+
+\section{Creating our dataset}
+
+We want to create a synthetic dataset which still allows us to perform some kind of event study.  We'll take the simplest case of two variables, which ramp up to 1 and remain there.
+
+In order to perform an event study, we need two data sources:
+\begin{itemize}
+    \item A \texttt{zoo} object which contains the timeseries data for each variable, in one of the following formats:
+    \begin{itemize}
+        \item \textbf{Levels}: absolute levels, i.e., raw data values.
+        \item \textbf{Returns}: $100 \cdot \log\left(\mathop{diff}\left(\mathbf{levels}\right)\right)$.  1 is 1\% in returns data.  This is commonly found in e.g. financial datasets.
+    \end{itemize}
+    \item A \texttt{data.frame} object which contains the event times and which variable they pertain to.  This must have two columns:
+    \begin{itemize}
+        \item \texttt{name}: a column which holds the variable names, as they occur in the \texttt{zoo} timeseries object.  The \texttt{name} of each row specifies the column of the \texttt{zoo} timeseries object that the event time applies to.
+        \item \texttt{when}: a column which holds event time.  This can be a \texttt{Date}, \texttt{POSIXt}, or \texttt{numeric} value, as long as it works with the time index in the \texttt{zoo} timeseries.
+    \end{itemize}
+\end{itemize}
+
+We'll begin by creating the timeseries object in zoo.
+
+\subsection{Creating the data as a \texttt{zoo} object}
+
+We want to create a timeseries, whose behaviour changes after a certain point in time.  
+We begin at 0, ascend linearly to reach 1 at the event time, then remain at 1.  
+We perform this for two variables, \texttt{variable.one} and \texttt{variable.two}.  
+This is a minimal example, so you can easily see how to structure your own data to work with eventstudies.
+
+In order to create our dataset, we create one \texttt{zoo} object per variable, then \texttt{cbind} them into the final \texttt{zoo} object.
+
+<<show-the-events,results=verbatim>>=
+library(zoo)
+
+variable.one <- zoo(c(seq(0, 1, length.out = 4), c(1, 1, 1, 1, 1, 1)))
+variable.two <- zoo(c(seq(0, 1, length.out = 5), c(1, 1, 1, 1, 1)))
+
+level.zoo.object <- cbind(variable.one, variable.two)
+@
+
+Note the use of the \texttt{seq} function; it forms a range which goes from zero to one, with \texttt{length.out} steps.
+
+We can see how these two timeseries look in Figure \Fref{fig:timeseries}
+
+\begin{figure}
+    \begin{center}
+        <<plot-ts,fig=TRUE,width=4,height=3.5>>=
+        plot(level.zoo.object)
+        @ 
+    \caption{What our synthetic timeseries look like}\label{fig:timeseries}
+    \end{center}
+\end{figure}
+
+\subsection{Defining event times in a \texttt{data.frame}}
+
+Now that we've defined the timeseries, we'll also define a \texttt{data.frame} which describes when the events happen.
+Here, since we've created the data, we know that the events happen at time 4 for \texttt{variable.one}, and at time 5 for \texttt{variable.two}.
+The time values can be of type \texttt{date-time}, \texttt{Date}, or \texttt{integer}.  To use integers in R, we use the \texttt{L} suffix, as in \texttt{4L}.
+
+Note that the column names have to be precisely what is shown here.
+
+<<show-the-events,results=verbatim>>=
+dates.data.frame <- data.frame(
+    name = c("variable.one", "variable.two"),
+    when = c(3L, 4L))
+@
+
+\section{Performing the event study}
+
+Now, we simply perform the event study.  
+We provide the \textt{level.zoo.object} which we constructed in Section 1.1, 
+along with the \texttt{dates.data.frame} which we constructed in Section 1.2.
+
+Here, the zoo object is passed to \texttt{firm.returns} (the name is slightly misleading) and the events dataframe is passed to \texttt{event.list}.
+
+
+
+As for parameters, we set \texttt{is.levels = TRUE}, since we are providing absolute data (levels) and not rescaled change data (returns).  
+If your data is in the returns format as previously described, please set this to \texttt{FALSE}.
+
+We set \texttt{event.window = 2}, since the data is quite small.  
+Feel free to set the window value as high or low as necessary, though.  
+
+We set \texttt{type = "None"}, since we aren't running any market model for decorrelation. 
+
+<<show-the-events,results=verbatim>>=
+library(eventstudies)
+es <- eventstudy(firm.returns = level.zoo.object,
+                 event.list = dates.data.frame,
+                 event.window = 2,
+                 type = "None",
+                 is.levels = TRUE,)
+@
+
+\begin{figure}
+    \begin{center}
+        <<plot-es,fig=TRUE,width=4,height=3.5>>=
+        plot(es)
+        @ 
+    \caption{The event study of our synthetic data}\label{fig:es}
+    \end{center}
+\end{figure}
+
+\end{document}
